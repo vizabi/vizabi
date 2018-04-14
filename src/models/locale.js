@@ -41,7 +41,7 @@ const LocaleModel = DataConnected.extend({
     return this.loadData();
   },
 
-  loadData() {
+  loadData(opts) {
     this.setReady(false);
     this._loadCall = true;
 
@@ -50,9 +50,12 @@ const LocaleModel = DataConnected.extend({
     // through the listeners
 
     const promises = [];
-    utils.forEach(this._root._data, mdl => {
-      if (mdl._type === "data") promises.push(mdl.loadConceptProps());
-    });
+    
+    if (opts && opts.dataConnectedChange) {
+      utils.forEach(this._root._data, mdl => {
+        if (mdl._type === "data") promises.push(mdl.loadConceptProps());
+      });
+    }
 
     // load UI strings only if we don't have them already
     if (!this.strings[this.id]) {
