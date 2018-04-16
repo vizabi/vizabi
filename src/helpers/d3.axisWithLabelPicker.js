@@ -244,7 +244,7 @@ export default function axisSmart(_orient) {
 
         g.select(".vzb-axis-value")
           .select("text")
-          .interrupt()
+          .interrupt("text")
           .text(highlightValue == "none" ? "" : options.formatter(highlightValue))
           .transition();
 
