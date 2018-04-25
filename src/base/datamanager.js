@@ -62,7 +62,7 @@ const DataManagerPrototype = {
       from: "entities"
     }, queryAddition);
     return Promise.all(
-      [...this.getDataModels().values()].map(
+      [...this.getDataModels().values()].filter(ds => ds.getConceptprops(conceptID)).map(
         dataModel => dataModel.load(query, undefined, true).then(dataId => dataModel.getData(dataId))
       )
     );
