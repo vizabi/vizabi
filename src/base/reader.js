@@ -22,6 +22,11 @@ const Reader = Class.extend({
     $in: (configValue, rowValue) => configValue.includes(rowValue)
   },
 
+  LOGICAL_TEST: {
+    $and: "every",
+    $or: "some"
+  },
+
   ERRORS: {
     GENERIC_ERROR: "reader/error/generic"
   },
@@ -106,23 +111,23 @@ const Reader = Class.extend({
                 const value = joinWhere[joinRowKey];
                 const parser = parsers[joinRowKey];
 
-                whereResult[joinRowKey] = parser ?
+                whereResult.push({ [joinRowKey]: parser ?
                   typeof value === "object" ?
                     Object.keys(value).reduce((callbackConditions, callbackKey) => {
                       callbackConditions[callbackKey] = parser(value[callbackKey]);
                       return callbackConditions;
                     }, {}) :
                     parser(value)
-                  : value;
+                  : value });
               });
           } else {
             const parser = parsers[rowKey];
-            whereResult[rowKey] = parser ? parser(conditionValue) : conditionValue;
+            whereResult.push({ [rowKey]: parser ? parser(conditionValue) : conditionValue });
           }
         });
 
         return whereResult;
-      }, {});
+      }, []);
     }
 
     return query;
@@ -249,24 +254,27 @@ const Reader = Class.extend({
 
   _isSuitableRow(query, row) {
     const { where } = query;
+    return !where || Object.keys(where).every(conditionKey => this._testCondition(where[conditionKey], conditionKey, row));
+  },
 
-    return !where.$and ||
-      Object.keys(where.$and).every(conditionKey => {
-        const condition = where.$and[conditionKey];
-        const rowValue = row[conditionKey];
+  _testCondition(condition, conditionKey, row) {
+    const logicalTest = this.LOGICAL_TEST[conditionKey];
+    const rowValue = logicalTest ? conditionKey : row[conditionKey];
 
-        // if the column is missing, then don't apply filter
-        return typeof rowValue === "undefined" ||
-          (typeof condition !== "object" ?
-            (rowValue === condition
-              // resolve booleans via strings
-              || condition === true && utils.isString(rowValue) && rowValue.toLowerCase().trim() === "true"
-              || condition === false && utils.isString(rowValue) && rowValue.toLowerCase().trim() === "false"
-            ) :
+    // if the column is missing, then don't apply filter
+    return typeof rowValue === "undefined" ||
+      (condition instanceof Date ? !(+condition - +rowValue) :
+        typeof condition !== "object" ?
+          (rowValue === condition
+            // resolve booleans via strings
+            || condition === true && utils.isString(rowValue) && rowValue.toLowerCase().trim() === "true"
+            || condition === false && utils.isString(rowValue) && rowValue.toLowerCase().trim() === "false"
+          ) :
+          logicalTest ? condition[logicalTest](newCondition => Object.keys(newCondition).every(newConditionKey => this._testCondition(newCondition[newConditionKey], newConditionKey, row))) :
             Object.keys(condition).every(callbackKey =>
-              this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], rowValue)
+              this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], rowValue, row)
             ));
-      });
+
   },
 
   error(code, message, payload, query, file) {
