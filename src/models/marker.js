@@ -987,7 +987,7 @@ const Marker = Model.extend({
 
     let text = KEYS
       .filter(key => d[key] !== DATAMANAGER.getConceptProperty(key, "totals_among_entities"))
-      .map(key => values[labelNames[key]] ? values[labelNames[key]][d[key]] : d[key])
+      .map(key => values[labelNames[key]] && values[labelNames[key]][d[key]] || d[key])
       .join(", ");
 
     if (text === "") text = this._root.locale.getTFunction()("hints/grandtotal");
