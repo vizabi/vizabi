@@ -147,9 +147,6 @@ const Hook = DataConnected.extend({
 
     this.trigger("hook_change");
 
-    // TODO: should be set on data source switch, but load happens before change events
-    this.dataSource = this.getClosestModel(this.data);
-
     const query = this.getQuery(opts.splashScreen);
 
     if (query === true) return Promise.resolve();
