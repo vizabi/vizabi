@@ -29,19 +29,15 @@ const Marker = Model.extend({
 
     this._super(name, value, parent, binds, persistent);
 
-    this.on("change", "space", this.updateSpaceReferences.bind(this));
+    this.on("change", "space", this.setInterModelListeners.bind(this));
   },
 
   setInterModelListeners() {
-    this._super();
-    this.updateSpaceReferences();
-  },
-
-  updateSpaceReferences() {
-    utils.forEach(this.getSpace(), dimensionModel => {
+    utils.forEach(this.getSpace(), reference => {
       // make reference to dimension
-      this._space[dimensionModel] = this.getClosestModel(dimensionModel);
+      this._space[reference] = this.getClosestModel(reference);
     });
+    this._super();
   },
 
   setSpace(newSpace) {
