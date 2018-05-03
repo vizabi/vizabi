@@ -160,15 +160,18 @@ const Component = Events.extend({
     utils.removeClass(this.placeholder, class_loading_data);
     utils.addClass(this.placeholder, class_error);
 
+    let errorLog = JSON.stringify(error, null, 2);
+    if (errorLog == "{}") errorLog = error.stack;
+
     const translator = this.model._root.locale.getTFunction();
     const mailto = `mailto:angie@gapminder.org?subject=Gapminder Vizabi error report&body=Hi Angie! Please have a look at this! %0D%0A %0D%0A %0D%0A
       These are the steps to reproduce the error: %0D%0A 
       1. Go to ` + window.location.origin + ` %0D%0A 
       2. %5Bplease write here what you did%5D %0D%0A %0D%0A %0D%0A`
-      + encodeURIComponent(JSON.stringify(error, null, 4));
+      + encodeURIComponent(errorLog);
 
     this.errorMessageEl.classed("vzb-hidden", false);
-    const technical = this.errorMessageEl.select(".vzb-error-message-technical").html(JSON.stringify(error, null, 2));
+    const technical = this.errorMessageEl.select(".vzb-error-message-technical").html(errorLog);
     this.errorMessageEl.select(".vzb-error-message-expand")
       .on("click", () => technical.classed("vzb-hidden", !technical.classed("vzb-hidden")))
       .html(translator("crash/expand"));
@@ -192,7 +195,7 @@ const Component = Events.extend({
     this.errorMessageEl.select(".vzb-error-message-intro").html(translator(crashIntro, template).replace("mailto", mailto));
     this.errorMessageEl.select(".vzb-error-message-outro").html(translator(crashOutro, template).replace("mailto", mailto));
 
-    utils.error(JSON.stringify(error, null, 2));
+    utils.error(errorLog);
   },
 
 
