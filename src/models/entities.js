@@ -47,6 +47,9 @@ const EntitiesModel = DataConnected.extend({
     this.autoconfigureModel();
   },
 
+  setLinkWith(model) {
+  },
+
   autoconfigureModel() {
     if (!this.dim && this.autoconfig) {
       const concept = this.dataSource.getConcept(this.autoconfig);

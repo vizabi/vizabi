@@ -137,6 +137,7 @@ export class Storage {
             col.valid = {};
             col.nested = {};
             col.unique = {};
+            col.timespan = {};
             col.limits = {};
             col.frames = {};
             col.haveNoDataPointsPerKey = {};
@@ -276,6 +277,9 @@ export class Storage {
       case "valid":
         this._collection[dataId][what][id] = this._getValid(dataId, whatId);
         break;
+      case "timespan":
+        this._collection[dataId][what][id] = this._getTimespan(dataId, whatId);
+        break;
       case "limits":
         this._collection[dataId][what][id] = this._getLimits(dataId, whatId);
         break;
@@ -287,6 +291,17 @@ export class Storage {
         break;
     }
     return this._collection[dataId][what][id];
+  }
+
+  _getTimespan(dataId, column) {
+    const TIME = this._collection[dataId].query.animatable;
+    const items = this._collection[dataId].data
+      .filter(f => f[column] || f[column] === 0)
+      .map(m => m[TIME]);
+
+    if (items.length == 0) utils.warn("_getTimespan() was unable to work with an empty array of valid datapoints");
+
+    return { min: d3.min(items), max: d3.max(items) };
   }
 
   _getValid(dataId, column) {

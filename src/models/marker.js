@@ -349,54 +349,6 @@ const Marker = Model.extend({
     this.set("select", this.select, true);
   },
 
-  /**
-   * Gets the narrowest limits of the subhooks with respect to the provided data column
-   * @param {String} attr parameter (data column)
-   * @returns {Object} limits (min and max)
-   * this function is only needed to route the "time" to some indicator,
-   * to adjust time start and end to the max and min time available in data
-   */
-  getTimeLimits() {
-    const _this = this;
-    const time = this._parent.time;
-    const minArray = [], maxArray = [];
-    let min, max, items = {};
-    if (!this.cachedTimeLimits) this.cachedTimeLimits = {};
-    utils.forEach(this.getSubhooks(), hook => {
-
-      //only indicators depend on time and therefore influence the limits
-      if (hook.use !== "indicator" || hook.which == time.dim || !hook._important || !hook._dataId) return;
-
-      const cachedLimits = _this.cachedTimeLimits[hook._dataId + hook.which];
-
-      if (cachedLimits) {
-        //if already calculated the limits then no ned to do it again
-        min = cachedLimits.min;
-        max = cachedLimits.max;
-      } else {
-        //otherwise calculate own date limits (a costly operation)
-        items = hook.getValidItems().map(m => m[time.getDimension()]);
-        if (items.length == 0) utils.warn("getTimeLimits() was unable to work with an empty array of valid datapoints");
-        min = d3.min(items);
-        max = d3.max(items);
-      }
-      _this.cachedTimeLimits[hook._dataId + hook.which] = { min, max };
-      minArray.push(min);
-      maxArray.push(max);
-    });
-
-    let resultMin = d3.max(minArray);
-    let resultMax = d3.min(maxArray);
-    if (resultMin > resultMax) {
-      utils.warn("getTimeLimits(): Availability of the indicator's data has no intersection. I give up and just return some valid time range where you'll find no data points. Enjoy!");
-      resultMin = d3.min(minArray);
-      resultMax = d3.max(maxArray);
-    }
-
-    //return false for the case when neither of hooks was an "indicator" or "important"
-    return !min && !max ? false : { min: resultMin, max: resultMax };
-  },
-
   getImportantHooks() {
     const importantHooks = [];
     utils.forEach(this._dataCube || this.getSubhooks(true), (hook, name) => {
