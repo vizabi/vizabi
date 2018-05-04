@@ -54,7 +54,7 @@ const Hook = DataConnected.extend({
     const obj = { which: newValue.concept };
 
     if (newValue.dataSource) obj.data = newValue.dataSource;
-    const newDataSource = this.getClosestModel(obj.data || this.data);
+    const newDataSource = this.dataSource = this.getClosestModel(obj.data || this.data);
     const conceptProps = newDataSource.getConceptprops(newValue.concept);
 
     if (newValue.use) obj.use = newValue.use;
@@ -146,9 +146,6 @@ const Hook = DataConnected.extend({
     if (!this.which || this.use === "constant") return Promise.resolve();
 
     this.trigger("hook_change");
-
-    // TODO: should be set on data source switch, but load happens before change events
-    this.dataSource = this.getClosestModel(this.data);
 
     const query = this.getQuery(opts.splashScreen);
 
