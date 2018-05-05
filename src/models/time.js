@@ -176,6 +176,12 @@ const TimeModel = DataConnected.extend({
       if (this.start - min != 0 || !this.start && !this.startOrigin) newTime["start"] = min;
       if (this.end - max != 0 || !this.end && !this.endOrigin) newTime["end"] = max;
 
+      if (this.startSelected == null) newTime["startSelected"] = min;
+      if (this.endSelected == null) newTime["endSelected"] = max;
+
+      // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
+      if (this.value == null) newTime["value"] = this.parse(this.formatDate(new Date()));
+
       this.setTreeFreezer(true);
       this.set(newTime, false, false);
 
@@ -265,11 +271,11 @@ const TimeModel = DataConnected.extend({
       this.set("end", new Date(this.start), null, false);
     }
 
-    if (this.value < this.startSelected && this.startSelected != null) {
+    if (this.value < this.startSelected && this.value != null && this.startSelected != null) {
       this.value = new Date(this.startSelected);
     }
 
-    if (this.value > this.endSelected && this.endSelected != null) {
+    if (this.value > this.endSelected && this.value != null && this.endSelected != null) {
       this.value = new Date(this.endSelected);
     }
     if (this.splash === false) {
@@ -283,9 +289,9 @@ const TimeModel = DataConnected.extend({
     }
 
     //value has to be between start and end
-    if (this.value < this.start && this.start != null) {
+    if (this.value < this.start && this.value != null && this.start != null) {
       this.value = new Date(this.start);
-    } else if (this.value > this.end && this.end != null) {
+    } else if (this.value > this.end && this.value != null && this.end != null) {
       this.value = new Date(this.end);
     }
 
@@ -295,9 +301,6 @@ const TimeModel = DataConnected.extend({
   },
 
   validateFormatting() {
-    // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
-    if (this.value == null) this.set("value", this.parse(this.formatDate(new Date())), null, false);
-
     //make sure dates are transformed into dates at all times
     if (!utils.isDate(this.start) || !utils.isDate(this.end) || !utils.isDate(this.value)
       || !utils.isDate(this.startSelected) || !utils.isDate(this.endSelected)) {

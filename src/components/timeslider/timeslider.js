@@ -302,6 +302,8 @@ const TimeSlider = Component.extend({
   ready() {
     if (this.model.time.splash) return;
 
+    if (!this.model.time._ready) return utils.warn("TODO timeslider is fired ready event while time model is not ready yet! how come?");
+
     const _this = this;
 
     this.element.classed(class_loading, false);
@@ -403,10 +405,12 @@ const TimeSlider = Component.extend({
 
     const select = _this.model.marker.select;
     if (select.length == 0) {
-      _this.model.time.set({
-        startSelected: new Date(_this.model.time.start),
-        endSelected: new Date(_this.model.time.end)
-      }, null, false  /*make change non-persistent for URL and history*/);
+      if (_this.model.time.start != null && _this.model.time.end != null) {
+        _this.model.time.set({
+          startSelected: new Date(_this.model.time.start),
+          endSelected: new Date(_this.model.time.end)
+        }, null, false  /*make change non-persistent for URL and history*/);
+      }
       return;
     }
     const KEYS = utils.unique(this.model.marker._getAllDimensions({ exceptType: "time" }));
