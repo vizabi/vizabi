@@ -34,16 +34,19 @@ const Hook = DataConnected.extend({
     const spaceRefs = this._parent.getSpace(this);
 
     //check what we want to hook this model to
-    utils.forEach(spaceRefs, name => {
+    utils.forEach(spaceRefs, reference => {
       //hook with the closest prefix to this model
-      this._space[name] = this.getClosestModel(name);
+      this._space[reference] = this.getClosestModel(reference);
       //if hooks change, this should load again
-      this._space[name].on("dataConnectedChange", this.handleDataConnectedChange.bind(this));
+      this._space[reference].on("dataConnectedChange", this.handleDataConnectedChange.bind(this));
+      // tell the connected model to set a link with me
+      this._space[reference].setLinkWith(this);
     });
     this.getClosestModel("locale").on("dataConnectedChange", this.handleDataConnectedChange.bind(this));
   },
 
   onSuccessfullLoad() {
+    this.trigger("onSuccessfullLoad");
     this.validate();
     this.buildScale();
     this._super();
@@ -513,6 +516,12 @@ const Hook = DataConnected.extend({
    */
   getLimits(attr) {
     return this.dataSource.getData(this._dataId, "limits", attr);
+  },
+
+  getTimespan() {
+    const timeModel = this._parent._parent.time;
+    if (this.use !== "indicator" || this.which == timeModel.dim || !this._important || !this._dataId) return;
+    return this.dataSource.getData(this._dataId, "timespan", this.which);
   },
 
   getFrame(steps, forceFrame, selected) {

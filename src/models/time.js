@@ -58,6 +58,7 @@ const TimeModel = DataConnected.extend({
 
   objectLeafs: ["autoconfig"],
   dataConnectedChildren: ["startOrigin", "endOrigin", "dim"],
+  hooksToListen: new Set([]),
 
   /**
    * Initializes the locale model.
@@ -129,6 +130,54 @@ const TimeModel = DataConnected.extend({
 
       if (concept) this.dim = concept.concept;
       utils.printAutoconfigResult(this);
+    }
+  },
+
+  setLinkWith(hook) {
+    this.hooksToListen.add(hook);
+    hook.on("startLoading", () => this.setReady(false));
+    hook.on("ready", this.checkTimeLimits.bind(this));
+  },
+
+  unsetLinkWith(hook) {
+    this.hooksToListen.delete(hook);
+    hook.off("startLoading", () => this.setReady(false));
+    hook.off("ready", this.checkTimeLimits.bind(this));
+  },
+
+  checkTimeLimits() {
+    //if all hooks are ready, check time limits and set time model to ready
+    if ([...this.hooksToListen].every(hook => hook._ready)) {
+      const minArray = [this.startOrigin], maxArray = [this.endOrigin];
+
+      this.hooksToListen.forEach(hook => {
+        const tLimits = hook.getTimespan();
+        if (tLimits && tLimits.min && tLimits.max) {
+
+          if (!utils.isDate(tLimits.min) || !utils.isDate(tLimits.max))
+            return utils.warn("checkTimeLimits(): min-max for hook " + hook._name + " look wrong: " + tLimits.min + " " + tLimits.max + ". Expecting Date objects. Ensure that time is properly parsed in the data from reader");
+
+          minArray.push(tLimits.min);
+          maxArray.push(tLimits.max);
+        }
+      });
+
+      let min = d3.max(minArray);
+      let max = d3.min(maxArray);
+
+      if (min > max) {
+        utils.warn("checkTimeLimits(): Availability of the indicator's data has no intersection. I give up and just return some valid time range where you'll find no data points. Enjoy!");
+        min = d3.min(minArray);
+        max = d3.max(maxArray);
+      }
+
+      // change start and end (but keep startOrigin and endOrigin for furhter requests)
+      const newTime = {};
+      if (this.start - min != 0 || !this.start && !this.startOrigin) newTime["start"] = min;
+      if (this.end - max != 0 || !this.end && !this.endOrigin) newTime["end"] = max;
+
+      this.set(newTime, false, false);
+      this.setReady();
     }
   },
 

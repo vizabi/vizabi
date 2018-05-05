@@ -426,6 +426,7 @@ const Model = EventSource.extend({
    * @returns defer
    */
   startLoading(opts) {
+    this.trigger("startLoading");
 
     const promises = [];
     promises.push(this.loadData(opts));
