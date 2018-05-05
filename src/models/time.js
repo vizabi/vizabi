@@ -176,7 +176,15 @@ const TimeModel = DataConnected.extend({
       if (this.start - min != 0 || !this.start && !this.startOrigin) newTime["start"] = min;
       if (this.end - max != 0 || !this.end && !this.endOrigin) newTime["end"] = max;
 
+      this.setTreeFreezer(true);
       this.set(newTime, false, false);
+
+      if (newTime.start || newTime.end) {
+        this.hooksToListen.forEach(hook => {
+          if (hook.which == this.dim) hook.buildScale();
+        });
+      }
+      this.setTreeFreezer(false);
       this.setReady();
     }
   },
