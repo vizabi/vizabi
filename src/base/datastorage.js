@@ -238,6 +238,7 @@ export class Storage {
       col.valid = {};
       col.nested = {};
       col.unique = {};
+      col.timespan = {};
       col.limits = {};
       col.frames = {};
       col.haveNoDataPointsPerKey = {};
