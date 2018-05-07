@@ -50,7 +50,7 @@ const LocaleModel = DataConnected.extend({
     // through the listeners
 
     const promises = [];
-    
+
     if (opts && opts.dataConnectedChange) {
       utils.forEach(this._root._data, mdl => {
         if (mdl._type === "data") promises.push(mdl.loadConceptProps());

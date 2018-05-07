@@ -58,7 +58,6 @@ const TimeModel = DataConnected.extend({
 
   objectLeafs: ["autoconfig"],
   dataConnectedChildren: ["startOrigin", "endOrigin", "dim"],
-  hooksToListen: new Set([]),
 
   /**
    * Initializes the locale model.
@@ -69,6 +68,7 @@ const TimeModel = DataConnected.extend({
    */
   init(name, values, parent, bind) {
     this._type = "time";
+    this.hooksToListen = new Set([]);
 
     //same constructor
     this._super(name, values, parent, bind);
@@ -122,6 +122,10 @@ const TimeModel = DataConnected.extend({
 
   afterPreload() {
     this.autoconfigureModel();
+  },
+
+  _isLoading() {
+    return ![...this.hooksToListen].every(hook => hook._ready);
   },
 
   autoconfigureModel() {
