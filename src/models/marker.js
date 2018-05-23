@@ -884,7 +884,7 @@ const Marker = Model.extend({
 
     const findSelectedTime = function(iterator, findCB) {
       const point = iterator();
-      if (point == null) return;
+      if (point == null) return findCB(point);
       _this.getFrame(timePoints[point], values => {
         if (findEntityWithCompleteHooks(values)) {
           findCB(point);
