@@ -29,6 +29,11 @@ const Presentation = Dialog.extend("presentation", {
       placeholder: ".vzb-decorations-switch",
       model: ["ui.chart.decorations", "locale"],
       checkbox: "enabled"
+    }, {
+      component: simplecheckbox,
+      placeholder: ".vzb-advancedshowandselect-switch",
+      model: ["ui.dialogs.dialog.find", "locale"],
+      checkbox: "enableSelectShowSwitch"
     }];
 
     this._super(config, parent);

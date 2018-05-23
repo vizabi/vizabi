@@ -27,6 +27,7 @@ const Find = Dialog.extend("find", {
       arg: "opacitySelectDim"
     }];
 
+    this.enableSelectShowSwitch = ((config.ui.dialogs.dialog || {}).find || {}).enableSelectShowSwitch || false;
     this.panelMode = ((config.ui.dialogs.dialog || {}).find || {}).panelMode || "find";
     this.enablePicker = ((config.ui.dialogs.dialog || {}).find || {}).enablePicker;
     if (this.enablePicker) {
@@ -64,6 +65,12 @@ const Find = Dialog.extend("find", {
           _this.redrawDataPoints(values);
         });
       },
+      "change:ui.dialogs.dialog.find.enableSelectShowSwitch": function(evt) {
+        if (!_this._readyOnce) return;
+        _this.enableSelectShowSwitch = ((config.ui.dialogs.dialog || {}).find || {}).enableSelectShowSwitch || false;
+        _this.element.select(".vzb-dialog-title-switch .vzb-switch-slider").classed("vzb-hidden", !_this.enableSelectShowSwitch);
+        _this.element.select(".vzb-dialog-title-switch").style("pointer-events", _this.enableSelectShowSwitch ? "auto" : "none");
+      },
       "translate:locale": function() {
         if (!_this._readyOnce) return;
         _this.input_search.attr("placeholder", _this.translator("placeholder/search") + "...");
@@ -88,6 +95,8 @@ const Find = Dialog.extend("find", {
     this.deselect_all = this.element.select(".vzb-find-deselect");
     this.opacity_nonselected = this.element.select(".vzb-dialog-bubbleopacity");
 
+    this.element.select(".vzb-dialog-title-switch .vzb-switch-slider").classed("vzb-hidden", !this.enableSelectShowSwitch);
+    this.element.select(".vzb-dialog-title-switch").style("pointer-events", this.enableSelectShowSwitch ? "auto" : "none");    
     this.element.select(".vzb-find-filter-selector").classed("vzb-hidden", !this.enablePicker);
     this.element.select(".vzb-dialog-title").classed("vzb-title-two-rows", this.enablePicker);
 
