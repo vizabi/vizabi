@@ -1,128 +1,135 @@
 {
-  "buttons/expand":"وسّع",
-  "buttons/unexpand":"استعادة",
-  "buttons/trails":"المسارات",
-  "buttons/lock":"قفل",
-  "buttons/find":"ابحث",
-  "buttons/show":"اظهار",
-  "buttons/deselect":"إلغاء تحديد",
-  "buttons/showall":"اظهار الكل",
-  "buttons/reset":"إعادة تعيين",
-  "buttons/ok":"موافق",
-  "buttons/colors":"اللون",
-  "buttons/color":"اللون",
-  "buttons/size":"‮الحجم",
-  "buttons/size_label":"‮الحجم",
-  "buttons/axes":"س و ص",
-  "buttons/axesmc":"س و ص",
-  "buttons/axis_x":"محور س",
-  "buttons/axis_y":"محور ص",
-  "buttons/stack":"تكديس",
-  "buttons/more_options":"الخيارات",
-  "buttons/opacity":"العتامة",
-  "buttons/opacityNonselect":"عتامة غير المحدد",
-  "buttons/opacityRegular":"عتامة عادية",
-  "buttons/presentation":"الوقت الحالي",
-  "buttons/about":"عن",
-  "buttons/speed":"‮السرعة",
-  "buttons/label":"بطاقات العنونة",
-  "buttons/zoom":"تكبير",
-  "buttons/inpercent":"النسبة المئوية",
-  "buttons/unclassified":"غير مصنف",
-  "buttons/grouping":"مجموعة",
-  "buttons/side":"جانب",
-  "buttons/leftright":"يمين ⇿ يسار",
-  "buttons/mapcolors":"المناطق",
-  "dialogs/mapcolors":"ألوان المناطق",
-  "dialogs/color/select-all":"تحديد كل محتويات هذه المجموعة",
-  "dialogs/color/remove-else":"إزالة كل شيء آخر",
-  "dialogs/color/edit-color":"تعديل اللون",
-  "dialogs/find":"تحديد",
-  "dialogs/presentation":"العرض",
-  "hints/bubbl/setminsize":"الحد الأدنى لحجم الفقاعة:",
-  "hints/bubbl/setmaxsize":"الحد الأقصى لحجم الفقاعة:",
-  "hints/bubbl/setsize":"حجم الفقاعة:",
-  "hints/mount/maxYvalue":"الحد الأقصى للقيمة س:",
-  "hints/mount/logXstops":"تسميات سجل محور س (إذا تناسب):",
-  "hints/mount/howtostack":"تكديس الجبال:",
-  "hints/mount/howtomerge":"دمج الجبال:",
-  "hints/mount/xlimits":"حدود المحور السيني:",
-  "hints/mount/probe":"خط س: الفقد الشديد عند 1.85",
-  "hints/mount/onlyshowthefollowing":"إخفاء كافة الأشكال باستثناء:",
-  "hints/min":"الحد الأدنى",
-  "hints/max":"الحد الأقصى",
-  "hints/dataWarning":"شكوك حول البيانات",
-  "hints/dataWarning-little":"البيانات",
-  "hints/source":"مزيد من المعلومات والمصادر",
-  "hints/nodata":"لا توجد بيانات",
-  "hints/units":"وحدة",
-  "hints/nodescr":"لا يوجد وصف",
-  "hints/ap/onlyshowthefollowingsides":"إخفاء جميع الأطراف ما عدا:",
-  "buttons/mapoptions":"طبقات الخريطة",
-  "hints/extapimap/mapEngine":"محرك الخريطة",
-  "hints/extapimap/mapStyle":"نمط الخريطة",
-  "hints/extapimap/showBubbles":"إظهار الفقاعات",
-  "hints/extapimap/showAreas":"المناطق",
-  "hints/extapimap/showMap":"الخريطة",
-  "hints/color/more":"انقر هنا لمزيد من الاختيارات",
-  "colorpicker/default":"لون الافتراضي",
-  "bubblechart/marker":"الفقاعات",
-  "mount/maxYmode/immediate":"عاجل",
-  "mount/maxYmode/latest":"الأحدث",
-  "mount/maxYmode/total":"الإجمالي",
-  "mount/stacking/color":"حسب الألوان",
-  "mount/stacking/world":"العالم",
-  "mount/stacking/none":"لا شيء",
-  "mount/merging/color":"حسب الألوان",
-  "mount/merging/world":"العالم",
-  "mount/merging/none":"لا شيء",
-  "mount/manualSorting":"الفرز اليدوي للمجموعات:",
-  "mount/people":"الأشخاص",
-  "mount/title":"عدد السكان حسب الدخل",
-  "mount/extremepoverty":"الفقر المدقع",
-  "popbyage/yearOlds":"الذين أعمارهم",
-  "popbyage/locked":"locked year",
-  "popbyage/title":"السكان حسب العمر",
-  "placeholder/search":"ابـحث",
-  "scaletype/linear":"خطي",
-  "scaletype/log":"سجل",
-  "scaletype/genericLog":"سجل عام",
-  "scaletype/time":"الوقت",
-  "scaletype/ordinal":"ترتيبي",
-  "check/panWithArrow":"إسمح بالتحريك بإستعمال مؤشر الماوس",
-  "check/adaptMinMaxZoom":"احتوِ الفقاعات, صغر الصورة عندما تذهب",
-  "check/presentation":"زيادة حجم النص للعرض",
-  "check/removeLabelBox":"إزالة خانات التسمية",
-  "check/zoomOnScrolling":"التكبير والتصغير باستخدام عجلة الماوس",
-  "check/flipSides":"قلب الجوانب",
-  "indicator/_default/axis":"ثابت",
-  "indicator/_default/size":"حجم واحد",
-  "indicator/_default/color":"لون واحد",
-  "indicator/_default/side":"جانب واحد",
-  "description/_default/color":"جميع العلامات سيكون لها نفس اللون",
-  "description/_default/size":"كل الألوان سيكون لها نفس اللون",
-  "description/_default/axis":"جميع العلامات سيكون لها نفس الموضع",
-  "description/_default/side":"",
-  "unit/_default/color":"",
-  "unit/_default/size":"",
-  "unit/_default/axis":"",
-  "unit/_default/side":"",
-  "unit/":"",
-  "unit/pixels":"بكسل",
-  "unit/mountainchart_hardcoded_income_per_day":"دولار في اليوم",
-  "datawarning/title/mountainchart":"هناك ريبة كبيرة في بيانات الدخل!",
-  "datawarning/body/bubblechart":"إن مقارنة حجم الاقتصاد عبر البلدان ليس أمرا بديهيا. إذ إن الطرق متفاوتة والأسعار متباينة. قامت غابمايندر بتعديل الصورة بالنسبة لكثير من هذه الاختلافات, لكننا مع ذلك ننصحك بألا تأخذ هذه الأرقام على أنها صحيحة تماما. <br/><br/> البلدان التي تقع على مستويات دخل منخفضة لديهما بينات ذات جودة منخفضة عموما, نظرا لقلة الموارد التوفرة لعمل الإحصائيات. كذلك فإن التقديرات التاريخية للناتج المحلي الإجمالي قبل عام 1950 أكثر اضطرابا عموما. <br/><br/> بيانات معدل وفيات الأطفال أكثر موثوقية من الناتج المحلي الإجمالي للفرد, نظرا لأن وحدة المقارنة, أي الأطفال المتوفين, أكثر قابلية للمقارنة عموما عبر الزمان والمكان. هذا أحد أسباب كون هذا المؤشر أصبح أكثر فائدة لقياس التقدم الاجتماعي. ولكن لا تزال هناك ريبة كببرة حول المؤشرات التاريخية لوفيات الأطفال. <br/><br/> يمكن معرفة المزيد عن مجموعات البيانات والطرق المتبعة على <a href='http://www.gapminder.org/news/data-sources-dont-panic-end-poverty' target='_blank'>هذه التدوينة </a>",
-  "datawarning/body/mountainchart":"هناك طرق كثيرة لتقدير الدخل ومقارنته. وتختلف الطرق المستخدمة باختلاف البلدان والسنوات. وللأسف لا يوجد مصدر يمكّننا من مقارنة جميع البلدان, ولا حتى لعام واحد. استطاعت غابمايندر تعديل الصورة بالنسبة لبعض الاختلافات في البيانات, لكن لا تزال ثمة مشاكل كبيرة في مقارنة البلدان المختلفة. لا ينبغي أخذ الشكل الدقيق لبلد ما بجدية تامة. <br/><br/> تتفق غابمايندر تماما مع <a href='https://twitter.com/brankomilan' target='_blank'> Branko Milanovic </a> بشأن الحاجة الملحة لاستبيان عالمي قابل للمقارنة, وخصوصو لغرض مراقبة هدف الأمم المتحدة بشأن الفقر. <br/><br/> نحن نعمل دوما على تحسين مجموعات بياناتنا وطرقنا. نرجو أن تتوقعو مراجعة لهذا الرسم البياني خلال الأشهر القادمة. <br/><br/> تعرف أكثر على مجموعات البيانات والطرق على <a href='http://www.gapminder.org/news/data-sources-dont-panic-end-poverty' target='_blank'> هذه التدوينة</a>",
-  "datawarning/body/bubblemap":"ذات جودة منخفضة عموما, نظرا لقلة الموارد التوفرة لعمل الإحصائيات. كذلك فإن التقديرات التاريخية للناتج المحلي الإجمالي قبل عام 1950 أكثر اضطرابا عموما.",
-  "datawarning/body/cartogram":"ذات جودة منخفضة عموما, نظرا لقلة الموارد التوفرة لعمل الإحصائيات. كذلك فإن التقديرات التاريخية للناتج المحلي الإجمالي قبل عام 1950 أكثر اضطرابا عموما.",
-  "datawarning/body/linechart":"ذات جودة منخفضة عموما, نظرا لقلة الموارد التوفرة لعمل الإحصائيات. كذلك فإن التقديرات التاريخية للناتج المحلي الإجمالي قبل عام 1950 أكثر اضطرابا عموما.",
-  "datawarning/body/barrankchart":"ذات جودة منخفضة عموما, نظرا لقلة الموارد التوفرة لعمل الإحصائيات. كذلك فإن التقديرات التاريخية للناتج المحلي الإجمالي قبل عام 1950 أكثر اضطرابا عموما.",
-  "reader/error/wrongTimeUnitsOrColumn":"Was unable to read the data :( <br><br> The expected time format is like \"{{currentYear}}\", but found \"{{foundYear}}\". <br><br> Possible reasons why this could happen: <br> 1. The data arrangement was selected incorrectly, <br> 2. The data does not follow one of the given templates, <br> See the tutorial <a href='https://vizabi.org/tutorials/2017/04/03/show-your-data/' target='_blank'>here</a> for more help. <br><br> 3. Time points are formatted incorrectly. <br> Choose a different time format in \"additional options\" during the import, or stick to the expected one: \"{{currentYear}}\". <br><br> You may also need to restart the app now. <br> <a href='https://getsatisfaction.com/gapminder/' target='_blank'>Contact us</a> if still in trouble.",
-  "reader/error/notEnoughRows":"Was unable to read the data :( <br><br> Looks like your file contains only one line. <br><br> The valid file should contains two or more.",
-  "reader/error/undefinedDelimiter":"Was unable to read the data :( <br><br> Can't detect delimiter. <br><br> Please replace your delimiters with comma ( , ) or semicolon ( ; ), consistently throughtout the file. Also check that all rows have the same number of columns.",
-  "reader/error/emptyHeaders":"Was unable to read the data :( <br><br> Please check if there are empty lines above the column headers. The valid file should not have these. See the tutorial <a href='https://vizabi.org/tutorials/2017/04/03/show-your-data/' target='_blank'>here</a> for more help. You may also need to restart the app now. <a href='https://getsatisfaction.com/gapminder/' target='_blank'>Contact us</a> if still in trouble.",
-  "reader/error/repeatedKeys":"Was unable to read the data :( <br><br> Looks like your file contains repeated line for key \"{{key}}\" with indicator \"{{indicator}}\". The valid file should have one line for each key,indicator pair. See the tutorial <a href='https://vizabi.org/tutorials/2017/04/03/show-your-data/' target='_blank'>here</a> for more help. You may also need to restart the app now. <a href='https://getsatisfaction.com/gapminder/' target='_blank'>Contact us</a> if still in trouble.",
-  "reader/error/generic":"غير قادر على قراءة البيانات :( <br>",
-  "crash/error":"نعتذر، لقد اكتشفت مشكلة في برنامجنا لم نقم بحلها بعد. الرجاء مساعدتنا بالإبلاغ عنها في <a href='https://getsatisfaction.com/gapminder' target='_blank'>https://getsatisfaction.com/gapminder</a>. يرجى إرفاق الرابط الحالي من خانة العنوان أعلاه، بالإضافة إلى الخطوات التي كنت قمت بها قبل ظهور المشكلة وذكر نوع نظام التشغيل الخاص بك وبرنامج المتصفح ورسالة الخطأ التي تظهر أدناه.",
-  "connection/error":"حدثت مشكلة أثناء تحميل بيانات التخطيط الخاص بك. قد يحدث هذا إذا فُقِج الاتصال بالإنترنت. تأكد من أن لديك اتصالاً ثم حاول مرة أخرى."
+    "buttons/expand": "وسّع",
+    "buttons/unexpand": "استعادة",
+    "buttons/trails": "المسارات",
+    "buttons/lock": "قفل",
+    "buttons/find": "ابحث",
+    "buttons/show": "اظهار",
+    "buttons/deselect": "إلغاء تحديد",
+    "buttons/showall": "اظهار الكل",
+    "buttons/reset": "إعادة تعيين",
+    "buttons/apply": "Apply",
+    "buttons/ok": "موافق",
+    "buttons/colors": "اللون",
+    "buttons/color": "اللون",
+    "buttons/size": "‮الحجم",
+    "buttons/size_label": "‮الحجم",
+    "buttons/axes": "س و ص",
+    "buttons/axesmc": "س و ص",
+    "buttons/axis_x": "محور س",
+    "buttons/axis_y": "محور ص",
+    "buttons/stack": "تكديس",
+    "buttons/more_options": "الخيارات",
+    "buttons/opacity": "العتامة",
+    "buttons/opacityNonselect": "عتامة غير المحدد",
+    "buttons/opacityRegular": "عتامة عادية",
+    "buttons/presentation": "الوقت الحالي",
+    "buttons/about": "عن",
+    "buttons/speed": "‮السرعة",
+    "buttons/label": "بطاقات العنونة",
+    "buttons/zoom": "تكبير",
+    "buttons/inpercent": "النسبة المئوية",
+    "buttons/unclassified": "غير مصنف",
+    "buttons/grouping": "مجموعة",
+    "buttons/side": "جانب",
+    "buttons/leftright": "يمين ⇿ يسار",
+    "buttons/mapcolors": "المناطق",
+    "buttons/moreellipsis": "more...",
+    "dialogs/mapcolors": "ألوان المناطق",
+    "dialogs/color/select-all": "تحديد كل محتويات هذه المجموعة",
+    "dialogs/color/remove-else": "إزالة كل شيء آخر",
+    "dialogs/color/edit-color": "تعديل اللون",
+    "dialogs/find": "تحديد",
+    "dialogs/presentation": "Look and feel",
+    "hints/bubbl/setminsize": "الحد الأدنى لحجم الفقاعة:",
+    "hints/bubbl/setmaxsize": "الحد الأقصى لحجم الفقاعة:",
+    "hints/bubbl/setsize": "حجم الفقاعة:",
+    "hints/mount/maxYvalue": "الحد الأقصى للقيمة س:",
+    "hints/mount/logXstops": "تسميات سجل محور س (إذا تناسب):",
+    "hints/mount/howtostack": "تكديس الجبال:",
+    "hints/mount/howtomerge": "دمج الجبال:",
+    "hints/mount/xlimits": "حدود المحور السيني:",
+    "hints/mount/probe": "خط س: الفقد الشديد عند 1.85",
+    "hints/mount/onlyshowthefollowing": "إخفاء كافة الأشكال باستثناء:",
+    "hints/min": "الحد الأدنى",
+    "hints/max": "الحد الأقصى",
+    "hints/dataWarning": "شكوك حول البيانات",
+    "hints/dataWarning-little": "البيانات",
+    "hints/source": "مزيد من المعلومات والمصادر",
+    "hints/nodata": "لا توجد بيانات",
+    "hints/units": "وحدة",
+    "hints/nodescr": "لا يوجد وصف",
+    "hints/grandtotal": "Total by all dimensions",
+    "hints/ap/onlyshowthefollowingsides": "إخفاء جميع الأطراف ما عدا:",
+    "buttons/mapoptions": "طبقات الخريطة",
+    "hints/extapimap/mapEngine": "Map engine",
+    "hints/extapimap/mapStyle": "Map style",
+    "hints/extapimap/showBubbles": "Show bubbles",
+    "hints/extapimap/showAreas": "Areas",
+    "hints/extapimap/showMap": "Map",
+    "hints/color/more": "انقر هنا لمزيد من الاختيارات",
+    "colorpicker/default": "لون الافتراضي",
+    "bubblechart/marker": "Bubbles",
+    "mount/maxYmode/immediate": "عاجل",
+    "mount/maxYmode/latest": "الأحدث",
+    "mount/maxYmode/total": "الإجمالي",
+    "mount/stacking/color": "حسب الألوان",
+    "mount/stacking/world": "العالم",
+    "mount/stacking/none": "لا شيء",
+    "mount/merging/color": "حسب الألوان",
+    "mount/merging/world": "العالم",
+    "mount/merging/none": "لا شيء",
+    "mount/manualSorting": "الفرز اليدوي للمجموعات:",
+    "mount/people": "الأشخاص",
+    "mount/title": "عدد السكان حسب الدخل",
+    "mount/extremepoverty": "الفقر المدقع",
+    "popbyage/yearOlds": "الذين أعمارهم",
+    "popbyage/locked": "locked year",
+    "popbyage/title": "السكان حسب العمر",
+    "placeholder/search": "ابـحث",
+    "scaletype/linear": "خطي",
+    "scaletype/log": "سجل",
+    "incomegroups/level1": "Income level 1",
+    "incomegroups/level2": "Level 2",
+    "incomegroups/level3": "Level 3",
+    "incomegroups/level4": "Level 4",
+    "scaletype/genericLog": "سجل عام",
+    "scaletype/time": "الوقت",
+    "scaletype/ordinal": "ترتيبي",
+    "check/panWithArrow": "إسمح بالتحريك بإستعمال مؤشر الماوس",
+    "check/adaptMinMaxZoom": "احتوِ الفقاعات, صغر الصورة عندما تذهب",
+    "check/presentation": "زيادة حجم النص للعرض",
+    "check/enabled": "Chart decorations",
+    "check/enableSelectShowSwitch": "Unlock Select & Show nerdery 🤓",
+    "check/removeLabelBox": "إزالة خانات التسمية",
+    "check/zoomOnScrolling": "التكبير والتصغير باستخدام عجلة الماوس",
+    "check/flipSides": "قلب الجوانب",
+    "indicator/_default/axis": "ثابت",
+    "indicator/_default/size": "حجم واحد",
+    "indicator/_default/color": "لون واحد",
+    "indicator/_default/side": "جانب واحد",
+    "description/_default/color": "جميع العلامات سيكون لها نفس اللون",
+    "description/_default/size": "كل الألوان سيكون لها نفس اللون",
+    "description/_default/axis": "جميع العلامات سيكون لها نفس الموضع",
+    "description/_default/side": "",
+    "unit/pixels": "بكسل",
+    "unit/mountainchart_hardcoded_income_per_day": "دولار في اليوم",
+    "datawarning/title/mountainchart": "هناك ريبة كبيرة في بيانات الدخل!",
+    "datawarning/body/bubblechart": "إن مقارنة حجم الاقتصاد عبر البلدان ليس أمرا بديهيا. إذ إن الطرق متفاوتة والأسعار متباينة. قامت غابمايندر بتعديل الصورة بالنسبة لكثير من هذه الاختلافات, لكننا مع ذلك ننصحك بألا تأخذ هذه الأرقام على أنها صحيحة تماما. <br/><br/> البلدان التي تقع على مستويات دخل منخفضة لديهما بينات ذات جودة منخفضة عموما, نظرا لقلة الموارد التوفرة لعمل الإحصائيات. كذلك فإن التقديرات التاريخية للناتج المحلي الإجمالي قبل عام 1950 أكثر اضطرابا عموما. <br/><br/> بيانات معدل وفيات الأطفال أكثر موثوقية من الناتج المحلي الإجمالي للفرد, نظرا لأن وحدة المقارنة, أي الأطفال المتوفين, أكثر قابلية للمقارنة عموما عبر الزمان والمكان. هذا أحد أسباب كون هذا المؤشر أصبح أكثر فائدة لقياس التقدم الاجتماعي. ولكن لا تزال هناك ريبة كببرة حول المؤشرات التاريخية لوفيات الأطفال. <br/><br/> يمكن معرفة المزيد عن مجموعات البيانات والطرق المتبعة على <a href='http://www.gapminder.org/news/data-sources-dont-panic-end-poverty' target='_blank'>هذه التدوينة </a>",
+    "datawarning/body/mountainchart": "هناك طرق كثيرة لتقدير الدخل ومقارنته. وتختلف الطرق المستخدمة باختلاف البلدان والسنوات. وللأسف لا يوجد مصدر يمكّننا من مقارنة جميع البلدان, ولا حتى لعام واحد. استطاعت غابمايندر تعديل الصورة بالنسبة لبعض الاختلافات في البيانات, لكن لا تزال ثمة مشاكل كبيرة في مقارنة البلدان المختلفة. لا ينبغي أخذ الشكل الدقيق لبلد ما بجدية تامة. <br/><br/> تتفق غابمايندر تماما مع <a href='https://twitter.com/brankomilan' target='_blank'> Branko Milanovic </a> بشأن الحاجة الملحة لاستبيان عالمي قابل للمقارنة, وخصوصو لغرض مراقبة هدف الأمم المتحدة بشأن الفقر. <br/><br/> نحن نعمل دوما على تحسين مجموعات بياناتنا وطرقنا. نرجو أن تتوقعو مراجعة لهذا الرسم البياني خلال الأشهر القادمة. <br/><br/> تعرف أكثر على مجموعات البيانات والطرق على <a href='http://www.gapminder.org/news/data-sources-dont-panic-end-poverty' target='_blank'> هذه التدوينة</a>",
+    "datawarning/body/bubblemap": "ذات جودة منخفضة عموما, نظرا لقلة الموارد التوفرة لعمل الإحصائيات. كذلك فإن التقديرات التاريخية للناتج المحلي الإجمالي قبل عام 1950 أكثر اضطرابا عموما.",
+    "datawarning/body/cartogram": "ذات جودة منخفضة عموما, نظرا لقلة الموارد التوفرة لعمل الإحصائيات. كذلك فإن التقديرات التاريخية للناتج المحلي الإجمالي قبل عام 1950 أكثر اضطرابا عموما.",
+    "datawarning/body/linechart": "ذات جودة منخفضة عموما, نظرا لقلة الموارد التوفرة لعمل الإحصائيات. كذلك فإن التقديرات التاريخية للناتج المحلي الإجمالي قبل عام 1950 أكثر اضطرابا عموما.",
+    "datawarning/body/barrankchart": "ذات جودة منخفضة عموما, نظرا لقلة الموارد التوفرة لعمل الإحصائيات. كذلك فإن التقديرات التاريخية للناتج المحلي الإجمالي قبل عام 1950 أكثر اضطرابا عموما.",
+    "reader/error/wrongTimeUnitsOrColumn": "The expected time format is like \"{{expected}}\", but found \"{{found}}\". <br><br> Possible reasons why this could happen: <br> 1. Data arrangement selected incorrectly, <br> 2. The data does not follow one of the given templates (see <a href='https://vizabi.org/tutorials/2017/04/03/show-your-data/' target='_blank'>this tutorial</a>), <br> 3. Time points are formatted incorrectly. Choose a different time format during the import, or stick to the expected one: \"{{expected}}\". <br><br> You may also need to restart the app <br> <a href='https://getsatisfaction.com/gapminder/' target='_blank'>Contact us</a> if still in trouble.",
+    "reader/error/notEnoughRows": "Looks like your file contains only one line. <br><br> The valid file should contains two or more.",
+    "reader/error/undefinedDelimiter": "The file is missing or it was too hard to make sense of it. <br><br> 1. Check that the file you are trying to access is available: \"{{file}}\" <br> 2. Make sure the delimiters are either comma ( , ) or semicolon ( ; ), and they are used consistently throughtout the file. <br> 3. Check that all rows have the same number of columns. <br><br> You can test your file with <a href='http://csvlint.io/' target='_blank'>csv lint</a>",
+    "reader/error/differentSeparators": "Can't parse all numbers in file. <br><br> Please check that all numbers in file have same decimal separators and same thousands separators. Replace wrong decimal and thousands separators consistently throughtout the file.",
+    "reader/error/emptyHeaders": "Please check if there are empty lines above the column headers. The valid file should not have these. See the tutorial <a href='https://vizabi.org/tutorials/2017/04/03/show-your-data/' target='_blank'>here</a> for more help. You may also need to restart the app now. <a href='https://getsatisfaction.com/gapminder/' target='_blank'>Contact us</a> if still in trouble.",
+    "reader/error/repeatedKeys": "Looks like your file contains repeated line for key \"{{key}}\" with indicator \"{{indicator}}\". <br><br> The valid file should have one line for each key,indicator pair, that is, the data should not be ambiguous. <br> See the tutorial <a href='https://vizabi.org/tutorials/2017/04/03/show-your-data/' target='_blank'>here</a> for more help. <br><br> You may also need to restart the app <br> <a href='https://getsatisfaction.com/gapminder/' target='_blank'>Contact us</a> if still in trouble.",
+    "reader/error/generic": "Was unable to read the data",
+    "crash/intro": "You've discovered a problem in our software that we didn't fix yet",
+    "crash/outro": "If you are on Gapminder.org the error is already reported (no personal data is collected). But if this is urgent you can <a href='mailto' target='_blank'>send an email directly to Angie</a><br><br>We'll try to fix it as soon as possible!<br>♥️ Gapminder team",
+    "crash/expand": "<a>technical details</a>",
+    "connection/error": "حدثت مشكلة أثناء تحميل بيانات التخطيط الخاص بك. قد يحدث هذا إذا فُقِج الاتصال بالإنترنت. تأكد من أن لديك اتصالاً ثم حاول مرة أخرى."
 }
