@@ -124,7 +124,19 @@ export class Storage {
           this.query = query;
           this.parsers = parsers;
           this.dataId = null;
-          _queue.readerObject.read(_query, this.parsers).then(response => {
+
+          //TODO FIXME: this is the added protection for the case when vizabi requests have null in select.key
+          //this happens because of the incorrect implementation of multidimensionality in pop by age,
+          //when marker is always connected to "side" entity, which sometimes has dim of null
+          //instead an entity should be added to and removed from marker space
+          let promise;
+          if (query.select.key.includes(null)) {
+            promise = Promise.resolve([]);
+          } else {
+            promise = _queue.readerObject.read(_query, this.parsers);
+          }
+
+          promise.then(response => {
             //success reading
             this.checkQueryResponse(query, response);
             this.dataId = utils.hashCode([
@@ -412,6 +424,8 @@ export class Storage {
 
   getFrames(dataId, framesArray, keys, conceptprops) {
     const _this = this;
+    //if(dataId === false) return Promise.resolve([]);
+    
     const whatId = getCacheKey(dataId, framesArray, keys);
     if (!this._collectionPromises[dataId][whatId]) {
       this._collectionPromises[dataId][whatId] = {
@@ -436,6 +450,8 @@ export class Storage {
 
   getFrame(dataId, framesArray, neededFrame, keys) {
     const _this = this;
+    //if(dataId === false) return Promise.resolve([]);
+    
     const whatId = getCacheKey(dataId, framesArray, keys);
     return new Promise((resolve, reject) => {
       if (_this._collection[dataId]["frames"][whatId] && _this._collection[dataId]["frames"][whatId][neededFrame]) {
