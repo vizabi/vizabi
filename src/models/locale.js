@@ -2,7 +2,7 @@ import * as utils from "base/utils";
 import DataConnected from "models/dataconnected";
 
 // this and many other locale information should at some point be stored in an external file with locale information (rtl, date formats etc)
-const rtlLocales = ["ar", "ar-SA"];
+const rtlLocales = ["ar", "ar-SA", "he", "he-IL"];
 
 const LocaleModel = DataConnected.extend({
 
