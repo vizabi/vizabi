@@ -67,12 +67,51 @@ const DataManagerPrototype = {
       )
     );
   },
+
+  /**
+   * Return tag entities with name and parents from all data sources
+   * @return {array} Array of tag objects
+   */
+  getTags() {
+    return this.getDimensionValues("tag", ["name", "parent"])
+      .then(results => this.mergeResults(results, ["tag"])); // using merge because key-duplicates terribly slow down treemenu
+  },
+
+  /**
+   * Concat query results. Does not care about keys and key collisions. Only use when key-collisions are accepted or not expected.
+   * @param  {[type]} results [description]
+   * @return {[type]}         [description]
+   */
+  concatResults(results) {
+    return results.reduce(
+      (accumulator, current) => accumulator.concat(current)
+    );
+  },
+
+  /**
+   * Merges query results. The first result is base, subsequent results are only added if key is not yet in end result.
+   * @param  {array of arrays} results Array where each element is a result, each result is an array where each element is a row
+   * @param  {array} key     primary key to each result
+   * @return {array}         merged results
+   */
+  mergeResults(results, key) {
+    const keys = new Map();
+    results.forEach(result => {
+      result.forEach(row => {
+        const keyString = key.map(concept => row[concept]).join(",");
+        if (!keys.has(keyString))
+          keys.set(keyString, row);
+      });
+    });
+    return Array.from(keys.values());
+  }
+
 };
 
 function DataManager(model) {
-  const dimMan = Object.create(DataManagerPrototype);
-  dimMan.model = model;
-  return dimMan;
+  const dataMan = Object.create(DataManagerPrototype);
+  dataMan.model = model;
+  return dataMan;
 }
 
 export default DataManager;

@@ -642,12 +642,8 @@ const TreeMenu = Component.extend({
   ready() {
     this.updateView();
 
-    //TODO: hack! potentially unsafe operation here
-    let tags;
-    if (this.model.marker_tags) {
-      tags = this.model.marker_tags.label.getData();
-    }
-    this._buildIndicatorsTree(tags);
+    this.model.marker._root.dataManager.getTags()
+      .then(this._buildIndicatorsTree.bind(this));
   },
 
   readyOnce() {
