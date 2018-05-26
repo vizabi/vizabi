@@ -110,12 +110,10 @@ const Component = Events.extend({
   },
 
   postrender() {
-    const _this = this;
-
     //render each subcomponent
     utils.forEach(this.components, subcomp => {
       subcomp.render();
-      _this.on("resize", () => {
+      this.on("resize", () => {
         subcomp.trigger("resize");
       });
     });
@@ -128,11 +126,10 @@ const Component = Events.extend({
    * @return {[type]} [description]
    */
   startLoading() {
-    const _this = this;
 
     // if a componente's model is ready, the component is ready
     this.model.on("ready", () => {
-      _this.loadingDone();
+      this.loadingDone();
     });
 
     if (!(this.model && this.model.isLoading())) {
