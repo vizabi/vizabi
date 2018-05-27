@@ -58,6 +58,9 @@ const DataModel = Model.extend({
    * @param {*} evts ?
    */
   load(query, parsers = {}, sideLoad) {
+    // deep clone to prevent one query sent to multiple data objects being manipulated cross-data model.
+    // For example one query sent to two different waffle server datasets.
+    query = utils.deepClone(query);
     // add waffle server specific query clauses if set
     if (this.dataset) query.dataset = this.dataset;
     if (this.version) query.version = this.version;
