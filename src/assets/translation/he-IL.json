@@ -50,7 +50,7 @@
     "hints/mount/howtomerge": "מזג הרים:",
     "hints/mount/xlimits": "גבולות ציר X:",
     "hints/mount/probe": "ציר X: עוני קיצוני ב 1.85",
-    "hints/mount/onlyshowthefollowing": "Hide all shapes except:",
+    "hints/mount/onlyshowthefollowing": "הסתר את כל הצורות למעט:",
     "hints/min": "מינימום",
     "hints/max": "מקסימום",
     "hints/dataWarning": "ספק לגבי הנתונים",
@@ -129,7 +129,7 @@
     "reader/error/repeatedKeys": "Looks like your file contains repeated line for key \"{{key}}\" with indicator \"{{indicator}}\". <br><br> The valid file should have one line for each key,indicator pair, that is, the data should not be ambiguous. <br> See the tutorial <a href='https://vizabi.org/tutorials/2017/04/03/show-your-data/' target='_blank'>here</a> for more help. <br><br> You may also need to restart the app <br> <a href='https://getsatisfaction.com/gapminder/' target='_blank'>Contact us</a> if still in trouble.",
     "reader/error/generic": "Was unable to read the data",
     "crash/intro": "You've discovered a problem in our software that we didn't fix yet",
-    "crash/outro": "If you are on Gapminder.org the error is already reported (no personal data is collected). But if this is urgent you can <a href='mailto' target='_blank'>send an email directly to Angie</a><br><br>We'll try to fix it as soon as possible!<br>♥️ Gapminder team",
-    "crash/expand": "<a>technical details</a>",
-    "connection/error": "A problem occurred while loading the data for your chart. This may happen if internet connection disappeared. Make sure you have a good one and try again."
+    "crash/outro": "אם אתה נמצא ב- Gapminder.org, השגיאה כבר דווחה (לא נאסף מידע אישי). אבל אם זה דחוף אתה יכול <a href='mailto' target='_blank'> לשלוח דוא\"ל ישירות אנג'י<br><br></a>ננסה לתקן זאת בהקדם האפשרי!<br>♥️ צוות Gapminder",
+    "crash/expand": "<a>פרטים טכניים</a>",
+    "connection/error": "אירעה בעיה בעת טעינת הנתונים עבור התרשים שלך. הדבר עלול לקרות אם החיבור לאינטרנט התנתק. ודאו כי יש חיבור לאינטרנט ונסו שנית."
 }
