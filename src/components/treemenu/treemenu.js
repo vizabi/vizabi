@@ -604,9 +604,6 @@ const TreeMenu = Component.extend({
       name: "marker",
       type: "marker"
     }, {
-      name: "marker_tags",
-      type: "marker"
-    }, {
       name: "time",
       type: "time"
     }, {

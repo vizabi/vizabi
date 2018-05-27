@@ -47,7 +47,7 @@ const BarChart = Tool.extend("BarChart", {
     }, {
       component: treemenu,
       placeholder: ".vzb-tool-treemenu",
-      model: ["state.marker", "state.marker_tags", "state.time", "locale"]
+      model: ["state.marker", "state.time", "locale"]
     }];
 
     //constructor is the same as any tool
