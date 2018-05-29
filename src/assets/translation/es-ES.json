@@ -104,6 +104,7 @@
     "check/removeLabelBox": "Eliminar cajas de etiquetas",
     "check/zoomOnScrolling": "Zoom con la rueda del ratón",
     "check/flipSides": "Voltear caras",
+    "treemenu/other_datasets": "Other datasets",
     "indicator/_default/axis": "Constante",
     "indicator/_default/size": "Un lado",
     "indicator/_default/color": "Color individual",
