@@ -104,6 +104,7 @@
     "check/removeLabelBox": "Убрать фон у надписей",
     "check/zoomOnScrolling": "Масштабирование колёсиком",
     "check/flipSides": "Поменять стороны",
+    "treemenu/other_datasets": "Other datasets",
     "indicator/_default/axis": "Фикс. значение",
     "indicator/_default/size": "Фикс. размер",
     "indicator/_default/color": "Один цвет",
