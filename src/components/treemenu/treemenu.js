@@ -725,6 +725,7 @@ const TreeMenu = Component.extend({
     const ROOT = "_root";
     const DEFAULT = "_default";
     const ADVANCED = "advanced";
+    const OTHER_DATASETS = "other_datasets";
     const dataModels = _this.model.marker._root.dataManager.getDataModels();
 
     //init the dictionary of tags
@@ -732,11 +733,16 @@ const TreeMenu = Component.extend({
     tags[ROOT] = { id: ROOT, children: [] };
 
     //if more than one dataset is present then make folders by dataset names
-    if (dataModels.size > 1) dataModels.forEach(m => {
-      const dsname = m.getDatasetName();
-      tags[dsname] = { id: dsname, type: "dataset", children: [] };
-      tags[ROOT].children.push(tags[dsname]);
-    });
+    if (dataModels.size > 1) {
+      tags[OTHER_DATASETS] = { id: OTHER_DATASETS, name: this.translator("treemenu/other_datasets"), type: "dataset", children: [] };
+      tags[ROOT].children.push(tags[OTHER_DATASETS]);
+
+      dataModels.forEach(m => {
+        const dsname = m.getDatasetName();
+        tags[dsname] = { id: dsname, type: "dataset", children: [] };
+        //tags[OTHER_DATASETS].children.push(tags[dsname]);
+      });
+    }
 
     //populate the dictionary of tags
     tagsArray.forEach(tag => { tags[tag.tag] = { id: tag.tag, name: tag.name, type: "folder", children: [] }; });
@@ -748,7 +754,11 @@ const TreeMenu = Component.extend({
     tagsArray.forEach(tag => {
       if (!tag.parent || !tags[tag.parent]) {
         // add tag to a root
-        indicatorsTree.children.push(tags[tag.tag]);
+        if (tags["data_" + tag.tag]) {
+          tags[OTHER_DATASETS].children.push(tags[tag.tag]);
+        } else {
+          indicatorsTree.children.push(tags[tag.tag]);
+        }
       } else {
         //add tag to a branch
         tags[tag.parent].children.push(tags[tag.tag]);
@@ -831,6 +841,8 @@ const TreeMenu = Component.extend({
           if (!isSubfolder) {
             if (a.id == "time") return -1;
             if (b.id == "time") return 1;
+            if (a.id == "other_datasets") return 1;
+            if (b.id == "other_datasets") return -1;
             if (a.id == "advanced") return 1;
             if (b.id == "advanced") return -1;
             if (a.id == "_default") return 1;
