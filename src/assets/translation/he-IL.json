@@ -68,6 +68,8 @@
     "hints/extapimap/showAreas": "אזורים",
     "hints/extapimap/showMap": "מפה",
     "hints/color/more": "לחץ לאפשרויות נוספות",
+    "hints/barrank/missedPositionsTooltip": "see which ones in the end of the ranking list",
+    "hints/barrank/missedPositionsWarning": "Some positions are missing",
     "colorpicker/default": "ברירת מחדל",
     "bubblechart/marker": "בועות",
     "mount/maxYmode/immediate": "מיידית",
