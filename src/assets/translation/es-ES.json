@@ -68,6 +68,8 @@
     "hints/extapimap/showAreas": "Áreas",
     "hints/extapimap/showMap": "Mapa",
     "hints/color/more": "haga clic para más opciones",
+    "hints/barrank/missedPositionsTooltip": "see which ones in the end of the ranking list",
+    "hints/barrank/missedPositionsWarning": "Some positions are missing",
     "colorpicker/default": "POR DEFECTO",
     "bubblechart/marker": "Burbujas",
     "mount/maxYmode/immediate": "Inmediato",
