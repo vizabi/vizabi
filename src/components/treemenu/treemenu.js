@@ -609,6 +609,9 @@ const TreeMenu = Component.extend({
     }, {
       name: "locale",
       type: "locale"
+    }, {
+      name: "ui",
+      type: "ui"
     }];
 
     this.context = context;
@@ -722,46 +725,78 @@ const TreeMenu = Component.extend({
     if (tagsArray === true || !tagsArray) tagsArray = [];
 
     const _this = this;
+
     const ROOT = "_root";
     const DEFAULT = "_default";
     const ADVANCED = "advanced";
     const OTHER_DATASETS = "other_datasets";
-    const dataModels = _this.model.marker._root.dataManager.getDataModels();
 
-    //init the dictionary of tags
+    const FOLDER_STRATEGY_SPREAD = "spread"; //spread indicatos over the root of treemeny
+    const FOLDER_STRATEGY_ROOT = "root"; //put indicators in dataset's own folder under root of treemeny
+    const FOLDER_STRATEGY_FOLDER = "folder"; //put indicators in dataset's own folder inside a specified folder. use notation like "folder:other_datasets"
+
+    const dataModels = _this.model.marker._root.dataManager.getDataModels();
+    const FOLDER_STRATEGY_DEFAULT = dataModels.size == 1 ? FOLDER_STRATEGY_SPREAD : FOLDER_STRATEGY_ROOT;
+
+    //init the dictionary of tags and add default folders
     const tags = {};
     tags[ROOT] = { id: ROOT, children: [] };
-
-    //if more than one dataset is present then make folders by dataset names
-    if (dataModels.size > 1) {
-      tags[OTHER_DATASETS] = { id: OTHER_DATASETS, name: this.translator("treemenu/other_datasets"), type: "dataset", children: [] };
-      tags[ROOT].children.push(tags[OTHER_DATASETS]);
-
-      dataModels.forEach(m => {
-        const dsname = m.getDatasetName();
-        tags[dsname] = { id: dsname, type: "dataset", children: [] };
-        //tags[OTHER_DATASETS].children.push(tags[dsname]);
-      });
-    }
+    tags[ADVANCED] = { id: ADVANCED, name: this.translator("treemenu/advanced"), type: "folder", children: [] };
+    tags[ROOT].children.push(tags[ADVANCED]);
+    tags[OTHER_DATASETS] = { id: OTHER_DATASETS, name: this.translator("treemenu/other_datasets"), type: "folder", children: [] };
+    tags[ROOT].children.push(tags[OTHER_DATASETS]);
 
     //populate the dictionary of tags
     tagsArray.forEach(tag => { tags[tag.tag] = { id: tag.tag, name: tag.name, type: "folder", children: [] }; });
+
+    //put the dataset folders where they should be: either in root or in specific folders or ==root in case of spreading
+    const folderStrategies = {};
+    dataModels.forEach(m => {
+
+      //figure out the folder strategy
+      let strategy = utils.getProp(this.model.ui, ["treemenu", "folderStrategyByDataset", m._name]);
+      let folder = null;
+      if (!strategy) strategy = FOLDER_STRATEGY_DEFAULT;
+
+      if (strategy.includes(":")) {
+        folder = strategy.split(":")[1];
+        strategy = strategy.split(":")[0];
+      }
+
+      //add the dataset's folder to the tree
+      tags[m._name] = { id: m._name, name: m.getDatasetName(), type: "dataset", children: [] };
+
+      if (strategy == FOLDER_STRATEGY_FOLDER && tags[folder]) {
+        tags[folder].children.push(tags[m._name]);
+      } else if (strategy == FOLDER_STRATEGY_SPREAD) {
+        tags[m._name] = tags[ROOT];
+      } else {
+        tags[ROOT].children.push(tags[m._name]);
+      }
+
+      folderStrategies[m._name] = strategy;
+    });
 
     //init the tag tree
     const indicatorsTree = tags[ROOT];
 
     //populate the tag tree
     tagsArray.forEach(tag => {
-      if (!tag.parent || !tags[tag.parent]) {
-        // add tag to a root
-        if (tags["data_" + tag.tag]) {
-          tags[OTHER_DATASETS].children.push(tags[tag.tag]);
-        } else {
-          indicatorsTree.children.push(tags[tag.tag]);
-        }
-      } else {
+
+      //if tag's parent is defined
+      if (tag.parent && tags[tag.parent]) {
+
         //add tag to a branch
         tags[tag.parent].children.push(tags[tag.tag]);
+
+      } else {
+
+        //if parent is missing add a tag either to dataset's own folder or to the root if spreading them
+        if (folderStrategies[tag.dataSourceName] == FOLDER_STRATEGY_SPREAD) {
+          tags[ROOT].children.push(tags[tag.tag]);
+        } else {
+          tags[tag.dataSourceName].children.push(tags[tag.tag]);
+        }
       }
     });
 
@@ -771,7 +806,7 @@ const TreeMenu = Component.extend({
       const entry = kvPair.value;
       //if entry's tag are empty don't include it in the menu
       if (!entry || entry.tags == "_none") return;
-      if (!entry.tags) entry.tags = kvPair.dataSource.getDatasetName() || ROOT;
+      if (!entry.tags) entry.tags = kvPair.dataSource._name || ROOT;
 
       const use = entry.concept == "_default" ? "constant" : (kvPair.key.size > 1 ? "indicator" : "property");
       const concept = { id: entry.concept, key: kvPair.key, name: entry.name, name_catalog: entry.name_catalog, description: entry.description, dataSource: kvPair.dataSource._name, use };
@@ -791,7 +826,7 @@ const TreeMenu = Component.extend({
         entry.tags.split(",").forEach(tag => {
           tag = tag.trim();
           if (tags[tag]) {
-            tags[tag].children.push(concept);
+            tags[tag === "_root" ? concept.dataSource : tag].children.push(concept);
           } else {
             //if entry's tag is not found in the tag dictionary
             if (!_this.consoleGroupOpen) {
