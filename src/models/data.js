@@ -275,7 +275,7 @@ const DataModel = Model.extend({
       const meta = this.readerObject.getDatasetInfo();
       return meta.name + (meta.version ? " " + meta.version : "");
     }
-    return this._name;
+    return this._name.replace("data_", "");
   },
 
   setGrouping(dataId, grouping) {

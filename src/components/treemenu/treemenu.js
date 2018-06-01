@@ -826,7 +826,7 @@ const TreeMenu = Component.extend({
         entry.tags.split(",").forEach(tag => {
           tag = tag.trim();
           if (tags[tag]) {
-            tags[tag === "_root" ? concept.dataSource : tag].children.push(concept);
+            tags[tag === "_root" && entry.concept != "_default" && entry.concept_type != "time" ? concept.dataSource : tag].children.push(concept);
           } else {
             //if entry's tag is not found in the tag dictionary
             if (!_this.consoleGroupOpen) {
