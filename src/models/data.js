@@ -162,7 +162,7 @@ const DataModel = Model.extend({
       "concept_type",
       "domain",
       "totals_among_entities",
-      "indicator_url",
+      "source_url",
       "color",
       "scales",
       "interpolation",
@@ -201,7 +201,7 @@ const DataModel = Model.extend({
 
       concept["concept"] = d.concept;
       concept["concept_type"] = d.concept_type;
-      concept["sourceLink"] = d.indicator_url;
+      concept["sourceLink"] = d.source_url;
       try {
         concept["color"] = d.color && d.color !== "" ? (typeof d.color === "string" ? JSON.parse(d.color) : d.color) : null; //
       } catch (e) {
