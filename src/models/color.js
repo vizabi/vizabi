@@ -89,7 +89,7 @@ const ColorModel = Hook.extend({
     });
   },
 
-  setInterModelListeners() {
+  afterPreload() {
     this._super();
     this._setSyncModels();
   },
