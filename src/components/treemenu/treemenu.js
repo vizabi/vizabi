@@ -538,9 +538,9 @@ const MenuItem = Class.extend({
 const TreeMenu = Component.extend({
 
   //setters-getters
-  tree(input) {
-    if (!arguments.length) return this._tree;
-    this._tree = input;
+  indicatorsTree(input) {
+    if (!arguments.length) return this._indicatorsTree;
+    this._indicatorsTree = input;
     return this;
   },
   callback(input) {
@@ -552,6 +552,21 @@ const TreeMenu = Component.extend({
     if (!arguments.length) return this._markerID;
     this._markerID = input;
     this.targetModel(this.model.marker[this._markerID]);
+    return this;
+  },
+  showWhenReady(input) {
+    if (!arguments.length) return this._showWhenReady;
+    this._showWhenReady = input;
+    return this;
+  },
+  scaletypeSelectorDisabled(input) {
+    if (!arguments.length) return this._scaletypeSelectorDisabled;
+    this._scaletypeSelectorDisabled = input;
+    return this;
+  },
+  title(input) {
+    if (!arguments.length) return this._title;
+    this._title = input;
     return this;
   },
   targetModel(input) {
@@ -640,10 +655,9 @@ const TreeMenu = Component.extend({
   },
 
   ready() {
-    this.updateView();
-
     this.model.marker._root.dataManager.getTags()
-      .then(this._buildIndicatorsTree.bind(this));
+      .then(this._buildIndicatorsTree.bind(this))
+      .then(this.updateView.bind(this));
   },
 
   readyOnce() {
@@ -860,7 +874,9 @@ const TreeMenu = Component.extend({
       delete _this.consoleGroupOpen;
     }
     this._sortChildren(indicatorsTree);
-    this.indicatorsTree = indicatorsTree;
+    this.indicatorsTree(indicatorsTree);
+
+    return Promise.resolve();
   },
 
   _sortChildren(tree, isSubfolder) {
@@ -1016,9 +1032,14 @@ const TreeMenu = Component.extend({
   },
 
   toggle() {
+    this.setHiddenOrVisible(!this.element.classed(css.hidden));
+  },
+
+  setHiddenOrVisible(hidden) {
     const _this = this;
-    const hidden = !this.element.classed(css.hidden);
+
     this.element.classed(css.hidden, hidden);
+    this.wrapper.classed(css.noTransition, hidden);
 
     if (hidden) {
       this.clearPos();
@@ -1029,8 +1050,6 @@ const TreeMenu = Component.extend({
       this.resize();
       this.scrollToSelected();
     }
-
-    this.wrapper.classed(css.noTransition, hidden);
 
     this.parent.components.forEach(c => {
       if (c.name == "gapminder-dialogs") {
@@ -1044,6 +1063,8 @@ const TreeMenu = Component.extend({
     });
 
     this.width = _this.element.node().offsetWidth;
+    
+    return this;
   },
 
   scrollToSelected() {
@@ -1210,7 +1231,7 @@ const TreeMenu = Component.extend({
     if (useDataFiltered) {
       dataFiltered = data;
     } else {
-      if (data == null) data = this._tree;
+      if (data == null) data = this._indicatorsTree;
 
       if (isHook) {
         allowedIDs = utils.keys(indicatorsDB).filter(f => {
@@ -1249,10 +1270,17 @@ const TreeMenu = Component.extend({
 
     this.wrapper.select("ul").remove();
 
-    this.element.select("." + css.title).select("span")
-      .text(this.translator(_this._targetModel instanceof Marker ? _this._targetModel._root._name + "/" + _this._targetModel._name
-        : "buttons/" + (isHook ? _this._targetModel._name : (targetModelType + "/" + _this._targetProp)))
+    let title = "";
+    if (this._title || this._title === "") {
+      title = this._title;
+    } else {
+      title = this.translator(
+        _this._targetModel instanceof Marker ? _this._targetModel._root._name + "/" + _this._targetModel._name
+          : "buttons/" + (isHook ? _this._targetModel._name : (targetModelType + "/" + _this._targetProp))
       );
+    }
+    this.element.select("." + css.title).select("span")
+      .text(title);
 
     this.element.select("." + css.search)
       .attr("placeholder", this.translator("placeholder/search") + "...");
@@ -1398,7 +1426,7 @@ const TreeMenu = Component.extend({
         const mdlScaleType = _this._targetModel.scaleType;
 
         scaleTypes
-          .classed(css.scaletypesDisabled, scaleTypesData.length < 2)
+          .classed(css.scaletypesDisabled, scaleTypesData.length < 2 || _this._scaletypeSelectorDisabled)
           .classed(css.scaletypesActive, d => (d == mdlScaleType || d === "log" && mdlScaleType === "genericLog") && scaleTypesData.length > 1)
           .text(d => _this.translator("scaletype/" + d));
       }
@@ -1424,8 +1452,9 @@ const TreeMenu = Component.extend({
     const setModel = this._setModel.bind(this);
     this
       .callback(setModel)
-      .tree(this.indicatorsTree)
       .redraw();
+
+    if (this._ready && this._showWhenReady) this.setHiddenOrVisible(false).showWhenReady(false);
 
     this.wrapper.select("." + css.search).node().value = "";
 
