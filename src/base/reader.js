@@ -77,6 +77,7 @@ const Reader = Class.extend({
         }
       })
       .catch(error => {
+        this._onLoadError(error);
         if (!utils.find(this.ERRORS, f => f === error.name)) error = this.error(this.ERRORS.GENERIC_ERROR, error);
         if (!error.endpoint) error.endpoint = this._basepath;
         if (!error.ddfql) error.ddfql = originalQuery;
@@ -274,6 +275,10 @@ const Reader = Class.extend({
             Object.keys(condition).every(callbackKey =>
               this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], rowValue, row)
             ));
+
+  },
+
+  _onLoadError(error) {
 
   },
 

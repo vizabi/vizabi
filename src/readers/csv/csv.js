@@ -59,37 +59,35 @@ const CSVReader = Reader.extend({
     return { name: this._basepath.split("/").pop() };
   },
 
+  getCached() {
+    return cached;
+  },
+
   load() {
     const { _basepath: path, _lastModified } = this;
+    const cachedPromise = cached[path + _lastModified];
 
-    return new Promise((resolve, reject) => {
-      const cachedData = cached[path + _lastModified];
+    return cachedPromise ? cachedPromise : cached[path + _lastModified] = new Promise((resolve, reject) => {
+      utils.d3text(path, (error, text) => {
+        if (error) {
+          error.name = this.ERRORS.FILE_NOT_FOUND;
+          error.message = `No permissions, missing or empty file: ${path}`;
+          error.endpoint = path;
+          return reject(error);
+        }
 
-      if (cachedData) {
-        resolve(cachedData);
-      } else {
-        utils.d3text(path, (error, text) => {
-          if (error) {
-            error.name = this.ERRORS.FILE_NOT_FOUND;
-            error.message = `No permissions, missing or empty file: ${path}`;
-            error.endpoint = path;
-            return reject(error);
-          }
+        try {
+          const { delimiter = this._guessDelimiter(text) } = this;
+          const parser = d3.dsvFormat(delimiter);
+          const rows = parser.parse(text, row => Object.keys(row).every(key => !row[key]) ? null : row);
+          const { columns } = rows;
 
-          try {
-            const { delimiter = this._guessDelimiter(text) } = this;
-            const parser = d3.dsvFormat(delimiter);
-            const rows = parser.parse(text, row => Object.keys(row).every(key => !row[key]) ? null : row);
-            const { columns } = rows;
-
-            const result = { columns, rows };
-            cached[path + _lastModified] = result;
-            resolve(result);
-          } catch (e) {
-            return reject(e);
-          }
-        });
-      }
+          const result = { columns, rows };
+          resolve(result);
+        } catch (e) {
+          return reject(e);
+        }
+      });
     });
   },
 
@@ -229,6 +227,13 @@ const CSVReader = Reader.extend({
         return result;
       }
     }
+  },
+
+  _onLoadError(error) {
+    const { _basepath: path, _lastModified } = this;
+    delete cached[path + _lastModified];
+
+    this._super(error);
   },
 
   versionInfo: { version: __VERSION, build: __BUILD }
