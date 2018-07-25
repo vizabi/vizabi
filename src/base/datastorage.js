@@ -743,7 +743,7 @@ export class Storage {
                 // and is valid. If so, then save it into a “clean regular set”
                 frame[column][key] = nested[nestedKey][frameName][0][column];
 
-              } else if (method === "none") {
+              } else if (method === "none" || query.gapfill === false) {
 
                 // the piece of data is not available and the interpolation is set to "none"
                 frame[column][key] = null;

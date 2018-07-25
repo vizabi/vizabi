@@ -271,6 +271,7 @@ const Hook = DataConnected.extend({
       "language": this.getClosestModel("locale").id,
       "from": from,
       "animatable": animatable,
+      "gapfill": !this.disable_gapfill,
       "select": select,
       "where": explicitAndFilters,
       "join": join,
