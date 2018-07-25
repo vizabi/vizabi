@@ -17,7 +17,10 @@ const CSVTimeInColumnsReader = CSVReader.extend({
   },
 
   load(parsers) {
-    return this._super()
+    const { _basepath: path, _lastModified, _name } = this;
+    const cachedPromise = this.getCached()[_name + "#" + path + _lastModified];
+
+    return cachedPromise ? cachedPromise : this.getCached()[_name + "#" + path + _lastModified] = this._super()
       .then(({ rows, columns }) => {
         const missedIndicator = parsers[this.timeKey] && !!parsers[this.timeKey](columns[this.keySize]);
         if (missedIndicator) warn("Indicator column is missed.");
@@ -37,7 +40,8 @@ const CSVTimeInColumnsReader = CSVReader.extend({
         return {
           columns: concepts,
           rows: rows.reduce((result, row) => {
-            const resultRows = result.filter(resultRow => resultRow[entityDomain] === row[entityDomain]);
+            const rowEntityDomain = row[entityDomain];
+            const resultRows = result.filter(resultRow => resultRow[entityDomain] === rowEntityDomain);
 
             if (resultRows.length) {
               if (resultRows[0][row[indicatorKey]] !== null) {
@@ -72,6 +76,13 @@ const CSVTimeInColumnsReader = CSVReader.extend({
           }, [])
         };
       });
+  },
+
+  _onLoadError(error) {
+    const { _basepath: path, _lastModified, _name } = this;
+    delete this.getCached()[_name + "#" + path + _lastModified];
+
+    this._super(error);
   },
 
   versionInfo: { version: __VERSION, build: __BUILD }
