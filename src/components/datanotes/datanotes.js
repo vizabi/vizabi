@@ -114,9 +114,8 @@ const DataNotes = Component.extend({
     if (concept.sourceLink) {
       const _source = this.translator("hints/source");
       const sourceName = concept.sourceName || "";
-      const sourceLink = (concept.sourceLink.indexOf("http://") === 0 || concept.sourceLink.indexOf("http://") === 0) ? concept.sourceLink : "http://" + concept.sourceLink;
       this.element.select(".vzb-data-notes-link").html("<span>" + (sourceName ? (_source + ":") : "") +
-        '<a href="' + sourceLink + '" target="_blank">' + (sourceName ? sourceName : _source) + "</a></span>");
+        '<a href="' + utils.normaliseLink(concept.sourceLink) + '" target="_blank">' + (sourceName ? sourceName : _source) + "</a></span>");
     }
     this.showNotes = concept.sourceLink || concept.description;
   },
