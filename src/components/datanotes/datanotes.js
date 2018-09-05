@@ -114,7 +114,7 @@ const DataNotes = Component.extend({
     if (concept.sourceLink) {
       const _source = this.translator("hints/source");
       const sourceName = concept.sourceName || "";
-      this.element.select(".vzb-data-notes-link").html("<span>" + (sourceName ? (_source + ":") : "") +
+      this.element.select(".vzb-data-notes-link").html("<span>" + (sourceName ? (_source + ": ") : "") +
         '<a href="' + utils.normaliseLink(concept.sourceLink) + '" target="_blank">' + (sourceName ? sourceName : _source) + "</a></span>");
     }
     this.showNotes = concept.sourceLink || concept.description;
