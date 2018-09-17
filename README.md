@@ -8,6 +8,8 @@
 [![Stories in Progress](https://badge.waffle.io/Gapminder/vizabi.svg?label=state%3A%20in%20progress&title=In%20Progress)](http://waffle.io/Gapminder/vizabi)
 [![Dependency Status](https://david-dm.org/Gapminder/vizabi.svg)](https://david-dm.org/Gapminder/vizabi)
 [![devDependency Status](https://david-dm.org/Gapminder/vizabi/dev-status.svg)](https://david-dm.orgGapminder/vizabi#info=devDependencies)
+[![Code Quality: Javascript](https://img.shields.io/lgtm/grade/javascript/g/vizabi/vizabi.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/vizabi/vizabi/context:javascript)
+[![Total Alerts](https://img.shields.io/lgtm/alerts/g/vizabi/vizabi.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/vizabi/vizabi/alerts)
 
 ## What is Vizabi?
 
