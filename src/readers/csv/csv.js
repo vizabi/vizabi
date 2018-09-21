@@ -3,6 +3,7 @@ import Reader from "base/reader";
 import * as utils from "base/utils";
 
 const cached = {};
+const GOOGLE_DOC_PREFIX = "https://docs.google.com/spreadsheets/";
 
 const CSVReader = Reader.extend({
 
@@ -20,6 +21,13 @@ const CSVReader = Reader.extend({
     this.keySize = readerInfo.keySize || 1;
     this.hasNameColumn = readerInfo.hasNameColumn || false;
     this.assetsPath = readerInfo.assetsPath || "";
+
+    //adjust _basepath if given a path to a google doc but without the correct export suffix. the first sheet is taken since none is specified
+    if (this._basepath.includes(GOOGLE_DOC_PREFIX) && !this._basepath.includes("tqx=out:csv")) {
+      const googleDocParsedUrl = this._basepath.split(GOOGLE_DOC_PREFIX)[1].split("/");
+      const googleDocId = googleDocParsedUrl[googleDocParsedUrl.indexOf("d") + 1];
+      this._basepath = GOOGLE_DOC_PREFIX + "d/" + googleDocId + "/gviz/tq?tqx=out:csv"; //&sheet=data
+    }
 
     this._parseStrategies = [
       ...[",.", ".,"].map(separator => this._createParseStrategy(separator)),
