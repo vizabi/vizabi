@@ -366,7 +366,7 @@ const Marker = Model.extend({
     return KEYS.reduce((result, key) => {
       const names = {};
       utils.forEach(_this._dataCube || _this.getSubhooks(true), (hook, name) => {
-        if (hook.use !== "property") return;
+        if (!hook.isDiscrete()) return;
         if (hook._type === "label" && hook.getEntity().dim === key) {
           names.label = name;
         }
