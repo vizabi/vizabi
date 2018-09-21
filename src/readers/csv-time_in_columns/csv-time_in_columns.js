@@ -19,23 +19,32 @@ const CSVTimeInColumnsReader = CSVReader.extend({
   load(parsers) {
     const { _basepath: path, _lastModified, _name } = this;
     const cachedPromise = this.getCached()[_name + "#" + path + _lastModified];
+    const keySize = this.keySize;
+    let nameConcept = null;
 
     return cachedPromise ? cachedPromise : this.getCached()[_name + "#" + path + _lastModified] = this._super()
       .then(({ rows, columns }) => {
-        const missedIndicator = parsers[this.timeKey] && !!parsers[this.timeKey](columns[this.keySize]);
+
+        //remove column "name" as array's k+1 th element, but remember its header in a variable. if it's an empty string, call it "name"
+        //name column is not the 0th element because it was moved in csv reader "load" method
+        if (this.hasNameColumn) nameConcept = columns.splice(keySize + 1, 1)[0] || "name";
+
+        const missedIndicator = parsers[this.timeKey] && !!parsers[this.timeKey](columns[keySize]);
         if (missedIndicator) warn("Indicator column is missed.");
-        const indicatorKey = missedIndicator ? this.MISSED_INDICATOR_NAME : columns[this.keySize];
+        const indicatorKey = missedIndicator ? this.MISSED_INDICATOR_NAME : columns[keySize];
 
-        const concepts = columns.slice(0, this.keySize).concat(missedIndicator ? capitalize(this.MISSED_INDICATOR_NAME) : rows.reduce((result, row) => {
-          const concept = row[indicatorKey];
-          if (!result.includes(concept) && concept) {
-            result.push(concept);
-          }
-          return result;
-        }, []));
-        concepts.splice(this.keySize, 0, this.timeKey);
+        const concepts = columns.slice(0, keySize)
+          .concat(this.timeKey)
+          .concat(nameConcept || [])
+          .concat(missedIndicator ? capitalize(this.MISSED_INDICATOR_NAME) : rows.reduce((result, row) => {
+            const concept = row[indicatorKey];
+            if (!result.includes(concept) && concept) {
+              result.push(concept);
+            }
+            return result;
+          }, []));
 
-        const indicators = concepts.slice(this.keySize + 1);
+        const indicators = concepts.slice(keySize + 1 + (nameConcept ? 1 : 0));
         const [entityDomain] = concepts;
         return {
           columns: concepts,
@@ -55,11 +64,15 @@ const CSVTimeInColumnsReader = CSVReader.extend({
               });
             } else {
               Object.keys(row).forEach(key => {
-                if (![entityDomain, indicatorKey].includes(key)) {
+                if (![entityDomain, indicatorKey, nameConcept].includes(key)) {
 
                   const domainAndTime = {
                     [entityDomain]: row[entityDomain],
                     [this.timeKey]: key,
+                  };
+
+                  const optionalNameColumn = !nameConcept ? {} : {
+                    [nameConcept]: row[nameConcept]
                   };
 
                   const indicatorsObject = indicators.reduce((result, indicator) => {
@@ -67,7 +80,7 @@ const CSVTimeInColumnsReader = CSVReader.extend({
                     return result;
                   }, {});
 
-                  result.push(Object.assign(domainAndTime, indicatorsObject));
+                  result.push(Object.assign(domainAndTime, optionalNameColumn, indicatorsObject));
                 }
               });
             }

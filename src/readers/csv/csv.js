@@ -18,6 +18,7 @@ const CSVReader = Reader.extend({
     this._basepath = readerInfo.path;
     this.delimiter = readerInfo.delimiter;
     this.keySize = readerInfo.keySize || 1;
+    this.hasNameColumn = readerInfo.hasNameColumn || false;
     this.assetsPath = readerInfo.assetsPath || "";
 
     this._parseStrategies = [
@@ -66,6 +67,7 @@ const CSVReader = Reader.extend({
   load() {
     const { _basepath: path, _lastModified } = this;
     const cachedPromise = cached[path + _lastModified];
+    const keySize = this.keySize;
 
     return cachedPromise ? cachedPromise : cached[path + _lastModified] = new Promise((resolve, reject) => {
       utils.d3text(path, (error, text) => {
@@ -81,6 +83,9 @@ const CSVReader = Reader.extend({
           const parser = d3.dsvFormat(delimiter);
           const rows = parser.parse(text, row => Object.keys(row).every(key => !row[key]) ? null : row);
           const { columns } = rows;
+
+          //move column "name" so it goes after "time". turns [name, geo, gender, time, lex] into [geo, gender, time, name, lex]
+          if (this.hasNameColumn) columns.splice(keySize + 1, 0, columns.splice(0, 1)[0]);
 
           const result = { columns, rows };
           resolve(result);
