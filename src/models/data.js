@@ -14,7 +14,7 @@ const DataModel = Model.extend({
    */
   getClassDefaults() {
     const defaults = {
-      reader: "csv"
+      reader: "inline"
     };
     return utils.deepExtend(this._super(), defaults);
   },
