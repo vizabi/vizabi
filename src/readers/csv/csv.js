@@ -20,6 +20,7 @@ const CSVReader = Reader.extend({
     this.delimiter = readerInfo.delimiter;
     this.keySize = readerInfo.keySize || 1;
     this.hasNameColumn = readerInfo.hasNameColumn || false;
+    this.nameColumnIndex = utils.isNumber(readerInfo.nameColumnIndex) ? readerInfo.nameColumnIndex : this.keySize;
     this.assetsPath = readerInfo.assetsPath || "";
 
     //adjust _basepath if given a path to a google doc but without the correct export suffix. the first sheet is taken since none is specified
@@ -93,7 +94,7 @@ const CSVReader = Reader.extend({
           const { columns } = rows;
 
           //move column "name" so it goes after "time". turns [name, geo, gender, time, lex] into [geo, gender, time, name, lex]
-          if (this.hasNameColumn) columns.splice(keySize + 1, 0, columns.splice(0, 1)[0]);
+          if (this.hasNameColumn) columns.splice(keySize + 1, 0, columns.splice(this.nameColumnIndex, 1)[0]);
 
           const result = { columns, rows };
           resolve(result);

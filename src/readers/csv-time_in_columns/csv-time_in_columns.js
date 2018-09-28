@@ -26,7 +26,7 @@ const CSVTimeInColumnsReader = CSVReader.extend({
       .then(({ rows, columns }) => {
 
         //remove column "name" as array's k+1 th element, but remember its header in a variable. if it's an empty string, call it "name"
-        //name column is not the 0th element because it was moved in csv reader "load" method
+        //name column is not at its original index because it was moved by csv reader "load" method
         if (this.hasNameColumn) nameConcept = columns.splice(keySize + 1, 1)[0] || "name";
 
         const missedIndicator = parsers[this.timeKey] && !!parsers[this.timeKey](columns[keySize]);
