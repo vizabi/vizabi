@@ -247,6 +247,7 @@ export default class ColorPicker {
       });
 
     circles.append("circle")
+      .datum({ data: { meaning: _colorWhite, display: _colorWhite } })
       .attr("r", _minRadius)
       .attr("fill", _colorWhite)
       .attr("class", css.COLOR_BUTTON)
