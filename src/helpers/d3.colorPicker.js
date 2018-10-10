@@ -36,6 +36,7 @@ export default class ColorPicker {
     this._colorOld = "#000";
     this._colorDef = "#000";
     this._colorWhite = "#f8f8f8";
+    this._colorBlack = "#444";
 
     // margins in % of container's width and height
     this._margin = {
@@ -56,23 +57,14 @@ export default class ColorPicker {
     this._maxRadius = this._width / 2 * (1 - this._margin.left - this._margin.right);
 
     // tuning defaults
-    this._nCellsH = 15;
-    // number of cells by hues (angular)
-    this._minH = 0;
-    // which hue do we start from: 0 to 1 instead of 0 to 365
-    this._nCellsL = 4;
-    // number of cells by lightness (radial)
-    this._minL = 0.5;
-    // which lightness to start from: 0 to 1. Recommended .3...0.5
-    this._satConstant = 0.7;
-    // constant saturation for color wheel: 0 to 1. Recommended .7...0.8
-    this._outerL_display = 0.4;
-    // exceptional saturation of the outer circle. the one displayed 0 to 1
-    this._outerL_meaning = 0.3;
-    // exceptional saturation of the outer circle. the one actually meant 0 to 1
-    this._firstAngleSat = 0;
-    // exceptional saturation at first angular segment. Set 0 to have shades of grey
-    this._minRadius = 15;
+    this._nCellsH = 30;         // number of cells by hues (angular)
+    this._minH = 0;             // which hue do we start from: 0 to 1 instead of 0 to 365
+    this._nCellsL = 8;          // number of cells by lightness (radial)
+    this._minL = 0.4;           // which lightness to start from: 0 to 1. Recommended .3...0.5
+    this._satConstant = 0.8;    // constant saturation for color wheel: 0 to 1. Recommended .7...0.8
+    this._outerL = 0.3;         // exceptional lightness of the outer circle: 0 to 1
+    this._firstAngleSat = 0;    // exceptional saturation at first angular segment. Set 0 to have shades of grey
+    this._minRadius = 12;
     this._arc = d3.arc();
 
 
@@ -93,8 +85,9 @@ export default class ColorPicker {
       _nCellsH,
       _firstAngleSat,
       _satConstant,
-      _outerL_display,
-      _outerL_meaning,
+      _outerL,
+      _colorWhite,
+      _colorBlack
     } = this;
 
     const result = [];
@@ -108,17 +101,13 @@ export default class ColorPicker {
         const hue = _minH + (1 - _minH) / _nCellsH * h;
         // new cell
         result[l].push({
-          display: this.constructor.hsl2rgb(
+          fill: this.constructor.hsl2rgb(
             hue,
             h === 0 ? _firstAngleSat : _satConstant,
-            l === 0 ? _outerL_display : lightness
+            l === 0 ? _outerL : lightness
           ),
 
-          meaning: this.constructor.hsl2rgb(
-            hue,
-            h === 0 ? _firstAngleSat : _satConstant,
-            l === 0 ? _outerL_meaning : lightness
-          )
+          stroke: l === 0 ? _colorWhite : _colorBlack
         });
       }
     }
@@ -157,6 +146,7 @@ export default class ColorPicker {
       _minRadius,
       _maxRadius,
       _colorWhite,
+      _colorBlack,
     } = this;
 
     _svg.append("rect")
@@ -215,7 +205,7 @@ export default class ColorPicker {
       .attr("cx", _width * _margin.left * 1.5)
       .attr("cy", _height * (1 - _margin.bottom * 1.5))
       .on("mouseover", function() {
-        d3.select(this).style("stroke", "#444");
+        d3.select(this).style("stroke", _colorBlack);
         self._cellHover(self._colorDef);
       })
       .on("mouseout", function() {
@@ -238,21 +228,21 @@ export default class ColorPicker {
         segment.append("path")
           .attr("class", css.COLOR_BUTTON)
           .attr("d", self._arc)
-          .style("fill", d => d.data.display)
-          .style("stroke", d => d.data.display)
+          .style("fill", d => d.data.fill)
+          .style("stroke", d => d.data.fill)
           .on("mouseover", function(d) {
-            self._cellHover(d.data.meaning, this);
+            self._cellHover(d.data.fill, this);
           })
           .on("mouseout", () => self._cellUnhover());
       });
 
     circles.append("circle")
-      .datum({ data: { meaning: _colorWhite, display: _colorWhite } })
+      .datum({ data: { fill: _colorWhite, stroke: _colorBlack } })
       .attr("r", _minRadius)
       .attr("fill", _colorWhite)
       .attr("class", css.COLOR_BUTTON)
       .on("mouseover", function() {
-        d3.select(this).style("stroke", "#555");
+        d3.select(this).style("stroke", _colorBlack);
         self._cellHover(_colorWhite);
       })
       .on("mouseout", function() {
@@ -265,7 +255,7 @@ export default class ColorPicker {
     _svg.selectAll("." + css.COLOR_BUTTON)
       .on("click", d => {
         d3.event.stopPropagation();
-        this._changeColor(d ? d.data.meaning : this._colorDef, true);
+        this._changeColor(d ? d.data.fill : this._colorDef, true);
         this.show(false);
       });
   }
@@ -306,7 +296,8 @@ export default class ColorPicker {
     if (view != null)
       this._colorPointer
         .classed(css.INVISIBLE, false)
-        .attr("d", d3.select(view).attr("d"));
+        .attr("d", d3.select(view).attr("d"))
+        .style("stroke", d3.select(view).datum().data.stroke || _colorWhite);
 
     this._sampleRect.style("fill", value);
     this._sampleText.text(value);
@@ -458,12 +449,8 @@ export default class ColorPicker {
     return this._getOrSet("minL", ...arguments);
   }
 
-  outerL_display() {
-    return this._getOrSet("outerL_display", ...arguments);
-  }
-
-  outerL_meaning() {
-    return this._getOrSet("outerL_meaning", ...arguments);
+  outerL() {
+    return this._getOrSet("outerL", ...arguments);
   }
 
   satConstant() {
@@ -541,10 +528,17 @@ export default class ColorPicker {
       b = this.hue2rgb(p, q, h - 1 / 3);
     }
 
-    return "#" +
-      Math.round(r * 255).toString(16) +
-      Math.round(g * 255).toString(16) +
-      Math.round(b * 255).toString(16);
+    const hex = {
+      r: Math.round(r * 255).toString(16),
+      g: Math.round(g * 255).toString(16),
+      b: Math.round(b * 255).toString(16)
+    };
+
+    if (hex.r.length === 1) hex.r = "0" + hex.r;
+    if (hex.g.length === 1) hex.g = "0" + hex.g;
+    if (hex.b.length === 1) hex.b = "0" + hex.b;
+
+    return "#" + hex.r + hex.g + hex.b;
   }
 
   static hue2rgb(p, q, t) {
