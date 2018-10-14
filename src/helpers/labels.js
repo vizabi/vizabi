@@ -675,11 +675,14 @@ const Labels = Class.extend({
         const fontSize = range[0] + Math.sqrt((_this.labelSizeTextScale(valueLST) - range[0]) * (range[1] - range[0]));
         _text.attr("font-size", fontSize + "px");
       } else {
-        _text.attr("font-size", "");
+        _text.attr("font-size", null);
       }
     }
 
+    //turn off stroke because ie11/edge return stroked bounding box for text
+    _text.style("stroke", "none");
     const contentBBox = _text.node().getBBox();
+    _text.style("stroke", null);
 
     const rect = labelGroup.selectAll("rect");
 
