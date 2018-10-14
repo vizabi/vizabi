@@ -122,6 +122,7 @@ const Find = Dialog.extend("find", {
         //clear highlight so it doesn't get in the way when selecting an entity
         if (!utils.isTouchDevice()) _this.model.state.marker.clearHighlighted();
         _this.model.state.marker.selectAll();
+        utils.defer(() => _this.panelComps[_this.panelMode].showHideSearch());
       }
     });
 
@@ -129,9 +130,14 @@ const Find = Dialog.extend("find", {
       _this.panelComps[_this.panelMode].showHideSearch();
     });
 
-    d3.select(this.input_search.node().parentNode).on("reset", () => {
-      utils.defer(() => _this.panelComps[_this.panelMode].showHideSearch());
-    });
+    d3.select(this.input_search.node().parentNode)
+      .on("reset", () => {
+        utils.defer(() => _this.panelComps[_this.panelMode].showHideSearch());
+      })
+      .on("submit", () => {
+        d3.event.preventDefault();
+        return false;
+      });
 
     this.deselect_all.on("click", () => {
       _this.deselectMarkers();
