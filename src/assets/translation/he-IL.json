@@ -35,6 +35,7 @@
     "buttons/leftright": "שמאל ⇿ ימין",
     "buttons/mapcolors": "אזורים",
     "buttons/moreellipsis": "עוד...",
+    "dialogs/helptranslate": "Help us translate this",
     "dialogs/mapcolors": "צבע האזור",
     "dialogs/color/select-all": "בחר הכל בקבוצה זו",
     "dialogs/color/remove-else": "הסר את כל השאר",
