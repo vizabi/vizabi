@@ -15,7 +15,6 @@ const SCALETYPE = "scaleType";
 const MODELTYPE_COLOR = "color";
 const MENU_HORIZONTAL = 1;
 const MENU_VERTICAL = 2;
-const TRANSLATE_LINK = "https://docs.google.com/document/d/1bzTWStFYAq2Oj9kV3vm261Dj9FW8C2tS7Jwj1wtTn1Q";
 
 //css custom classes
 const css = {
@@ -425,8 +424,8 @@ const Menu = Class.extend({
         leafContent.append("span").classed(css.leaf_content_item + " " + css.leaf_content_item_descr, true)
           .text(utils.replaceNumberSpacesToNonBreak(d.description) || "");
         leafContent.append("span").classed(css.leaf_content_item + " " + css.leaf_content_item_helptranslate, true)
-          .classed("vzb-invisible", !d.helpTranslateEnabled)
-          .html(`<a href="${d.translateLink}" target="_blank">${d.helpTranslateText}</a>`);
+          .classed("vzb-invisible", !d.translateContributionLink)
+          .html(`<a href="${d.translateContributionLink}" target="_blank">${d.translateContributionText}</a>`);
       });
   }
 });
@@ -1068,7 +1067,7 @@ const TreeMenu = Component.extend({
     });
 
     this.width = _this.element.node().offsetWidth;
-    
+
     return this;
   },
 
@@ -1344,9 +1343,8 @@ const TreeMenu = Component.extend({
               d.description = _this.translator("description/_default/" + targetModelType);
             }
             if (!d.description) d.description = noDescription;
-            d.translateLink = TRANSLATE_LINK;
-            d.helpTranslateText = _this.translator("dialogs/helptranslate");
-            d.helpTranslateEnabled = _this.model.ui.helpTranslateEnabled || false;
+            d.translateContributionLink = _this.model.locale.getTranslateContributionLink();
+            d.translateContributionText = _this.translator("dialogs/helptranslate");
             const deepLeaf = view.append("div").attr("class", css.menuHorizontal + " " + css.list_outer + " " + css.list_item_leaf);
             deepLeaf.on("click", d => {
               _this._selectIndicator({ concept: d.id, key: d.key, dataSource: d.dataSource, use: d.use });
