@@ -22,6 +22,11 @@ const Reader = Class.extend({
     $in: (configValue, rowValue) => configValue.includes(rowValue)
   },
 
+  LOGICAL_TEST: {
+    $and: "every",
+    $or: "some"
+  },
+
   ERRORS: {
     GENERIC_ERROR: "reader/error/generic"
   },
@@ -36,6 +41,7 @@ const Reader = Class.extend({
   },
 
   read(query, parsers = {}) {
+    const originalQuery = query;
     query = this._normalizeQuery(query, parsers);
 
     const {
@@ -46,14 +52,15 @@ const Reader = Class.extend({
     return this.load(parsers)
       .then(result => {
         const { rows, columns } = result;
+        this._checkTimeParser(columns, parsers);
         this.ensureDataIsCorrect(result, parsers);
 
         switch (true) {
           case from === this.SCHEMA_QUERY_FROM_CONCEPTS:
-            return { key: ["concept"], value: "concept_type" };
+            return [{ key: ["concept"], value: "concept_type" }];
 
           case from === this.SCHEMA_QUERY_FROM_ENTITIES:
-            return columns.slice(0, this.keySize).map(key => ({ key: [key] }));
+            return columns.slice(0, this.keySize).map(key => ({ key: [key], value: key }));
 
           case from === this.SCHEMA_QUERY_FROM_DATAPOINTS: {
             const key = columns.slice(0, this.keySize + 1);
@@ -70,9 +77,12 @@ const Reader = Class.extend({
         }
       })
       .catch(error => {
-        throw ({}).toString.call(error) === "[object Error]" ?
-          this.error(this.ERRORS.GENERIC_ERROR, error) :
-          error;
+        this._onLoadError(error);
+        if (!utils.find(this.ERRORS, f => f === error.name)) error = this.error(this.ERRORS.GENERIC_ERROR, error);
+        if (!error.endpoint) error.endpoint = this._basepath;
+        if (!error.ddfql) error.ddfql = originalQuery;
+        if (!error.details) error.details = this._name;
+        throw error;
       });
   },
 
@@ -80,9 +90,14 @@ const Reader = Class.extend({
 
   },
 
+  _checkTimeParser(columns, parsers) {
+    const timeKey = columns[this.keySize];
+    if (!parsers[timeKey]) parsers[timeKey] = t => t;
+  },
+
   _normalizeQuery(_query, parsers) {
     const query = Object.assign({}, _query);
-    const { where, join } = query;
+    const { where = {}, join = {} } = query;
 
     if (where.$and) {
       where.$and = where.$and.reduce((whereResult, condition) => {
@@ -97,23 +112,23 @@ const Reader = Class.extend({
                 const value = joinWhere[joinRowKey];
                 const parser = parsers[joinRowKey];
 
-                whereResult[joinRowKey] = parser ?
+                whereResult.push({ [joinRowKey]: parser ?
                   typeof value === "object" ?
                     Object.keys(value).reduce((callbackConditions, callbackKey) => {
                       callbackConditions[callbackKey] = parser(value[callbackKey]);
                       return callbackConditions;
                     }, {}) :
                     parser(value)
-                  : value;
+                  : value });
               });
           } else {
             const parser = parsers[rowKey];
-            whereResult[rowKey] = parser ? parser(conditionValue) : conditionValue;
+            whereResult.push({ [rowKey]: parser ? parser(conditionValue) : conditionValue });
           }
         });
 
         return whereResult;
-      }, {});
+      }, []);
     }
 
     return query;
@@ -133,7 +148,7 @@ const Reader = Class.extend({
 
         for (let i = rows.length - 1; i > -1; --i) {
           if (utils.isString(rows[i][concept]) && rows[i][concept] !== "") {
-            result.concept_type = "entity_set";
+            result.concept_type = "string";
             [result.domain] = columns;
             break;
           }
@@ -240,32 +255,41 @@ const Reader = Class.extend({
 
   _isSuitableRow(query, row) {
     const { where } = query;
-
-    return !where.$and ||
-      Object.keys(where.$and).every(conditionKey => {
-        const condition = where.$and[conditionKey];
-        const rowValue = row[conditionKey];
-
-        // if the column is missing, then don't apply filter
-        return typeof rowValue === "undefined" ||
-          (typeof condition !== "object" ?
-            (rowValue === condition
-              // resolve booleans via strings
-              || condition === true && utils.isString(rowValue) && rowValue.toLowerCase().trim() === "true"
-              || condition === false && utils.isString(rowValue) && rowValue.toLowerCase().trim() === "false"
-            ) :
-            Object.keys(condition).every(callbackKey =>
-              this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], rowValue)
-            ));
-      });
+    return !where || Object.keys(where).every(conditionKey => this._testCondition(where[conditionKey], conditionKey, row));
   },
 
-  error(code, message, payload) {
-    return {
-      code,
-      message,
-      payload
-    };
+  _testCondition(condition, conditionKey, row) {
+    const logicalTest = this.LOGICAL_TEST[conditionKey];
+    const rowValue = logicalTest ? conditionKey : row[conditionKey];
+
+    // if the column is missing, then don't apply filter
+    return typeof rowValue === "undefined" ||
+      (condition instanceof Date ? !(+condition - +rowValue) :
+        typeof condition !== "object" ?
+          (rowValue === condition
+            // resolve booleans via strings
+            || condition === true && utils.isString(rowValue) && rowValue.toLowerCase().trim() === "true"
+            || condition === false && utils.isString(rowValue) && rowValue.toLowerCase().trim() === "false"
+          ) :
+          logicalTest ? condition[logicalTest](newCondition => Object.keys(newCondition).every(newConditionKey => this._testCondition(newCondition[newConditionKey], newConditionKey, row))) :
+            Object.keys(condition).every(callbackKey =>
+              this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], rowValue, row)
+            ));
+
+  },
+
+  _onLoadError(error) {
+
+  },
+
+  error(code, message, payload, query, file) {
+    const error = new Error;
+    error.name = code;
+    error.message = message;
+    error.details = payload;
+    error.ddfql = query;
+    error.endpoint = file;
+    return error;
   }
 
 });

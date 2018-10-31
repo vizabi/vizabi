@@ -149,6 +149,7 @@ const Stack = Dialog.extend("stack", {
         case "bycolor":
           obj.stack.use = "property";
           obj.stack.which = this.model.state.marker.color.which;
+          obj.stack.spaceRef = this.model.state.marker.color.spaceRef;
           break;
       }
 

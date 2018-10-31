@@ -26,8 +26,6 @@ const formats = {
 
 const TimeModel = DataConnected.extend({
 
-  objectLeafs: ["autoconfig"],
-
   /**
    * Default values for this model
    */
@@ -58,6 +56,7 @@ const TimeModel = DataConnected.extend({
     return utils.deepExtend(this._super(), defaults);
   },
 
+  objectLeafs: ["autoconfig"],
   dataConnectedChildren: ["startOrigin", "endOrigin", "dim"],
 
   /**
@@ -69,6 +68,7 @@ const TimeModel = DataConnected.extend({
    */
   init(name, values, parent, bind) {
     this._type = "time";
+    this.hooksToListen = new Set([]);
 
     //same constructor
     this._super(name, values, parent, bind);
@@ -124,12 +124,78 @@ const TimeModel = DataConnected.extend({
     this.autoconfigureModel();
   },
 
+  _isLoading() {
+    return ![...this.hooksToListen].every(hook => hook._ready);
+  },
+
   autoconfigureModel() {
     if (!this.dim && this.autoconfig) {
       const concept = this.dataSource.getConcept(this.autoconfig);
 
       if (concept) this.dim = concept.concept;
       utils.printAutoconfigResult(this);
+    }
+  },
+
+  setLinkWith(hook) {
+    this.hooksToListen.add(hook);
+    hook.on("startLoading", () => this.setReady(false));
+    hook.on("ready", this.checkTimeLimits.bind(this));
+  },
+
+  unsetLinkWith(hook) {
+    this.hooksToListen.delete(hook);
+    hook.off("startLoading", () => this.setReady(false));
+    hook.off("ready", this.checkTimeLimits.bind(this));
+  },
+
+  checkTimeLimits() {
+    //if all hooks are ready, check time limits and set time model to ready
+    if ([...this.hooksToListen].every(hook => hook._ready)) {
+      const minArray = [this.startOrigin], maxArray = [this.endOrigin];
+
+      this.hooksToListen.forEach(hook => {
+        const tLimits = hook.getTimespan();
+        if (tLimits && tLimits.min && tLimits.max) {
+
+          if (!utils.isDate(tLimits.min) || !utils.isDate(tLimits.max))
+            return utils.warn("checkTimeLimits(): min-max for hook " + hook._name + " look wrong: " + tLimits.min + " " + tLimits.max + ". Expecting Date objects. Ensure that time is properly parsed in the data from reader");
+
+          minArray.push(tLimits.min);
+          maxArray.push(tLimits.max);
+        }
+      });
+
+      let min = d3.max(minArray);
+      let max = d3.min(maxArray);
+
+      if (min > max) {
+        utils.warn("checkTimeLimits(): Availability of the indicator's data has no intersection. I give up and just return some valid time range where you'll find no data points. Enjoy!");
+        min = d3.min(minArray);
+        max = d3.max(maxArray);
+      }
+
+      // change start and end (but keep startOrigin and endOrigin for furhter requests)
+      const newTime = {};
+      if (this.start - min != 0 || !this.start && !this.startOrigin) newTime["start"] = min;
+      if (this.end - max != 0 || !this.end && !this.endOrigin) newTime["end"] = max;
+
+      if (this.startSelected == null) newTime["startSelected"] = min;
+      if (this.endSelected == null) newTime["endSelected"] = max;
+
+      // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
+      if (this.value == null) newTime["value"] = this.parse(this.formatDate(new Date()));
+
+      this.setTreeFreezer(true);
+      this.set(newTime, false, false);
+
+      if (newTime.start || newTime.end) {
+        this.hooksToListen.forEach(hook => {
+          if (hook.which == this.dim) hook.buildScale();
+        });
+      }
+      this.setTreeFreezer(false);
+      this.setReady();
     }
   },
 
@@ -209,11 +275,11 @@ const TimeModel = DataConnected.extend({
       this.set("end", new Date(this.start), null, false);
     }
 
-    if (this.value < this.startSelected && this.startSelected != null) {
+    if (this.value < this.startSelected && this.value != null && this.startSelected != null) {
       this.value = new Date(this.startSelected);
     }
 
-    if (this.value > this.endSelected && this.endSelected != null) {
+    if (this.value > this.endSelected && this.value != null && this.endSelected != null) {
       this.value = new Date(this.endSelected);
     }
     if (this.splash === false) {
@@ -227,9 +293,9 @@ const TimeModel = DataConnected.extend({
     }
 
     //value has to be between start and end
-    if (this.value < this.start && this.start != null) {
+    if (this.value < this.start && this.value != null && this.start != null) {
       this.value = new Date(this.start);
-    } else if (this.value > this.end && this.end != null) {
+    } else if (this.value > this.end && this.value != null && this.end != null) {
       this.value = new Date(this.end);
     }
 
@@ -239,9 +305,6 @@ const TimeModel = DataConnected.extend({
   },
 
   validateFormatting() {
-    // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
-    if (this.value == null) this.set("value", this.parse(this.formatDate(new Date())), null, false);
-
     //make sure dates are transformed into dates at all times
     if (!utils.isDate(this.start) || !utils.isDate(this.end) || !utils.isDate(this.value)
       || !utils.isDate(this.startSelected) || !utils.isDate(this.endSelected)) {
@@ -309,7 +372,7 @@ const TimeModel = DataConnected.extend({
    * @param {Boolean} splash: get filter for current year only
    * @returns {Object} time filter
    */
-  getFilter(splash) {
+  getFilter({ splash }) {
     const defaultStart = this.parse(this.startOrigin);
     const defaultEnd = this.parse(this.endOrigin);
 
@@ -371,7 +434,7 @@ const TimeModel = DataConnected.extend({
 
     this.allSteps[hash] = [];
     const is = this.getIntervalAndStep();
-    let curr = d3["utc" + is.interval].offset(this.start, this.offset);
+    let curr = d3["utc" + is.interval].count(this.start, this.end) < this.offset ? new Date(this.start) : d3["utc" + is.interval].offset(this.start, this.offset);
     while (+curr <= +this.end) {
       const is = this.getIntervalAndStep();
       this.allSteps[hash].push(curr);

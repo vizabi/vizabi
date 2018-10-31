@@ -1,7 +1,7 @@
 import * as utils from "base/utils";
-import Component from "base/component";
 import Dialog from "components/dialogs/_dialog";
 
+import show from "./show";
 import singlehandleslider from "components/brushslider/singlehandleslider/singlehandleslider";
 import indicatorpicker from "components/indicatorpicker/indicatorpicker";
 
@@ -17,18 +17,24 @@ const Find = Dialog.extend("find", {
     const _this = this;
 
     this.components = [{
+      component: show,
+      placeholder: ".vzb-dialog-panel-show",
+      model: ["state", "locale"]
+    }, {
       component: singlehandleslider,
       placeholder: ".vzb-dialog-bubbleopacity",
       model: ["state.marker", "locale"],
       arg: "opacitySelectDim"
     }];
 
+    this.enableSelectShowSwitch = ((config.ui.dialogs.dialog || {}).find || {}).enableSelectShowSwitch || false;
+    this.panelMode = ((config.ui.dialogs.dialog || {}).find || {}).panelMode || "find";
     this.enablePicker = ((config.ui.dialogs.dialog || {}).find || {}).enablePicker;
     if (this.enablePicker) {
       this.components.push({
         component: indicatorpicker,
         placeholder: ".vzb-find-filter-selector",
-        model: ["state.time", "state.entities", "locale"]
+        model: ["state.time", "state.marker", "locale"]
       });
     }
 
@@ -36,7 +42,7 @@ const Find = Dialog.extend("find", {
       "change:state.marker.select": function(evt) {
         _this.items.order();
         _this.selectDataPoints();
-        _this.showHideDeselect();
+        _this.showHideButtons();
       },
       "change:state.time.playing": function(evt) {
         if (!_this.model.state.time.playing) {
@@ -59,7 +65,14 @@ const Find = Dialog.extend("find", {
           _this.redrawDataPoints(values);
         });
       },
+      "change:ui.dialogs.dialog.find.enableSelectShowSwitch": function(evt) {
+        if (!_this._readyOnce) return;
+        _this.enableSelectShowSwitch = ((config.ui.dialogs.dialog || {}).find || {}).enableSelectShowSwitch || false;
+        _this.element.select(".vzb-dialog-title-switch .vzb-switch-slider").classed("vzb-hidden", !_this.enableSelectShowSwitch);
+        _this.element.select(".vzb-dialog-title-switch").style("pointer-events", _this.enableSelectShowSwitch ? "auto" : "none");
+      },
       "translate:locale": function() {
+        if (!_this._readyOnce) return;
         _this.input_search.attr("placeholder", _this.translator("placeholder/search") + "...");
       }
     };
@@ -73,17 +86,34 @@ const Find = Dialog.extend("find", {
   readyOnce() {
     this._super();
 
+    this.panelComps = { find: this, show: this.findChildByName("show") };
+
+    this.titleSwitch = this.element.select(".vzb-dialog-title-switch input");
+    this.panelsEl = this.contentEl.selectAll(".vzb-dialog-content");
     this.list = this.element.select(".vzb-find-list");
     this.input_search = this.element.select(".vzb-find-search");
     this.deselect_all = this.element.select(".vzb-find-deselect");
     this.opacity_nonselected = this.element.select(".vzb-dialog-bubbleopacity");
 
+    this.element.select(".vzb-dialog-title-switch .vzb-switch-slider").classed("vzb-hidden", !this.enableSelectShowSwitch);
+    this.element.select(".vzb-dialog-title-switch").style("pointer-events", this.enableSelectShowSwitch ? "auto" : "none");    
     this.element.select(".vzb-find-filter-selector").classed("vzb-hidden", !this.enablePicker);
     this.element.select(".vzb-dialog-title").classed("vzb-title-two-rows", this.enablePicker);
 
     this.KEY = this.model.state.entities.getDimension();
 
     const _this = this;
+
+    this.titleSwitch.on("change", () => {
+      _this.panelMode = _this.titleSwitch.property("checked") ? "show" : "find";
+      _this.panelsEl.classed("vzb-active", false);
+      _this.contentEl.select(".vzb-dialog-panel-" + _this.panelMode).classed("vzb-active", true);
+      _this.panelComps[_this.panelMode].showHideSearch();
+      _this._buttonAdjust();
+      _this.panelComps[_this.panelMode].showHideButtons();
+    });
+    this.titleSwitch.property("checked", this.panelMode !== "find");
+    this.titleSwitch.dispatch("change");
 
     this.input_search.on("keyup", () => {
       const event = d3.event;
@@ -92,20 +122,29 @@ const Find = Dialog.extend("find", {
         //clear highlight so it doesn't get in the way when selecting an entity
         if (!utils.isTouchDevice()) _this.model.state.marker.clearHighlighted();
         _this.model.state.marker.selectAll();
+        utils.defer(() => _this.panelComps[_this.panelMode].showHideSearch());
       }
     });
 
     this.input_search.on("input", () => {
-      _this.showHideSearch();
+      _this.panelComps[_this.panelMode].showHideSearch();
     });
 
-    d3.select(this.input_search.node().parentNode).on("reset", () => {
-      utils.defer(() => _this.showHideSearch());
-    });
+    d3.select(this.input_search.node().parentNode)
+      .on("reset", () => {
+        utils.defer(() => _this.panelComps[_this.panelMode].showHideSearch());
+      })
+      .on("submit", () => {
+        d3.event.preventDefault();
+        return false;
+      });
 
     this.deselect_all.on("click", () => {
       _this.deselectMarkers();
     });
+
+    const closeButton = this.buttonsEl.select(".vzb-dialog-button[data-click='closeDialog']");
+    closeButton.on("click.panel", () => _this.panelComps[_this.panelMode].closeClick());
 
     this.translator = this.model.locale.getTFunction();
     this.input_search.attr("placeholder", this.translator("placeholder/search") + "...");
@@ -115,6 +154,15 @@ const Find = Dialog.extend("find", {
       _this.ready();
     });
 
+  },
+
+  getPanelMode() {
+    return this.panelMode;
+  },
+
+  _buttonAdjust() {
+    this.buttonsEl.selectAll(".vzb-dialog-buttons > :not([data-dialogtype])").classed("vzb-hidden", true);
+    this.buttonsEl.selectAll(`[data-panel=${this.panelMode}]`).classed("vzb-hidden", false);
   },
 
   open() {
@@ -140,33 +188,19 @@ const Find = Dialog.extend("find", {
     this._super();
 
     const _this = this;
-    const KEY = this.KEY = this.model.state.entities.getDimension();
     const KEYS = this.KEYS = utils.unique(this.model.state.marker._getAllDimensions({ exceptType: "time" }));
-    this.multiDim = KEYS.length > 1;
 
     this.importantHooks = _this.model.state.marker.getImportantHooks();
-    const labelNames = _this.model.state.marker.getLabelHookNames();
 
     this.time = this.model.state.time.value;
     this.model.state.marker.getFrame(this.time, values => {
       if (!values) return;
 
-      const data = _this.multiDim ? _this.model.state.marker.getKeysMD()
-        .map(pointer => {
-          pointer.brokenData = false;
-          pointer.name = KEYS.map((key, index) => values[labelNames[index]][pointer[key]])
-            .join(", ");
-
-          return pointer;
-        })
-        : _this.model.state.marker.getKeys().map(d => {
-          const pointer = {};
-          pointer[KEY] = d[KEY];
-          pointer.brokenData = false;
-          pointer.name = values.label[d[KEY]];
-
-          return pointer;
-        });
+      const data = _this.model.state.marker.getKeys().map(d => {
+        d.brokenData = false;
+        d.name = _this.model.state.marker.getCompoundLabelText(d, values);
+        return d;
+      });
 
       //sort data alphabetically
       data.sort((a, b) => (a.name < b.name) ? -1 : 1);
@@ -208,56 +242,36 @@ const Find = Dialog.extend("find", {
       _this.redrawDataPoints(values);
       _this.selectDataPoints();
       _this.showHideSearch();
-      _this.showHideDeselect();
+      _this.showHideButtons();
 
     });
   },
 
   redrawDataPoints(values) {
     const _this = this;
-    const KEY = this.KEY;
     const KEYS = this.KEYS;
 
-    if (this.multiDim) {
-      _this.items
-        .each(function(d) {
-          const view = d3.select(this).select("label");
-          d.brokenData = false;
+    _this.items
+      .each(function(d) {
+        const view = d3.select(this).select("label");
+        d.brokenData = false;
 
-          utils.forEach(_this.importantHooks, name => {
-            const hook = values[name];
-            if (!hook) return;
-            const value = utils.getValueMD(d, hook, KEYS) || false;
-            if (!value && value !== 0) {
-              d.brokenData = true;
-              return false;
-            }
-          });
-
-          const nameIfEllipsis = this.offsetWidth < this.scrollWidth ? d.name : "";
-          view
-            .classed("vzb-find-item-brokendata", d.brokenData)
-            .attr("title", nameIfEllipsis + (d.brokenData ? (nameIfEllipsis ? " | " : "") + _this.model.state.time.formatDate(_this.time) + ": " + _this.translator("hints/nodata") : ""));
+        utils.forEach(_this.importantHooks, name => {
+          if (_this.model.state.marker[name].use == "constant") return;
+          const hook = values[name];
+          if (!hook) return;
+          const value = hook[utils.getKey(d, KEYS)];
+          if (!value && value !== 0) {
+            d.brokenData = true;
+            return false;
+          }
         });
-    } else {
-      _this.items
-        .each(function(d) {
-          const view = d3.select(this).select("label");
 
-          d.brokenData = false;
-          utils.forEach(values, (hook, name) => {
-            //TODO: remove the hack with hardcoded hook names (see discussion in #1389)
-            if (name !== "color" && name !== "size_label" && _this.model.state.marker[name].use !== "constant" && !hook[d[KEY]] && hook[d[KEY]] !== 0) {
-              d.brokenData = true;
-            }
-          });
-
-          const nameIfEllipsis = this.offsetWidth < this.scrollWidth ? d.name : "";
-          view
-            .classed("vzb-find-item-brokendata", d.brokenData)
-            .attr("title", nameIfEllipsis + (d.brokenData ? (nameIfEllipsis ? " | " : "") + _this.model.state.time.formatDate(_this.time) + ": " + _this.translator("hints/nodata") : ""));
-        });
-    }
+        const nameIfEllipsis = this.offsetWidth < this.scrollWidth ? d.name : "";
+        view
+          .classed("vzb-find-item-brokendata", d.brokenData)
+          .attr("title", nameIfEllipsis + (d.brokenData ? (nameIfEllipsis ? " | " : "") + _this.model.state.time.formatDate(_this.time) + ": " + _this.translator("hints/nodata") : ""));
+      });
   },
 
   selectDataPoints() {
@@ -281,6 +295,8 @@ const Find = Dialog.extend("find", {
   },
 
   showHideSearch() {
+    if (this.getPanelMode() !== "find") return;
+
     let search = this.input_search.node().value || "";
     search = search.toLowerCase();
 
@@ -291,12 +307,14 @@ const Find = Dialog.extend("find", {
       });
   },
 
-  showHideDeselect() {
+  showHideButtons() {
+    if (this.getPanelMode() !== "find") return;
+
     const someSelected = !!this.model.state.marker.select.length;
     this.deselect_all.classed("vzb-hidden", !someSelected);
     this.opacity_nonselected.classed("vzb-hidden", !someSelected);
     if (someSelected) {
-      this.components[0].trigger("resize");
+      this.findChildByName("singlehandleslider").trigger("resize");
     }
   },
 
@@ -308,6 +326,10 @@ const Find = Dialog.extend("find", {
     this._super(event);
 
     if (!utils.isTouchDevice()) this.input_search.node().focus();
+  },
+
+  closeClick() {
+
   }
 
 });

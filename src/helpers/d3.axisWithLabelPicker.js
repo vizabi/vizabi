@@ -244,7 +244,7 @@ export default function axisSmart(_orient) {
 
         g.select(".vzb-axis-value")
           .select("text")
-          .interrupt()
+          .interrupt("text")
           .text(highlightValue == "none" ? "" : options.formatter(highlightValue))
           .transition();
 
@@ -453,8 +453,8 @@ export default function axisSmart(_orient) {
           return lengthRange >
             tickValues.length * (
               options.heightOfOneDigit +
-              parseInt(options.cssMargin.top) +
-              parseInt(options.cssMargin.bottom)
+            parseInt(options.cssMargin.top) +
+            parseInt(options.cssMargin.bottom)
             );
         }
 
@@ -481,9 +481,9 @@ export default function axisSmart(_orient) {
         return lengthRange >
           tickValues.length * marginsLR + (approximationStyle == PESSIMISTIC ?
             options.widthOfOneDigit * tickValues.length * maxLength : 0) + (approximationStyle == OPTIMISTIC ?
-              options.widthOfOneDigit * (
-                tickValues.map(d => options.formatter(d)).join("").length
-              ) : 0);
+            options.widthOfOneDigit * (
+              tickValues.map(d => options.formatter(d)).join("").length
+            ) : 0);
       };
 
 

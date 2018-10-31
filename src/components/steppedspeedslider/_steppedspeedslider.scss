@@ -1,7 +1,6 @@
 .vzb-stepped-speed-slider {
   position: relative;
   height: $size-timeslider-small;
-  padding-top: 5px;
   padding-right: 15px;
 
   .vzb-stepped-speed-slider-axis {
@@ -27,8 +26,8 @@
   }
 }
 
-&.vzb-small {
-  .vzb-stepped-speed-slider {
-    padding-top: 0;
+&.vzb-large {
+    .vzb-stepped-speed-slider {
+    padding-top: 5px;
   }
 }

@@ -14,7 +14,7 @@ const DataModel = Model.extend({
    */
   getClassDefaults() {
     const defaults = {
-      reader: "csv"
+      reader: "inline"
     };
     return utils.deepExtend(this._super(), defaults);
   },
@@ -47,7 +47,8 @@ const DataModel = Model.extend({
    * @return {Promise} Promise which resolves when concepts are loaded
    */
   preloadData() {
-    return this.loadConceptProps();
+    return this.loadDataAvailability()
+      .then(this.loadConceptProps.bind(this));
   },
 
   /**
@@ -56,35 +57,45 @@ const DataModel = Model.extend({
    * @param {Object} parsers An object with concepts as key and parsers as value
    * @param {*} evts ?
    */
-  load(query, parsers = {}) {
+  load(query, parsers = {}, sideLoad) {
+    // deep clone to prevent one query sent to multiple data objects being manipulated cross-data model.
+    // For example one query sent to two different waffle server datasets.
+    query = utils.deepClone(query);
     // add waffle server specific query clauses if set
     if (this.dataset) query.dataset = this.dataset;
     if (this.version) query.version = this.version;
     const dataId = DataStorage.getDataId(query, this.readerObject, parsers);
     if (dataId) {
-      return Promise.resolve(dataId);
+      if (!query.grouping) return Promise.resolve(dataId);
+      return DataStorage.aggregateData(dataId, query, this.readerObject, this.getConceptprops());
     }
     utils.timeStamp("Vizabi Data: Loading Data");
-    EventSource.freezeAll([
-      "hook_change",
-      "resize"
-    ]);
+    if (!sideLoad) {
+      EventSource.freezeAll([
+        "hook_change",
+        "resize"
+      ]);
+    }
 
     return DataStorage.loadFromReader(query, parsers, this.readerObject)
       .then(dataId => {
-        EventSource.unfreezeAll();
+        if (!query.grouping) return dataId;
+        return DataStorage.aggregateData(dataId, query, this.readerObject, this.getConceptprops());
+      })
+      .then(dataId => {
+        if (!sideLoad) EventSource.unfreezeAll();
         return dataId;
       })
       .catch(error => {
-        EventSource.unfreezeAll();
-        this.handleLoadError(error, query);
+        if (!sideLoad) EventSource.unfreezeAll();
+        this.handleLoadError(error);
       });
   },
 
   getAsset(assetName, callback) {
     return this.readerObject.getAsset(assetName)
       .then(response => callback(response))
-      .catch(error => this.handleLoadError(error, assetName));
+      .catch(error => this.handleLoadError(error));
   },
 
   getReader() {
@@ -106,72 +117,114 @@ const DataModel = Model.extend({
     return DataStorage.getData(dataId, what, whatId, args);
   },
 
+  loadDataAvailability() {
+    const conceptsQuery = {
+      select: {
+        key: ["key", "value"],
+        value: []
+      },
+      from: "concepts.schema"
+    };
+    const entitiesQuery = utils.extend({}, conceptsQuery, { from: "entities.schema" });
+    const datapointsQuery = utils.extend({}, conceptsQuery, { from: "datapoints.schema" });
+
+    return Promise.all([
+      this.load(conceptsQuery),
+      this.load(entitiesQuery),
+      this.load(datapointsQuery)
+    ])
+      .then(this.handleDataAvailabilityResponse.bind(this))
+      .catch(error => this.handleLoadError(error));
+  },
+
+  handleDataAvailabilityResponse(dataIds) {
+    this.keyAvailability = new Map();
+    this.dataAvailability = [];
+    dataIds.forEach(dataId => {
+      const collection = this.getData(dataId, "query").from.split(".")[0];
+      this.dataAvailability[collection] = [];
+      this.getData(dataId).forEach(kvPair => {
+        const key = (typeof kvPair.key === "string" ? JSON.parse(kvPair.key) : kvPair.key).sort(); // sort to get canonical form (can be removed when reader gives back canonical)
+
+        this.dataAvailability[collection].push({
+          key: new Set(key),
+          value: kvPair.value
+        });
+
+        this.keyAvailability.set(key.join(","), key);
+      });
+    });
+  },
+
   loadConceptProps() {
+    // only selecting concept properties which Vizabi needs and are available in dataset
+    const vizabiConceptProps = [
+      "concept_type",
+      "domain",
+      "totals_among_entities",
+      "source_url",
+      "source",
+      "color",
+      "scales",
+      "interpolation",
+      "tags",
+      "name",
+      "name_short",
+      "name_catalog",
+      "description",
+      "format"
+    ];
+    const availableConceptProps = this.dataAvailability.concepts.map(m => m.value);
+    const availableVizabiConceptProps = vizabiConceptProps.filter(n => availableConceptProps.includes(n));
+
     const query = {
       select: {
         key: ["concept"],
-        value: [
-          "concept_type",
-          "domain",
-          "indicator_url",
-          "color",
-          "scales",
-          "interpolation",
-          "tags",
-          "name",
-          "name_short",
-          "name_catalog",
-          "description",
-          "format"
-        ]
+        value: availableVizabiConceptProps
       },
       from: "concepts",
       where: {},
       language: this.getClosestModel("locale").id,
     };
 
-    const timeModel = this._root.state.time;
-    const parsers = {};
-    parsers[timeModel.getDimensionOrWhich() || timeModel._type] = timeModel.getParser();
-
-    return this.load(query, parsers)
+    return this.load(query)
       .then(this.handleConceptPropsResponse.bind(this))
-      .catch(error => this.handleLoadError(error, query));
-
+      .catch(error => this.handleLoadError(error));
   },
 
   handleConceptPropsResponse(dataId) {
 
-    this.conceptDictionary = { _default: { concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root" } };
+    this.conceptDictionary = { _default: { concept: "_default", concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root" } };
     this.conceptArray = [];
 
     this.getData(dataId).forEach(d => {
       const concept = {};
 
-      if (d.concept_type) concept["use"] = (d.concept_type == "measure" || d.concept_type == "time") ? "indicator" : "property";
-
+      concept["concept"] = d.concept;
       concept["concept_type"] = d.concept_type;
-      concept["sourceLink"] = d.indicator_url;
+      concept["sourceLink"] = d.source_url;
+      concept["sourceName"] = d.source;
       try {
-        concept["color"] = d.color && d.color !== "" ? JSON.parse(d.color) : null;
+        concept["color"] = d.color && d.color !== "" ? (typeof d.color === "string" ? JSON.parse(d.color) : d.color) : null; //
       } catch (e) {
         concept["color"] = null;
       }
       try {
-        concept["scales"] = d.scales ? JSON.parse(d.scales) : null;
+        concept["scales"] = d.scales && d.color !== "" ? (typeof d.scales === "string" ? JSON.parse(d.scales) : d.scales) : null;
       } catch (e) {
         concept["scales"] = null;
       }
       if (!concept.scales) {
         switch (d.concept_type) {
           case "measure": concept.scales = ["linear", "log"]; break;
-          case "string": concept.scales = ["nominal"]; break;
+          case "string": concept.scales = ["ordinal"]; break;
           case "entity_domain": concept.scales = ["ordinal"]; break;
           case "entity_set": concept.scales = ["ordinal"]; break;
+          case "boolean": concept.scales = ["ordinal"]; break;
           case "time": concept.scales = ["time"]; break;
+          default: concept.scales = ["linear", "log"];
         }
       }
-      if (concept["scales"] == null) concept["scales"] = ["linear", "log"];
       if (d.interpolation) {
         concept["interpolation"] = d.interpolation;
       } else if (d.concept_type == "measure") {
@@ -181,8 +234,8 @@ const DataModel = Model.extend({
       } else {
         concept["interpolation"] = "stepMiddle";
       }
-      concept["concept"] = d.concept;
       concept["domain"] = d.domain;
+      concept["totals_among_entities"] = d.totals_among_entities;
       concept["tags"] = d.tags;
       concept["format"] = d.format;
       concept["name"] = d.name || d.concept || "";
@@ -196,9 +249,14 @@ const DataModel = Model.extend({
   },
 
   getConceptprops(which) {
-    return which ?
-      utils.getProp(this, ["conceptDictionary", which]) || utils.warn("The concept " + which + " is not found in the dictionary") :
-      this.conceptDictionary;
+    if (typeof which !== "undefined") {
+      if (!this.conceptDictionary[which]) {
+        utils.warn("The concept " + which + " is not found in the dictionary");
+        return null;
+      }
+      return this.conceptDictionary[which];
+    }
+    return this.conceptDictionary;
   },
 
   getConcept({ index: index = 0, type: type = null, includeOnlyIDs: includeOnlyIDs = [], excludeIDs: excludeIDs = [] } = { }) {
@@ -219,7 +277,7 @@ const DataModel = Model.extend({
       const meta = this.readerObject.getDatasetInfo();
       return meta.name + (meta.version ? " " + meta.version : "");
     }
-    return this._name;
+    return this._name.replace("data_", "");
   },
 
   setGrouping(dataId, grouping) {
@@ -240,14 +298,11 @@ const DataModel = Model.extend({
     DataStorage.listenFrame(dataId, framesArray, keys,  cb);
   },
 
-  handleLoadError(error, query) {
-    if (utils.isObject(error)) {
-      const locale = this.getClosestModel("locale");
-      const translation = locale.getTFunction()(error.code, error.payload) || "";
-      error = `${translation} ${error.message || ""}`.trim();
-    }
-
-    utils.warn("Problem with query: ", query);
+  handleLoadError(error) {
+    error.browserDetails = utils.getBrowserDetails();
+    error.osName = utils.getOSname();
+    error.homepoint = window.location.href;
+    error.time = (new Date()).toString();
     this._super(error);
   },
 

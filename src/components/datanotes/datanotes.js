@@ -107,15 +107,15 @@ const DataNotes = Component.extend({
 
     this.element.select(".vzb-data-notes-body")
       .classed("vzb-hidden", !concept.description)
-      .text(concept.description || "");
+      .text(utils.replaceNumberSpacesToNonBreak(concept.description) || "");
 
     this.element.select(".vzb-data-notes-link").classed("vzb-hidden", !concept.sourceLink);
 
     if (concept.sourceLink) {
       const _source = this.translator("hints/source");
       const sourceName = concept.sourceName || "";
-      this.element.select(".vzb-data-notes-link").html("<span>" + (sourceName ? (_source + ":") : "") +
-        '<a href="' + concept.sourceLink + '" target="_blank">' + (sourceName ? sourceName : _source) + "</a></span>");
+      this.element.select(".vzb-data-notes-link").html("<span>" + (sourceName ? (_source + ": ") : "") +
+        '<a href="' + utils.normaliseLink(concept.sourceLink) + '" target="_blank">' + (sourceName ? sourceName : _source) + "</a></span>");
     }
     this.showNotes = concept.sourceLink || concept.description;
   },

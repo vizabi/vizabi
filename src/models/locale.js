@@ -2,7 +2,7 @@ import * as utils from "base/utils";
 import DataConnected from "models/dataconnected";
 
 // this and many other locale information should at some point be stored in an external file with locale information (rtl, date formats etc)
-const rtlLocales = ["ar", "ar-SA"];
+const rtlLocales = ["ar", "ar-SA", "he", "he-IL"];
 
 const LocaleModel = DataConnected.extend({
 
@@ -29,6 +29,8 @@ const LocaleModel = DataConnected.extend({
   init(name, values, parent, bind) {
     this._type = "locale";
 
+    this._translateContributionLink = null; 
+    
     //same constructor, with same arguments
     this._super(name, values, parent, bind);
   },
@@ -41,7 +43,7 @@ const LocaleModel = DataConnected.extend({
     return this.loadData();
   },
 
-  loadData() {
+  loadData(opts) {
     this.setReady(false);
     this._loadCall = true;
 
@@ -50,14 +52,17 @@ const LocaleModel = DataConnected.extend({
     // through the listeners
 
     const promises = [];
-    utils.forEach(this._root._data, mdl => {
-      if (mdl._type === "data") promises.push(mdl.loadConceptProps());
-    });
+
+    if (opts && opts.dataConnectedChange) {
+      utils.forEach(this._root._data, mdl => {
+        if (mdl._type === "data") promises.push(mdl.loadConceptProps());
+      });
+    }
 
     // load UI strings only if we don't have them already
     if (!this.strings[this.id]) {
       promises.push(new Promise((resolve, reject) => {
-        d3.json(this.filePath + this.id + ".json", (error, strings) => {
+        utils.d3json(this.filePath + this.id + ".json", (error, strings) => {
           if (error) return reject(error);
           this._handleNewStrings(strings);
           resolve();
@@ -67,7 +72,7 @@ const LocaleModel = DataConnected.extend({
 
     return Promise.all(promises)
       .then(() => this.trigger("translate"))
-      .catch(() => this.handleLoadError());
+      .catch(error => this.handleLoadError(error));
   },
 
   _handleNewStrings(receivedStrings) {
@@ -106,6 +111,15 @@ const LocaleModel = DataConnected.extend({
 
   isRTL() {
     return (rtlLocales.indexOf(this.id) !== -1);
+  },
+
+  getTranslateContributionLink() {
+    return this._translateContributionLink;
+  },
+
+  setTranslateContributionLink(arg) {
+    this._translateContributionLink = arg;
+    return this;
   }
 
 });

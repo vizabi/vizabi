@@ -34,16 +34,19 @@ const Hook = DataConnected.extend({
     const spaceRefs = this._parent.getSpace(this);
 
     //check what we want to hook this model to
-    utils.forEach(spaceRefs, name => {
+    utils.forEach(spaceRefs, reference => {
       //hook with the closest prefix to this model
-      this._space[name] = this.getClosestModel(name);
+      this._space[reference] = this.getClosestModel(reference);
       //if hooks change, this should load again
-      this._space[name].on("dataConnectedChange", this.handleDataConnectedChange.bind(this));
+      this._space[reference].on("dataConnectedChange", this.handleDataConnectedChange.bind(this));
+      // tell the connected model to set a link with me
+      this._space[reference].setLinkWith(this);
     });
     this.getClosestModel("locale").on("dataConnectedChange", this.handleDataConnectedChange.bind(this));
   },
 
   onSuccessfullLoad() {
+    this.trigger("onSuccessfullLoad");
     this.validate();
     this.buildScale();
     this._super();
@@ -54,18 +57,11 @@ const Hook = DataConnected.extend({
     const obj = { which: newValue.concept };
 
     if (newValue.dataSource) obj.data = newValue.dataSource;
-    const newDataSource = this.getClosestModel(obj.data || this.data);
+    const newDataSource = this.dataSource = this.getClosestModel(obj.data || this.data);
     const conceptProps = newDataSource.getConceptprops(newValue.concept);
 
-    if (newValue.which === "_default") {
-      obj.use = "constant";
-    } else {
-      if (conceptProps.use) obj.use = conceptProps.use;
-    }
-
-    if (conceptProps.scales) {
-      obj.scaleType = conceptProps.scales[0];
-    }
+    if (newValue.use) obj.use = newValue.use;
+    if (conceptProps && conceptProps.scales) obj.scaleType = conceptProps.scales[0];
 
     if (this.getType() === "axis" || this.getType() === "size") {
       obj.domainMin = null;
@@ -74,7 +70,20 @@ const Hook = DataConnected.extend({
       obj.zoomedMax = null;
     }
 
-    this.set(obj);
+    //FIXME: this will set spaceRef ofa hook when there are multiple dimensions to chose from
+    //this has a limitation because hook can only be 1-dimensional here (but now it can point to any of the dimensions)
+    //when we introduce hook spaces this should be replaced by setting space of a hook based on newValue
+    if (newValue.use === "property" && newValue.key && newValue.key.length === 1) {
+      obj.spaceRef = utils.find(this._space, entityMdl => entityMdl.dim === newValue.key[0].concept)._name;
+    }
+    if (newValue.use === "constant" || newValue.use === "indicator") {
+      obj.spaceRef = null;
+    }
+
+    this.set(obj, undefined, undefined, undefined, this.setWhich);
+
+    //support external page indicator frequency tracking
+    this._root.trigger("change_hook_which", { "which": obj.which, "hook": this._name });
   },
 
   setScaleType(newValue) {
@@ -88,14 +97,41 @@ const Hook = DataConnected.extend({
 
   afterPreload() {
     this.autoconfigureModel();
+    if (!this.spaceRef) this.spaceRef = this.updateSpaceReference();
   },
 
-  autoconfigureModel() {
+  autoconfigureModel(autoconfigResult) {
+
     if (!this.which && this.autoconfig) {
-      const concept = this.dataSource.getConcept(this.autoconfig);
-      if (concept) this.which = concept.concept;
+      if (!autoconfigResult) autoconfigResult = this._parent.getAvailableConcept(this.autoconfig);
+
+      if (autoconfigResult) {
+        const concept = autoconfigResult.value;
+        const obj = {
+          //dataSource: autoconfigResult.dataSource,
+          which: concept.concept,
+          use: ((autoconfigResult.key.size || autoconfigResult.key.length) > 1 || this.autoconfig.type === "time") ? "indicator" : "property",
+          scaleType: concept.scales[0] || "linear"
+        };
+        this.set(obj);
+      } else {
+        const obj = {
+          which: "_default",
+          use: "constant",
+          scaleType: "ordinal"
+        };
+        this.set(obj);
+      }
+
       utils.printAutoconfigResult(this);
     }
+  },
+
+  updateSpaceReference() {
+    if (this.use !== "property") return null;
+    const newSpaceRef = "entities" + this._name.replace(this._type, "");
+
+    return  this._space[newSpaceRef] ? newSpaceRef : this._parent.getSpace()[0]._name;
   },
 
   /**
@@ -110,12 +146,9 @@ const Hook = DataConnected.extend({
 
     // then start loading data
 
-    if (!this.which) return Promise.resolve();
+    if (!this.which || this.use === "constant") return Promise.resolve();
 
     this.trigger("hook_change");
-
-    // TODO: should be set on data source switch, but load happens before change events
-    this.dataSource = this.getClosestModel(this.data);
 
     const query = this.getQuery(opts.splashScreen);
 
@@ -160,11 +193,6 @@ const Hook = DataConnected.extend({
   afterLoad(dataId) {
     this._dataId = dataId;
 
-    const grouping = this._parent._getGrouping();
-    if (grouping) {
-      this.dataSource.setGrouping(dataId, grouping);
-    }
-
     utils.timeStamp("Vizabi Model: Data loaded: " + this._id);
   },
 
@@ -187,9 +215,8 @@ const Hook = DataConnected.extend({
     // select
     // we remove this.which from values if it duplicates a dimension
     const allDimensions = utils.unique(this._getAllDimensions(exceptions));
-    let dimensions = (prop && allDimensions.length > 1) ? [(this.spaceRef ? this._space[this.spaceRef].dim : this.which)] : allDimensions;
+    const dimensions = (this.use === "property" && allDimensions.length > 1) ? [allDimensions.indexOf(this.which) !== -1 ? this.which : this.getEntity().dim] : allDimensions;
 
-    dimensions = dimensions.filter(f => f !== "_default");// && f!==null);
     if (!dimensions || !dimensions.length) {
       utils.warn("getQuery() produced no query because no keys are available");
       return true;
@@ -206,7 +233,7 @@ const Hook = DataConnected.extend({
     const from = prop ? "entities" : "datapoints";
 
     // where
-    filters = this._getAllFilters(exceptions, splashScreen);
+    filters = this._getAllFilters(exceptions, { splash: splashScreen, entityTypeRequest: prop });
     if (prop && allDimensions.length > 1) {
       const f = {};
       if (filters[dimensions]) f[dimensions] = filters[dimensions];
@@ -225,23 +252,33 @@ const Hook = DataConnected.extend({
     }
 
     // join
-    let join = this._getAllJoins(exceptions, splashScreen);
+    let join = this._getAllJoins(exceptions, { splash: splashScreen, entityTypeRequest: prop });
     if (prop && allDimensions.length > 1) {
       const j = {};
       if (join["$" + dimensions]) j["$" + dimensions] = join["$" + dimensions];
       join = j;
     }
 
+    // grouping
+    let grouping = this._parent._getGrouping();
+    if (grouping) {
+      grouping = utils.clone(grouping, dimensions);
+      if (utils.isEmpty(grouping)) grouping = false;
+    }
+
     //return query
-    return {
+    const query = {
       "language": this.getClosestModel("locale").id,
       "from": from,
       "animatable": animatable,
+      "gapfill": !this.disable_gapfill,
       "select": select,
       "where": explicitAndFilters,
       "join": join,
       "order_by": prop ? ["rank"] : [this._space.time.dim]
     };
+    if (grouping) query["grouping"] = grouping;
+    return query;
   },
 
 
@@ -272,10 +309,10 @@ const Hook = DataConnected.extend({
 
   /**
    * gets all hook filters
-   * @param {Boolean} splashScreen get filters for first screen only
+   * @param {Boolean} filterOpts get filters for first screen only
    * @returns {Object} filters
    */
-  _getAllFilters(opts, splashScreen) {
+  _getAllFilters(opts, filterOpts) {
     opts = opts || {};
     let filters = {};
     const _this = this;
@@ -286,12 +323,11 @@ const Hook = DataConnected.extend({
       if (opts.onlyType && h.getType() !== opts.onlyType) {
         return true;
       }
-      if (h.skipFilter || _this._parent.skipFilter) return;
       // if query's dimensions are the same as the hook's, no join
       if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
-        filters = utils.extend(filters, h.getFilter(splashScreen));
+        filters = utils.extend(filters, h.getFilter(filterOpts));
       } else {
-        const joinFilter = h.getFilter(splashScreen);
+        const joinFilter = h.getFilter(filterOpts);
         if (joinFilter != null && !utils.isEmpty(joinFilter)) {
           const filter = {};
           filter[h.getDimension()] = "$" + h.getDimension();
@@ -302,7 +338,7 @@ const Hook = DataConnected.extend({
     return filters;
   },
 
-  _getAllJoins(opts, splashScreen) {
+  _getAllJoins(opts, filterOpts) {
     const joins = {};
     const _this = this;
     utils.forEach(this._space, h => {
@@ -315,13 +351,12 @@ const Hook = DataConnected.extend({
       if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
         return true;
       }
-      if (h.skipFilter || _this._parent.skipFilter) return;
 
-      const filter = h.getFilter(splashScreen);
+      const filter = h.getFilter(filterOpts);
       if (filter != null && !utils.isEmpty(filter)) {
         joins["$" + h.getDimension()] = {
           key: h.getDimension(),
-          where: h.getFilter(splashScreen)
+          where: h.getFilter(filterOpts)
         };
       }
     });
@@ -484,6 +519,12 @@ const Hook = DataConnected.extend({
     return this.dataSource.getData(this._dataId, "limits", attr);
   },
 
+  getTimespan() {
+    const timeModel = this._parent._parent.time;
+    if (this.use !== "indicator" || this.which == timeModel.dim || !this._important || !this._dataId) return;
+    return this.dataSource.getData(this._dataId, "timespan", this.which);
+  },
+
   getFrame(steps, forceFrame, selected) {
     return this.dataSource.getFrame(this._dataId, steps, forceFrame, selected);
   },
@@ -495,14 +536,18 @@ const Hook = DataConnected.extend({
   /**
    * gets hook values according dimension values
    */
-  getItems() {
+  getItems(filtered) {
     const _this = this;
     const dim = this.spaceRef && this._space[this.spaceRef] ? this._space[this.spaceRef].dim : _this._getFirstDimension({ exceptType: "time" });
     const items = {};
     const validItems = this.getValidItems();
 
+    const filterItems = filtered ? this.getEntity().getFilteredEntities().map(d => d[dim]) : [];
+    const filterLength = filterItems.length;
+
     if (utils.isArray(validItems)) {
       validItems.forEach(d => {
+        if (filterLength && !filterItems.includes(d[dim])) return;
         items[d[dim]] = d[_this.which];
       });
     }
@@ -551,19 +596,12 @@ const Hook = DataConnected.extend({
 
     };
 
-    const iterateGroupKeys = function(data, deep, result, cb) {
-      deep--;
-      utils.forEach(data, (d, id) => {
-        if (deep) {
-          result[id] = {};
-          iterateGroupKeys(d, deep, result[id], cb);
-        } else {
-          cb(d, result, id);
-        }
+    utils.forEach(filtered, (times, key) => {
+      const limit = limitsDim[JSON.parse(key).join(",")] = {};
+      utils.forEach(times, (item, time) => {
+        countLimits(item, limit, time);
       });
-    };
-
-    iterateGroupKeys(filtered, dims.length, limitsDim, countLimits);
+    });
 
     return limitsDim;
   },
@@ -590,7 +628,7 @@ const Hook = DataConnected.extend({
     // validate scale type: only makes sense if which is defined
     if (this.which) {
       const { scaleType } = this;
-      let { scales = [] } = this.getConceptprops();
+      let { scales = [] } = this.getConceptprops() || {};
       if (this.allow && this.allow.scales && this.allow.scales.length > 0) {
         scales = scales.filter(val => this.allow.scales.indexOf(val) != -1);
       }
@@ -599,15 +637,18 @@ const Hook = DataConnected.extend({
       const genericLogIsAllowed = scales.includes("log") && scaleType === "genericLog";
       if (!(scaleTypeIsAllowed || genericLogIsAllowed) && scales.length > 0) {
         const [firstAllowedScaleType] = scales;
-        this.set({ scaleType: firstAllowedScaleType === "nominal" ? "ordinal" : firstAllowedScaleType }, null, false);
+        this.set({ scaleType: firstAllowedScaleType }, null, false);
       }
     }
   },
 
   getEntity() {
-    return this._space[this.spaceRef || this._parent.getSpace()[0]];
+    return this._space[this.spaceRef] || this._parent._space[this.spaceRef] || this._parent._space[this._parent.getSpace()[0]];
   },
 
+  getDataKeys() {
+    return this.spaceRef ? [this.getEntity().dim] : this._getAllDimensions({ exceptType: "time" });
+  }
 });
 
 export default Hook;

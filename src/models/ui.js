@@ -30,6 +30,7 @@ const UI = Model.extend({
       presentation: false,
       buttons: [],
       dialogs: {
+        dialog: { find: { enableSelectShowSwitch: false } },
         popup: [],
         sidebar: [],
         moreoptions: []

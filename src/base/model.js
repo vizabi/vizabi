@@ -92,6 +92,7 @@ const Model = EventSource.extend({
     this._parent = parent;
     this._root = parent ? parent._root : this;
     this._name = name;
+    this._inError = false;
     this._ready = false;
     this._readyOnce = false;
     //has this model ever been ready?
@@ -147,9 +148,10 @@ const Model = EventSource.extend({
    * @param val property value (object or value)
    * @param {Boolean} force force setting of property to value and triggers set event
    * @param {Boolean} persistent true if the change is a persistent change
+   * @param {Function} caller — the outer function that has called this setter might want to identify itself to avoid recursive call
    * @returns defer defer that will be resolved when set is done
    */
-  set(attr, val, force, persistent) {
+  set(attr, val, force, persistent, caller) {
     const setting = this._setting;
     let attrs;
     let freezeCall = false; // boolean, indicates if this .set()-call froze the modelTree
@@ -192,9 +194,12 @@ const Model = EventSource.extend({
           changes.push(attribute);
         }
 
-        const fn = "set" + utils.capitalize(attribute);
-        if (this.isHook() && utils.isFunction(this[fn]) && val !== prevValue) {
-          this[fn](attribute === "which" ? { concept: val, dataSource: this.data } : val);
+        //if a hook has "setAttribute" funation, then call it from here, except when the Caller is that particular function
+        //avoiding double calling prevents side effects
+        //TODO: this was introduced to handle back button, but it looks like a hack really
+        const fn = "set" + utils.capitalize(attribute[0]) + attribute.slice(1);
+        if (this.isHook() && utils.isFunction(this[fn]) && caller !== this[fn] && val !== prevValue) {
+          this[fn](attribute === "which" ? { concept: val } : val);
         }
 
       } else {
@@ -421,6 +426,7 @@ const Model = EventSource.extend({
    * @returns defer
    */
   startLoading(opts) {
+    this.trigger("startLoading");
 
     const promises = [];
     promises.push(this.loadData(opts));
@@ -432,12 +438,8 @@ const Model = EventSource.extend({
     return Promise.all(promises)
       .then(this.onSuccessfullLoad.bind(this))
       .catch(error => {
-        const translator = this.getClosestModel("locale").getTFunction();
-        this.triggerLoadError([
-          translator("crash/error"),
-          window.navigator.userAgent,
-          error
-        ].join("<br>"));
+        utils.error("error in model " + this._name);
+        this.triggerLoadError(error);
       });
   },
 
@@ -472,18 +474,22 @@ const Model = EventSource.extend({
     );
   },
 
-  handleLoadError(error = this.getDefaultErrorMessage()) {
-    throw error;
+  handleLoadError(error = this.getDefaultError()) {
+    this.triggerLoadError(error);
   },
 
-  getDefaultErrorMessage() {
-    return this.getClosestModel("locale")
-      .getTFunction()("connection/error");
+  getDefaultError() {
+    const error = new Error;
+    error.message = this.getClosestModel("locale").getTFunction()("connection/error");
+    return error;
   },
 
   triggerLoadError(error) {
-    utils.error(error);
-    this.trigger("load_error", error);
+    EventSource.unfreezeAll();
+    if (this._inError) return utils.error("Model " + this._name + " already in error");
+    this._inError = true;
+    this._root.trigger("load_error", error);
+    this._root.trigger("load_error1", error);
   },
 
   /**

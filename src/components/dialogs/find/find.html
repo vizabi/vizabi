@@ -2,31 +2,47 @@
   <span class="thumb-tack-class thumb-tack-class-ico-pin fa" data-dialogtype="find" data-click="pinDialog"></span>
   <span class="thumb-tack-class thumb-tack-class-ico-drag fa" data-dialogtype="find" data-click="dragDialog"></span>
   <div class="vzb-dialog-title">
-    <%=t ("dialogs/find") %>
-    <span class="vzb-find-filter-selector"></span>
+    <label class="vzb-dialog-title-switch">
+      <input type="checkbox">
+      <span class="vzb-switch-slider round"></span>
+      <span class="vzb-switch-off"><%=t ("dialogs/find") %></span>
+      <span class="vzb-switch-on"><%=t ("buttons/show") %></span>
+    </label>
     <span class="vzb-dialog-content vzb-find-filter">
-      <form>
+      <form novalidate>
         <input class="vzb-find-search" type="search" required/>
-        <button class="vzb-cancel-button" type="reset"/>
+        <button class="vzb-cancel-button" type="reset"></button>
       </form>
     </span>
+    <span class="vzb-find-filter-selector"></span>
   </div>
   
   <div class="vzb-dialog-content vzb-dialog-content-fixed vzb-dialog-scrollable">
-    <div class="vzb-find-list">
-      <!-- list will be placed here -->
-    </div>
+      <div class="vzb-dialog-content vzb-dialog-scrollable vzb-dialog-panel vzb-dialog-panel-find vzb-active">
+        <div class="vzb-find-list">
+          <!-- list will be placed here -->
+        </div>
+      </div>
+
+      <div class="vzb-dialog-content vzb-dialog-scrollable vzb-dialog-panel vzb-dialog-panel-show">
+      </div>
   </div>
 
   <div class="vzb-dialog-buttons">
-    <div class="vzb-dialog-bubbleopacity vzb-dialog-control"></div>
-    <div class="vzb-dialog-button vzb-find-deselect">
+    <div class="vzb-dialog-bubbleopacity vzb-dialog-control" data-panel="find"></div>
+    <div class="vzb-dialog-button vzb-find-deselect" data-panel="find">
       <%=t ("buttons/deselect") %>
     </div>
-
-    <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary">
+    <div class="vzb-dialog-button vzb-show-deselect" data-panel="show">
+      <%=t ("buttons/reset") %>
+    </div>
+    <div class="vzb-dialog-button vzb-show-apply" data-panel="show">
+      <%=t ("buttons/apply") %>
+    </div>
+      
+    <div data-dialogtype="find" data-click="closeDialog" class="vzb-dialog-button vzb-label-primary">
       <%=t ("buttons/ok") %>
     </div>
-  </div>
+  </div>  
 
 </div>

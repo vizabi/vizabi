@@ -18,6 +18,7 @@ const SizeModel = Axis.extend({
       domainMax: null,
       zoomedMin: null,
       zoomedMax: null,
+      fixBaseline: 0,
       extent: [0, 0.85],
       scaleType: null,
       allow: {
@@ -35,26 +36,7 @@ const SizeModel = Axis.extend({
     //but then also clamp a numeric scale
     if (this.scaleType !== "ordinal") this.scale.clamp(true);
 
-  },
-
-  autoconfigureModel() {
-    if (!this.which && this.autoconfig) {
-      const concept = this.dataSource.getConcept(this.autoconfig);
-
-      if (concept) {
-        this.which = concept.concept;
-        this.use = "indicator";
-        this.scaleType = "linear";
-      } else {
-        this.which = "_default";
-        this.use = "constant";
-        this.scaleType = "ordinal";
-      }
-
-      utils.printAutoconfigResult(this);
-    }
   }
-
 });
 
 export default SizeModel;

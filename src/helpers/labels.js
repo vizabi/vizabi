@@ -119,7 +119,7 @@ const label = function(context) {
           .on("mouseover", function(d) {
             if (utils.isTouchDevice()) return;
             _this.model.marker.highlightMarker(d);
-            const KEY = _this.KEY || _this.model.entities.getDimension();
+            const KEY = _this.KEY || _this.context.KEY;
             // hovered label should be on top of other labels: if "a" is not the hovered element "d", send "a" to the back
             _this.entityLabels.sort((a, b) => a[KEY] != d[KEY] ? -1 : 1);
             d3.select(this).selectAll("." + _cssPrefix + "-label-x")
@@ -134,7 +134,7 @@ const label = function(context) {
           .on("click", function(d) {
             if (!utils.isTouchDevice()) return;
             const cross = d3.select(this).selectAll("." + _cssPrefix + "-label-x");
-            const KEY = _this.KEY || _this.model.entities.getDimension();
+            const KEY = _this.KEY || _this.context.KEY;
             const hidden = cross.classed("vzb-transparent");
             if (hidden) {
               // hovered label should be on top of other labels: if "a" is not the hovered element "d", send "a" to the back
@@ -382,7 +382,8 @@ const Labels = Class.extend({
   },
 
   ready() {
-    this.KEY = this.context.model.entities.getDimension();
+    this.KEYS = this.context.KEYS;
+    this.KEY = this.context.KEY;
     this.updateIndicators();
     this.updateLabelSizeLimits();
     //this.updateLabelsOnlyTextSize();
@@ -415,7 +416,8 @@ const Labels = Class.extend({
         _this.updateLabelsOnlyTextSize();
       });
 
-    this.KEY = this.context.model.entities.getDimension();
+    this.KEYS = this.context.KEYS;
+    this.KEY = this.context.KEY;
 
     this.cached = {};
 
@@ -494,13 +496,19 @@ const Labels = Class.extend({
 
   selectDataPoints() {
     const _this = this;
+    const KEYS = this.KEYS;
     const KEY = this.KEY;
     const _cssPrefix = this.options.CSS_PREFIX;
 
+    const select = _this.model.marker.select.map(d => {
+      const p = utils.clone(d, KEYS);
+      p[KEY] = utils.getKey(d, KEYS);
+      return p;
+    });
     this.entityLabels = this.labelsContainer.selectAll("." + _cssPrefix + "-entity")
-      .data(_this.model.marker.select, d => (d[KEY]));
+      .data(select, d => (d[KEY]));
     this.entityLines = this.linesContainer.selectAll("g.entity-line." + _cssPrefix + "-entity")
-      .data(_this.model.marker.select, d => (d[KEY]));
+      .data(select, d => (d[KEY]));
 
     this.entityLabels.exit()
       .each(d => {
@@ -552,6 +560,7 @@ const Labels = Class.extend({
 
   updateLabel(d, index, cache, valueX, valueY, valueS, valueC, valueL, valueLST, duration, showhide) {
     const _this = this;
+    const KEYS = this.KEYS;
     const KEY = this.KEY;
     if (d[KEY] == _this.druging)
       return;
@@ -572,7 +581,7 @@ const Labels = Class.extend({
 
       if (cached.labelX_ == null || cached.labelY_ == null)
       {
-        const select = utils.find(_this.model.marker.select, f => f[KEY] == d[KEY]);
+        const select = utils.find(_this.model.marker.select, f => utils.getKey(f, KEYS) == d[KEY]);
         cached.labelOffset = select.labelOffset || [0, 0];
       }
 
@@ -666,11 +675,14 @@ const Labels = Class.extend({
         const fontSize = range[0] + Math.sqrt((_this.labelSizeTextScale(valueLST) - range[0]) * (range[1] - range[0]));
         _text.attr("font-size", fontSize + "px");
       } else {
-        _text.attr("font-size", "");
+        _text.attr("font-size", null);
       }
     }
 
+    //turn off stroke because ie11/edge return stroked bounding box for text
+    _text.style("stroke", "none");
     const contentBBox = _text.node().getBBox();
+    _text.style("stroke", null);
 
     const rect = labelGroup.selectAll("rect");
 
@@ -720,11 +732,12 @@ const Labels = Class.extend({
 
   updateLabelsOnlyTextSize() {
     const _this = this;
+    const KEYS = this.KEYS;
     const KEY = this.KEY;
 
     this.entityLabels.each(function(d, index) {
       const cached = _this.cached[d[KEY]];
-      _this._updateLabelSize(d, index, null, d3.select(this), _this.context.frame.size_label[d[KEY]]);
+      _this._updateLabelSize(d, index, null, d3.select(this), _this.context.frame.size_label[utils.getKey(d, KEYS)]);
       const lineGroup = _this.entityLines.filter(f => f[KEY] == d[KEY]);
       _this.positionLabel(d, index, null, this, 0, null, lineGroup);
     });

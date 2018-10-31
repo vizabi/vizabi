@@ -22,6 +22,7 @@ const AxisModel = Hook.extend({
       domainMax: null,
       zoomedMin: null,
       zoomedMax: null,
+      fixBaseline: null,
       scaleType: "linear",
       allow: {
         scales: ["linear", "log", "genericLog", "time", "pow"]
@@ -30,15 +31,11 @@ const AxisModel = Hook.extend({
     return utils.deepExtend(this._super(), defaults);
   },
 
-  autoconfigureModel() {
-    if (!this.which && this.autoconfig) {
-
-      const concept = this.dataSource.getConcept(this.autoconfig)
-        || this.dataSource.getConcept({ type: "time" });
-
-      if (concept) this.which = concept.concept;
-      utils.printAutoconfigResult(this);
+  autoconfigureModel(autoconfigResult) {
+    if (!this.which && this.autoconfig && this._type === "axis") {
+      autoconfigResult = this._parent.getAvailableConcept(this.autoconfig) || this._parent.getAvailableConcept({ type: "time" });
     }
+    this._super(autoconfigResult);
   },
 
   _type: "axis",
@@ -83,7 +80,9 @@ const AxisModel = Hook.extend({
         const limits = this.getLimits(this.which);
         //default domain is based on limits
         domain = [limits.min, limits.max];
-        //min and max can override the domain if defined
+        //fixBaseline can override the domain if defined and if limits.min isn't negative
+        domain[0] = ((this.fixBaseline || this.fixBaseline === 0) && limits.min > 0) ? +this.fixBaseline : domain[0];
+        //min and max can further override the domain if defined
         domain[0] = this.domainMin != null ? +this.domainMin : domain[0];
         domain[1] = this.domainMax != null ? +this.domainMax : domain[1];
       } else {

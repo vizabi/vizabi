@@ -48,35 +48,10 @@ const ColorModel = Hook.extend({
       palette: {},
       paletteLabels: null,
       allow: {
-        //this is almost everything, but not "nominal", so no random strings like "name"
         scales: ["linear", "log", "genericLog", "time", "pow", "ordinal"]
       }
     };
     return utils.deepExtend(this._super(), defaults);
-  },
-
-  autoconfigureModel() {
-    if (!this.which && this.autoconfig) {
-      const concept = this.dataSource.getConcept(this.autoconfig);
-
-      if (concept) {
-        const obj = {
-          which: concept.concept,
-          use: concept.use || "indicator",
-          scaleType: (concept.scales && concept.scales[0] ? concept.scales[0] : "linear")
-        };
-        this.set(obj);
-      } else {
-        const obj = {
-          which: "_default",
-          use: "constant",
-          scaleType: "ordinal"
-        };
-        this.set(obj);
-      }
-
-      utils.printAutoconfigResult(this);
-    }
   },
 
   /**
@@ -101,7 +76,7 @@ const ColorModel = Hook.extend({
 
       if (_this.palette && Object.keys(_this.palette._data).length !== 0) {
         const defaultPalette = _this.getDefaultPalette();
-        const currentPalette = _this.getPalette(true);
+        const currentPalette = _this.getPalette();
         const palette = {};
         //extend partial current palette with default palette and
         //switch current palette elements which equals
@@ -114,7 +89,7 @@ const ColorModel = Hook.extend({
     });
   },
 
-  setInterModelListeners() {
+  afterPreload() {
     this._super();
     this._setSyncModels();
   },
@@ -126,10 +101,10 @@ const ColorModel = Hook.extend({
     if (!args) return utils.warn("getColorShade() is missing arguments");
 
     // if colorID is not given or not found in the palette, replace it with default color
-    if (!args.colorID || !palette[args.colorID]) args.colorID = "_default";
+    //if (!args.colorID || !palette[args.colorID]) args.colorID = "_default";
 
     // if the resolved colr value is not an array (has only one shade) -- return it
-    if (!utils.isArray(palette[args.colorID])) return args.shadeID == "shade" ? d3.rgb(palette[args.colorID]).darker(0.5).toString() : palette[args.colorID];
+    if (!utils.isArray(palette[args.colorID])) return args.shadeID == "shade" ? d3.rgb(palette[args.colorID] || this.scale(args.colorID)).darker(0.5).toString() : palette[args.colorID];
 
     const conceptpropsColor = this.getConceptprops().color;
     const shade = args.shadeID && conceptpropsColor && conceptpropsColor.shades && conceptpropsColor.shades[args.shadeID] ? conceptpropsColor.shades[args.shadeID] : 0;
@@ -163,7 +138,7 @@ const ColorModel = Hook.extend({
       //save the references here locally
       _this._syncModelReferences[modelName] = { model, marker, entities };
 
-      if (_this.isDiscrete()) _this._setSyncModel(model, marker, entities);
+      if (_this.isDiscrete() && _this.use !== "constant") _this._setSyncModel(model, marker, entities);
     });
   },
 
@@ -176,7 +151,7 @@ const ColorModel = Hook.extend({
       marker.setDataSourceForAllSubhooks(this.data);
       entities.set(newFilter, false, false);
     } else {
-      if (model.isDiscrete() && model.use !== "constant") model.set({ which: this.which, data: this.data }, false, false);
+      if (model.isDiscrete()) model.set({ which: this.which, data: this.data, spaceRef: this.spaceRef }, false, false);
     }
   },
 
@@ -261,7 +236,7 @@ const ColorModel = Hook.extend({
     return this.paletteLabels.getPlainObject();
   },
 
-  getPalette(includeDefault) {
+  getPalette() {
     //rebuild palette if it's empty
     if (!this.palette || Object.keys(this.palette._data).length === 0) {
       const palette = this.getDefaultPalette();
@@ -270,7 +245,7 @@ const ColorModel = Hook.extend({
       this.set("paletteLabels", paletteLabels, false, false);
     }
     const palette = this.palette.getPlainObject();
-    if (this.use === "indicator" && !includeDefault) {
+    if (this.scaleType !== "ordinal") {
       delete palette["_default"];
     }
     return palette;

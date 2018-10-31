@@ -76,7 +76,7 @@
         stroke: none;
       }
     }
-    .vzb-cl-unit {
+    .vzb-cl-subtitle {
       top: 30px;
       position: relative;
       padding-bottom: 5px;
@@ -105,7 +105,7 @@
     width: 100%;
     svg {height: 100%;}
   }
-  .vzb-cl-unit-text {
+  .vzb-cl-subtitle-text {
     display: block;
     white-space: normal;
   }
@@ -133,6 +133,9 @@
     z-index: 1;
 
     &-item {
+      @include rtl {
+        float: right;
+      }
       float: left;
       margin: 3px auto;
       cursor: pointer;
@@ -157,6 +160,10 @@
     }
 
     &-close {
+      @include rtl {
+        left: 5px;
+        right: auto;
+      }
       cursor: pointer;
       position: absolute;
       right: 5px;

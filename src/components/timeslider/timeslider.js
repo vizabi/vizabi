@@ -27,7 +27,7 @@ const profiles = {
   },
   medium: {
     margin: {
-      top: 10,
+      top: 0,
       right: 15,
       bottom: 10,
       left: 50
@@ -37,7 +37,7 @@ const profiles = {
   },
   large: {
     margin: {
-      top: 5,
+      top: -5,
       right: 15,
       bottom: 10,
       left: 75
@@ -77,9 +77,6 @@ const TimeSlider = Component.extend({
       name: "time",
       type: "time"
     }, {
-      name: "entities",
-      type: "entities"
-    }, {
       name: "marker",
       type: "marker"
     }, {
@@ -105,12 +102,14 @@ const TimeSlider = Component.extend({
         if (_this.slide) {
           //only set handle position if change is external
           if (!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
+          _this.ready();
         }
       },
       "change:time.end": function(evt, path) {
         if (_this.slide) {
           //only set handle position if change is external
           if (!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
+          _this.ready();
         }
       },
       "change:time.offset": function(evt, path) {
@@ -139,11 +138,14 @@ const TimeSlider = Component.extend({
     // Same constructor as the superclass
     this._super(model, context);
 
+    this.profiles = utils.deepClone(profiles);
+    this.presentationProfileChanges = utils.deepClone(presentationProfileChanges);
+
     if ((this.model.ui.chart || {}).margin) {
       this.model.on("change:ui.chart.margin", (evt, path) => {
         const layoutProfile = _this.getLayoutProfile();
         if (layoutProfile !== "small") {
-          const profile = profiles[layoutProfile];
+          const profile = _this.profiles[layoutProfile];
           profile.margin.left = _this.model.ui.chart.margin.left;
         }
         if (_this.slide) {
@@ -192,6 +194,15 @@ const TimeSlider = Component.extend({
     this.handle = this.element.select(".vzb-ts-slider-handle");
     this.valueText = this.element.select(".vzb-ts-slider-value");
     this.playButtons = this.element.select(".vzb-ts-btns");
+
+    this.element.select(".vzb-ts-btn-play").on("click", () => {
+      _this.model.time.play();
+    });
+
+    this.element.select(".vzb-ts-btn-pause").on("click", () => {
+      _this.model.time.pause("soft");
+    });
+
     //Scale
     this.xScale = d3.scaleUtc()
       .clamp(true);
@@ -265,7 +276,7 @@ const TimeSlider = Component.extend({
     // special for linechart: resize timeslider to match time x-axis length
     this.parent.on("myEvent", (evt, params) => {
       const layoutProfile = _this.getLayoutProfile();
-      const profile = profiles[layoutProfile];
+      const profile = _this.profiles[layoutProfile];
 
       if (params.profile && params.profile.margin) {
         profile.margin = params.profile.margin;
@@ -287,21 +298,11 @@ const TimeSlider = Component.extend({
   ready() {
     if (this.model.time.splash) return;
 
-    this.element.classed(class_loading, false);
+    if (!this.model.time._ready) return utils.warn("TODO timeslider is fired ready event while time model is not ready yet! how come?");
 
-    const play = this.element.select(".vzb-ts-btn-play");
-    const pause = this.element.select(".vzb-ts-btn-pause");
     const _this = this;
-    const time = this.model.time;
 
-    play.on("click", () => {
-
-      _this.model.time.play();
-    });
-
-    pause.on("click", () => {
-      _this.model.time.pause("soft");
-    });
+    this.element.classed(class_loading, false);
 
     this.changeLimits();
     this.changeTime();
@@ -340,7 +341,7 @@ const TimeSlider = Component.extend({
 
     this.model.time.pause();
 
-    this.profile = this.getActiveProfile(profiles, presentationProfileChanges);
+    this.profile = this.getActiveProfile(this.profiles, this.presentationProfileChanges);
 
     const slider_w = parseInt(this.slider_outer.style("width"), 10) || 0;
     const slider_h = parseInt(this.slider_outer.style("height"), 10) || 0;
@@ -400,16 +401,18 @@ const TimeSlider = Component.extend({
 
     const select = _this.model.marker.select;
     if (select.length == 0) {
-      _this.model.time.set({
-        startSelected: new Date(_this.model.time.start),
-        endSelected: new Date(_this.model.time.end)
-      }, null, false  /*make change non-persistent for URL and history*/);
+      if (_this.model.time.start != null && _this.model.time.end != null) {
+        _this.model.time.set({
+          startSelected: new Date(_this.model.time.start),
+          endSelected: new Date(_this.model.time.end)
+        }, null, false  /*make change non-persistent for URL and history*/);
+      }
       return;
     }
-    const KEY = _this.model.entities.getDimension();
+    const KEYS = utils.unique(this.model.marker._getAllDimensions({ exceptType: "time" }));
     const proms = [];
     utils.forEach(select, entity => {
-      proms.push(_this.model.marker.getEntityLimits(entity[KEY]));
+      proms.push(_this.model.marker.getEntityLimits(utils.getKey(entity, KEYS)));
     });
     Promise.all(proms).then(limits => {
       if (_setSelectedLimitsId != _this._setSelectedLimitsId) return;

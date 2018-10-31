@@ -1,8 +1,9 @@
 import * as utils from "base/utils";
 import Model from "base/model";
 import Component from "base/component";
-import { warn as warnIcon } from "base/iconset";
 import EventSource, { DefaultEvent } from "base/events";
+import DimensionManager from "base/dimensionmanager";
+import DataManager from "base/datamanager";
 
 const class_loading_first = "vzb-loading-first";
 const class_loading_data = "vzb-loading-data";
@@ -22,6 +23,8 @@ const ToolModel = Model.extend({
     this._id = utils.uniqueId("tm");
     this._type = "tool";
     this._component = tool;
+    this.dimensionManager = DimensionManager(this);
+    this.dataManager = DataManager(this);
 
     // defaults are defined on the Tool
     // this way, each tool can have it's own default model
@@ -62,51 +65,7 @@ const ToolModel = Model.extend({
     }
 
     validate_func(c);
-  },
-
-  setReady(arg) {
-    if (arg !== false) this.checkTimeLimits();
-    this._super(arg);
-  },
-
-
-  checkTimeLimits() {
-
-    const time = this.state.time;
-    const timeDependentMarkers = this.state.getSubmodels(false /*return as array*/, f => f._type == "marker" && f.space.includes("time"));
-
-    if (!time || !timeDependentMarkers.length) return;
-
-    const tLimits = {};
-    timeDependentMarkers.forEach(marker => {
-      const l = marker.getTimeLimits();
-      tLimits.min = d3.max([tLimits.min, l.min]);
-      tLimits.max = d3.min([tLimits.max, l.max]);
-    });
-
-    if (!utils.isDate(tLimits.min) || !utils.isDate(tLimits.max))
-      return utils.warn("checkTimeLimits(): min-max look wrong: " + tLimits.min + " " + tLimits.max + ". Expecting Date objects. Ensure that time is properly parsed in the data from reader");
-
-    // change start and end (but keep startOrigin and endOrigin for furhter requests)
-    const newTime = {};
-    if (time.start - tLimits.min != 0 || !time.start && !time.startOrigin) newTime["start"] = d3.max([tLimits.min, time.parse(time.startOrigin)]);
-    if (time.end - tLimits.max != 0 || !time.end && !time.endOrigin) newTime["end"] = d3.min([tLimits.max, time.parse(time.endOrigin)]);
-
-    time.set(newTime, false, false);
-
-    if (newTime.start || newTime.end) {
-      timeDependentMarkers.forEach(marker => {
-        utils.forEach(marker.getSubhooks(), hook => {
-          if (hook.which == time.dim) {
-            hook.buildScale();
-          }
-        });
-      });
-    }
-
-    //force time validation because time.value might now fall outside of start-end
-    time.validate();
-  },
+  }
 
 });
 
@@ -201,9 +160,8 @@ const Tool = Component.extend({
           _this.translateStrings();
           _this.model.ui.setRTL(_this.model.locale.isRTL());
         },
-        "load_error": (...args) => {
-          this.renderError();
-          this.error(...args);
+        "load_error1": (evt, error) => {
+          this.renderError(error);
         }
       });
   },
@@ -245,7 +203,7 @@ const Tool = Component.extend({
       .then(this.model.startLoading.bind(this.model))
       .then(this.finishLoading.bind(this))
       .catch(error => {
-        EventSource.unfreezeAll();
+        utils.error("error in tool promise chain");
         this.model.triggerLoadError(error);
       });
 
@@ -301,18 +259,6 @@ const Tool = Component.extend({
     this._super();
   },
 
-  /**
-   * Visually display errors
-   */
-  error(options, message) {
-    if (!message) {
-      message = options && options.type === "data" ?
-        "Error loading chart data. <br>Please, try again later." :
-        "Error loading chart";
-    }
-
-    this.placeholder.innerHTML = `<div class="vzb-error-message"><h1>${warnIcon}</h1><p>${message}</p></div>`;
-  },
 
   /**
    * Sets model from external page

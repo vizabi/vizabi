@@ -19,13 +19,22 @@ const Presentation = Dialog.extend("presentation", {
 
     // in dialog, this.model_expects = ["state", "data"];
 
-    this.components = [
-      {
-        component: simplecheckbox,
-        placeholder: ".vzb-presentationmode-switch",
-        model: ["ui", "locale"],
-        checkbox: "presentation"
-      }];
+    this.components = [{
+      component: simplecheckbox,
+      placeholder: ".vzb-presentationmode-switch",
+      model: ["ui", "locale"],
+      checkbox: "presentation"
+    }, {
+      component: simplecheckbox,
+      placeholder: ".vzb-decorations-switch",
+      model: ["ui.chart.decorations", "locale"],
+      checkbox: "enabled"
+    }, {
+      component: simplecheckbox,
+      placeholder: ".vzb-advancedshowandselect-switch",
+      model: ["ui.dialogs.dialog.find", "locale"],
+      checkbox: "enableSelectShowSwitch"
+    }];
 
     this._super(config, parent);
   }

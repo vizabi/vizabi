@@ -1,6 +1,82 @@
 .vzb-tool-dialogs {
   .vzb-dialogs-dialog {
     &[data-dlg='find'] {
+      
+      .vzb-dialog-title-switch {
+        @include rtl {
+          margin-left: 10px;
+          margin-right: 0;
+        }
+        position: relative;
+        display: block;
+        height: 34px;
+        margin-right: 10px;
+        align-self: flex-end;
+        cursor: pointer;
+
+        input {display: none;}
+
+        .vzb-switch-slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: 0;
+          margin-top: 1.8em;
+          border-top: 1px solid;
+          border-bottom: 1px solid;
+          border-color: $vzb-color-primary;
+        }
+
+        .vzb-switch-slider::before {
+          position: absolute;
+          content: "";
+          height: 6px;
+          width: 50%;
+          left: 0;
+          bottom: -3px;
+          background-color: $vzb-color-primary;
+
+          -webkit-transition: transform 0.4s;
+          transition: transform 0.4s;
+        }
+
+        //input:checked + .vzb-switch-slider {
+          //background-color: #2196F3;
+        //}
+
+        input:checked ~ .vzb-switch-off {
+          display: none;
+        }
+
+        input:checked ~ .vzb-switch-on {
+          display: inline;
+        }
+
+        .vzb-switch-off {
+          display: inline;
+        }
+
+        .vzb-switch-on {
+          display: none;
+        }
+
+        input:checked + .vzb-switch-slider::before {
+          // -webkit-transform: translateX(30px);
+          // -ms-transform: translateX(30px);
+          // transform: translateX(30px);
+          -webkit-transform: translateX(100%);
+          -ms-transform: translateX(100%);
+          transform: translateX(100%);
+        }
+
+        .vzb-switch-slider.round::before {
+          border-radius: 3px;
+        }
+      }
+
       .vzb-find-filter {
         display: inline-block;
         position: relative;
@@ -15,8 +91,140 @@
           border-bottom-color: $vzb-color-primary-light;
         }
       }
+      .vzb-show-list {
+        .vzb-accordion-section {
+          &:not(.vzb-accordion-active) {
+            max-height: 2.5em !important;
+          }
+          .vzb-accordion-section-title {
+            cursor: pointer;
+            background-color: rgba($vzb-color-primary-light, 0.15);
+            border-radius: 2px;
+            line-height: 19px;
+            height: 26px;
+          }
+          &.vzb-filtered {
+            .vzb-show-clear-cross {
+              display: block;
+            }
+            .vzb-show-category {
+              font-weight: bold;
+            }
+          }
+          &.vzb-fullexpand {
+            max-height: none !important;
+            .vzb-show-more {
+              display: none;
+            }
+          }
+          &:not(.vzb-fullexpand) {
+            .vzb-show-item.vzb-checked.vzb-separator {
+              margin-bottom: 2em;
+            }
+          }
+          .vzb-show-more {
+            padding: 0;
+            font-weight: normal;
+            position: absolute;
+            text-align: center;
+            width: 100%;
+            text-transform: uppercase;
+          }
+          .vzb-show-clear-cross {
+              @include rtl {
+              left: 2px;
+              right: auto;
+            }
+            font-size: 1.5em;
+            line-height: 100%;
+            display: none;
+            text-align: end;
+            position: absolute;
+            right: 2px;
+            margin-top: 5px;
+            cursor: pointer;
+          }
+          .vzb-show-category {
+            @include rtl {
+              margin-left: 1.5em;
+              margin-right: 3px;
+            }
+            display: block;
+            margin-left: 3px;
+            margin-right: 1.5em;
+            padding: 3px 0;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            background: none;
+            &.vzb-show-category-set {
+              @include rtl {
+                &::before {
+                  transform: translate(1.25em, 0) scale(-1, 1);
+                }
+              }
+              margin: 0 1.5em;
+              &::before {
+                content: "➥";
+                position: absolute;
+                transform: translate(-1.25em, 0);
+              }
+            }
+          }
+          .vzb-show-category-list {
+            transform: translateZ(0);
+            position: relative;
+            pointer-events: none;
+              input,
+              label {
+              pointer-events: all;
+            }
+          }
+          .vzb-show-item.vzb-checked.vzb-separator {
+            padding-bottom: 25px;
+            border-bottom: 1px solid;
+            border-bottom-color: $vzb-color-primary-light;
+          }
+        }
+      }
+
+      > .vzb-dialog-modal {
+        
+        > .vzb-dialog-content {
+          display: flex;
+          font-size: 1em;
+          margin: 0;
+          padding: 0;
+          > .vzb-dialog-content {
+            &.vzb-active {
+              order: -1;
+            }
+          }
+        }
+
+        > .vzb-dialog-buttons {
+          .vzb-show-apply {
+            @include rtl {
+              margin-left: 0;
+              margin-right: auto;
+            }
+            margin-left: auto;
+            transition: 0.1s ease-in-out;
+            transition-property: opacity;
+            &.vzb-disabled {
+              opacity: 0.3;
+              pointer-events: none;
+            }
+          }
+        }
+      }
+
+      .vzb-dialog-panel {
+        min-width: 100%;
+      }
+
       &.vzb-popup {
         .vzb-dialog-title {
+          display: flex;
           &.vzb-title-two-rows {
             @include rtl {
               padding-left: 5px;
@@ -28,6 +236,9 @@
               max-width: 240px;
             }
           }
+        }
+        .vzb-dialog-button.vzb-show-apply {
+          display: none;
         }
       }
       &.vzb-moreoptions {
@@ -47,23 +258,22 @@
       &.vzb-sidebar {
         .vzb-dialog-title {
           &.vzb-title-two-rows {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
             flex-wrap: wrap;
             > span:first-child {
               display: block;
               flex: 0 0 auto;
             }
             .vzb-find-filter-selector {
+              order: -1;
               display: block;
               flex: 1 1 auto;
-              min-width: 1px;
+              min-width: 100%;
             }
             .vzb-find-filter {
               @include rtl {
                 padding-right: 0;
               }
+              flex: 1 1;
               padding-left: 0;
               padding-top: 5px;
             }

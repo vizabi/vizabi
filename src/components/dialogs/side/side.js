@@ -16,17 +16,6 @@ const Side = Dialog.extend("side", {
     const _this = this;
 
     this.model_binds = {
-      "change:state.marker.side.which": function(evt) {
-        if (_this.model.state.entities_allpossibleside) {
-          const sideDim = _this.model.state.marker.side.use == "constant" ? null : _this.model.state.marker.side.which;
-          _this.model.state.entities_allpossibleside.set("dim", sideDim);
-        }
-      },
-      "change:state.entities_side.show": function(evt) {
-        if (!_this._readyOnce) return;
-        _this.updateState();
-        _this.redraw();
-      },
       "change:ui.chart.flipSides": function(evt) {
         if (!_this._readyOnce) return;
         _this.updateState();
@@ -64,6 +53,11 @@ const Side = Dialog.extend("side", {
       _this.model.ui.chart.flipSides = !_this.model.ui.chart.flipSides;
     });
 
+    this.model.state.marker.side.getEntity().on("change:show", () => {
+      _this.updateState();
+      _this.redraw();
+    });
+
     //make sure it refreshes when all is reloaded
     this.root.on("ready", () => {
       _this.redraw();
@@ -73,15 +67,16 @@ const Side = Dialog.extend("side", {
   ready() {
     this._super();
 
-    this.KEY = this.model.state.entities_side.getDimension();
-    if (this.model.state.marker.side.use !== "constant" && !(this.model.state.entities_side.show[this.KEY] || {})["$in"]) {
-      const key = this.model.state.entities_allpossibleside.dim;
-      const sideKeys = this.model.state.marker_allpossibleside.getKeys().map(d => d[key]);
+    const sideEntities = this.model.state.marker.side.getEntity();
+    this.KEY = sideEntities.getDimension();
+    this.labelNames = this.model.state.marker.getLabelHookNames();
+    if (this.model.state.marker.side.use !== "constant" && !(sideEntities.show[this.KEY] || {})["$in"]) {
+      const sideKeys = this.model.state.marker.side.getUnique(this.model.state.marker.side.which).filter(f => f !== null);
       const filterKeys = sideKeys.sort(d3.ascending).slice(0, 2);
       if (filterKeys.length > 0) {
-        const show = Object.assign({}, this.model.state.entities_side.show);
+        const show = Object.assign({}, sideEntities.show);
         show[this.KEY] = { "$in": filterKeys };
-        this.model.state.entities_side.set("show", show);
+        sideEntities.set("show", show);
       }
     }
 
@@ -129,18 +124,33 @@ const Side = Dialog.extend("side", {
   redraw() {
 
     const _this = this;
+    const labelNames = this.labelNames;
+    const KEY = this.KEY;
+
     this.translator = this.model.locale.getTFunction();
 
-    if (!_this.model.state.entities_allpossibleside.dim) return;
-    this.model.state.marker_allpossibleside.getFrame(this.model.state.time.value, values => {
+    if (!_this.model.state.marker.side.getEntity().dim) return;
+
+    this.model.state.marker.getFrame(this.model.state.time.value, values => {
       if (!values) return;
-      const data = utils.keys(values.label)
-        .map(d => {
+      const data = [];
+      const sideConcept = _this.model.state.marker.side.getConceptprops();
+
+      if (sideConcept.concept_type == "entity_set") {
+        data.push(..._this.model.state.marker.side.getEntity().getEntitySets("data")[sideConcept.concept][0].map(d => {
           const result = {};
-          result[_this.KEY] = d;
-          result["label"] = values.label[d];
+          result[KEY] = d[sideConcept.concept];
+          result["label"] = d["name"];
           return result;
+        }));
+      } else {
+        utils.forEach(values[labelNames[KEY]], (value, key) => {
+          const result = {};
+          result[KEY] = key;
+          result["label"] = value;
+          data.push(result);
         });
+      }
 
       //sort data alphabetically
       data.sort((a, b) => (a.label < b.label) ? -1 : 1);
@@ -170,7 +180,7 @@ const Side = Dialog.extend("side", {
       .attr("id", d => "-side-" + name + "-" + d[sideDim] + "-" + _this._id)
       .property("checked", d => _this.state[name][sideDim] === d[sideDim])
       .on("change", (d, i) => {
-        const sideEntities = _this.model.state.entities_side;
+        const sideEntities = _this.model.state.marker.side.getEntity();
         const sideDim = sideEntities.getDimension();
         const otherSide = name == "left" ? "right" : "left";
         const modelSide = _this.model.state.marker.side;

@@ -15,8 +15,8 @@ const Marker = Model.extend({
       opacityHighlightDim: 0.1,
       opacitySelectDim: 0.3,
       opacityRegular: 1,
-      allowSelectMultiple: true,
-      skipFilter: false
+      limit: 1000,
+      allowSelectMultiple: true
     };
     return utils.deepExtend(this._super(), defaults);
   },
@@ -28,11 +28,139 @@ const Marker = Model.extend({
     this._visible = [];
 
     this._super(name, value, parent, binds, persistent);
-    this.on("readyOnce", () => {
-      const exceptions = { exceptType: "time" };
-      const allDimensions = _this._getAllDimensions(exceptions);
-      _this._multiDim = allDimensions.length > 1;
+
+    this.on("change", "space", this.setInterModelListeners.bind(this));
+  },
+
+  setInterModelListeners() {
+    utils.forEach(this.getSpace(), reference => {
+      // make reference to dimension
+      this._space[reference] = this.getClosestModel(reference);
     });
+    this._super();
+  },
+
+  setSpace(newSpace) {
+    const subHooks = Object.keys(this.getSubhooks(true));
+    const setProps = {};
+    const setWhichProps = {};
+    const newDimModels = setProps["space"] = this._root.dimensionManager.getDimensionModelsForSpace(this._space, newSpace);
+    const addedDimModels = newDimModels.filter(f => !this.space.includes(f));
+    addedDimModels.forEach(dimensionModel => {
+      const dimModel = this.getClosestModel(dimensionModel);
+      const labelModelName = "label" + dimensionModel.replace(dimModel._type, "");
+      const props = { which: dimModel.dim, use: "property" };
+      //change which to 'name' if 'name' property available for dimension
+      const nameData = this._root.dataManager.getAvailableDataForKey(dimModel.dim, "name", "entities")[0];
+      if (nameData) {
+        props.which = nameData.value;
+        props.data = nameData.data;
+      }
+      if (subHooks.includes(labelModelName)) {
+        props.spaceRef = dimensionModel;
+        setProps[labelModelName] = props;
+      } else {
+        props.key = [{ concept: dimModel.dim }];
+        props.dataSource = props.data;
+        props.concept = props.which;
+        setWhichProps[labelModelName] = props;
+        setProps[labelModelName] = {};
+      }
+    });
+    this.set(setProps);
+
+    utils.forEach(setWhichProps, (props, hookName) => {
+      this[hookName].setInterModelListeners();
+      this[hookName].setWhich(props);
+    });
+
+    this._dataCube = this.getSubhooks(true);
+  },
+
+  getAvailableSpaces() {
+    const spaces = new Map();
+    utils.forEach(this._root._data, dataSource => {
+      if (dataSource._type !== "data") return;
+
+      const indicatorsDB = dataSource.getConceptprops();
+
+      dataSource.keyAvailability.forEach((space, str) => {
+        if (space.length > 1) { // supported dimensions might later depend on tool.
+          spaces.set(str, space.map(dimension => indicatorsDB[dimension]));
+        }
+      });
+    });
+    return spaces;
+  },
+
+  getAvailableData() {
+    const data = [];
+
+    if (d3.keys(this._space).length === 0) return utils.warn("getAvailableData() is trying to access missing _space items of marker '" + this._name + "' which likely haven't been resoled in time");
+    const dimensions = utils.unique(this.space.map(dim => this._space[dim].dim));
+
+    utils.forEach(this._root._data, dataSource => {
+      if (dataSource._type !== "data") return;
+
+      const indicatorsDB = dataSource.getConceptprops();
+
+      dataSource.dataAvailability.datapoints.forEach(kvPair => {
+        if (dimensions.length == kvPair.key.size && dimensions.every(dim => kvPair.key.has(dim))) {
+          data.push({
+            key: kvPair.key,
+            value: indicatorsDB[kvPair.value],
+            dataSource
+          });
+        }
+      });
+
+      // get all available entity properties for current marker space
+      const entitiesAvailability = [];
+      dataSource.dataAvailability.entities.forEach(kvPair => {
+        if (kvPair.value == null) return;
+        dimensions.forEach(dim => {
+          if (kvPair.key.has(dim) && kvPair.value.indexOf("is--") === -1) {
+            data.push({
+              key: Array.from(kvPair.key).map(concept => indicatorsDB[concept]),
+              value: indicatorsDB[kvPair.value],
+              dataSource
+            });
+          }
+        });
+      });
+
+    });
+
+    // just first dataModel, can lead to problems if first data source doesn't contain dim-concept
+    const firstDataModel = this._root.dataManager.getDataModels().values().next().value;
+    dimensions
+      .filter(dim => dim != null)
+      .forEach(dim => data.push({
+        key: [firstDataModel.getConceptprops(dim)],
+        value: firstDataModel.getConceptprops(dim),
+        dataSource: firstDataModel
+      }));
+    data.push({
+      key: [firstDataModel.getConceptprops("_default")],
+      value: firstDataModel.getConceptprops("_default"),
+      dataSource: firstDataModel
+    });
+
+    return data;
+  },
+
+
+  getAvailableConcept({ index: index = 0, type: type = null, includeOnlyIDs: includeOnlyIDs = [], excludeIDs: excludeIDs = [] } = { }) {
+    if (!type && includeOnlyIDs.length == 0 && excludeIDs.length == 0) {
+      return null;
+    }
+
+    const filtered = this.getAvailableData().filter(f =>
+      (!type || !f.value.concept_type || f.value.concept_type === type)
+      && (includeOnlyIDs.length == 0 || includeOnlyIDs.indexOf(f.value.concept) !== -1)
+      && (excludeIDs.length == 0 || excludeIDs.indexOf(f.value.concept) == -1)
+    );
+    return filtered[index] || filtered[filtered.length - 1];
   },
 
   setDataSourceForAllSubhooks(data) {
@@ -97,21 +225,21 @@ const Marker = Model.extend({
     if (!this.allowSelectMultiple) return;
 
     let added;
-    const dimension = this._getFirstDimension({ exceptType: "time" });
+    const dimensions = utils.unique(this._getAllDimensions({ exceptType: "time" }));
 
     this.select = this._visible.map(d => {
       added = {};
-      added[dimension] = d[dimension];
+      dimensions.forEach(dimension => added[dimension] = d[dimension]);
       return added;
     });
   },
 
   isSelected(d) {
     const _this = this;
-    const value = this._createValue(d);
+    const value = JSON.stringify(this._createValue(d));
 
     return this.select
-      .map(d => JSON.stringify(_this._createValue(d)) === JSON.stringify(value))
+      .map(d => JSON.stringify(_this._createValue(d)) === value)
       .indexOf(true) !== -1;
   },
 
@@ -191,9 +319,9 @@ const Marker = Model.extend({
    */
   isHighlighted(d) {
     const _this = this;
-    const value = this._createValue(d);
+    const value = JSON.stringify(this._createValue(d));
     return this.highlight
-      .map(d => JSON.stringify(_this._createValue(d)) === JSON.stringify(value))
+      .map(d => JSON.stringify(_this._createValue(d)) === value)
       .indexOf(true) !== -1;
   },
 
@@ -210,60 +338,15 @@ const Marker = Model.extend({
   setLabelOffset(d, xy) {
     if (xy[0] === 0 && xy[1] === 1) return;
 
+    const KEYS = utils.unique(this._getAllDimensions({ exceptType: "time" }));
+    const KEY = KEYS.join(",");
+
     this.select
-      .find(selectedMarker => utils.comparePlainObjects(selectedMarker, d))
+      .find(selectedMarker => utils.getKey(selectedMarker, KEYS) == d[KEY])
       .labelOffset = [Math.round(xy[0] * 1000) / 1000, Math.round(xy[1] * 1000) / 1000];
 
     //force the model to trigger events even if value is the same
     this.set("select", this.select, true);
-  },
-
-  /**
-   * Gets the narrowest limits of the subhooks with respect to the provided data column
-   * @param {String} attr parameter (data column)
-   * @returns {Object} limits (min and max)
-   * this function is only needed to route the "time" to some indicator,
-   * to adjust time start and end to the max and min time available in data
-   */
-  getTimeLimits() {
-    const _this = this;
-    const time = this._parent.time;
-    const minArray = [], maxArray = [];
-    let min, max, items = {};
-    if (!this.cachedTimeLimits) this.cachedTimeLimits = {};
-    utils.forEach(this.getSubhooks(), hook => {
-
-      //only indicators depend on time and therefore influence the limits
-      if (hook.use !== "indicator" || !hook._important || !hook._dataId) return;
-
-      const cachedLimits = _this.cachedTimeLimits[hook._dataId + hook.which];
-
-      if (cachedLimits) {
-        //if already calculated the limits then no ned to do it again
-        min = cachedLimits.min;
-        max = cachedLimits.max;
-      } else {
-        //otherwise calculate own date limits (a costly operation)
-        items = hook.getValidItems().map(m => m[time.getDimension()]);
-        if (items.length == 0) utils.warn("getTimeLimits() was unable to work with an empty array of valid datapoints");
-        min = d3.min(items);
-        max = d3.max(items);
-      }
-      _this.cachedTimeLimits[hook._dataId + hook.which] = { min, max };
-      minArray.push(min);
-      maxArray.push(max);
-    });
-
-    let resultMin = d3.max(minArray);
-    let resultMax = d3.min(maxArray);
-    if (resultMin > resultMax) {
-      utils.warn("getTimeLimits(): Availability of the indicator's data has no intersection. I give up and just return some valid time range where you'll find no data points. Enjoy!");
-      resultMin = d3.min(minArray);
-      resultMax = d3.max(maxArray);
-    }
-
-    //return false for the case when neither of hooks was an "indicator" or "important"
-    return !min && !max ? false : { min: resultMin, max: resultMax };
   },
 
   getImportantHooks() {
@@ -280,9 +363,10 @@ const Marker = Model.extend({
     const _this = this;
     const KEYS = utils.unique(this._getAllDimensions({ exceptType: "time" }));
 
-    return KEYS.map(key => {
+    return KEYS.reduce((result, key) => {
       const names = {};
       utils.forEach(_this._dataCube || _this.getSubhooks(true), (hook, name) => {
+        if (!hook.isDiscrete()) return;
         if (hook._type === "label" && hook.getEntity().dim === key) {
           names.label = name;
         }
@@ -291,85 +375,108 @@ const Marker = Model.extend({
         }
         return !names.label || !names.key;
       });
-      return names.label || names.key;
-    });
+      const name = names.label || names.key;
+      if (name) result[key] = name;
+      return result;
+    }, {});
   },
 
-  getKeysMD() {
-    const _this = this;
-    const resultKeys = [];
-
-    const KEYS = utils.unique(this._getAllDimensions({ exceptType: "time" }));
-    const TIME = this._getFirstDimension({ type: "time" });
-
+  getDataKeysPerHook() {
+    const result = {};
     utils.forEach(this._dataCube || this.getSubhooks(true), (hook, name) => {
-      if (hook.use === "constant" || hook.use === "property" || !hook._important) return;
-
-      const nested = hook.getNestedItems(KEYS.concat(TIME));
-
-      iterateKeys({}, nested, KEYS, 0, KEYS.length - 1);
-
-      function iterateKeys(keyObj, nested, keyNames, deep, deepMax) {
-        const keys = Object.keys(nested);
-        if (deep < deepMax) {
-          const _deep = deep + 1;
-          for (let i = 0, j = keys.length; i < j; i++) {
-            const _keyObj = {};
-            _keyObj[keyNames[deep]] = keys[i];
-            iterateKeys(_keyObj, nested[keys[i]], keyNames, _deep, deepMax);
-          }
-        } else {
-          resultKeys.push(...keys.map(key => {
-            const obj = Object.assign({}, keyObj);
-            obj[keyNames[deep]] = key;
-            return obj;
-          }));
-        }
-      }
-
+      result[name] = hook.getDataKeys();
     });
-
-    return resultKeys;
+    return result;
   },
+
   /**
    * Computes the intersection of keys in all hooks: a set of keys that have data in each hook
    * @returns array of keys that have data in all hooks of this._datacube
    */
-  getKeys(KEY) {
+  getKeys(KEYS) {
     const _this = this;
-    let resultKeys = [];
+    let resultKeys;
 
-    KEY = KEY || this._getFirstDimension();
+    KEYS = KEYS || utils.unique(this._getAllDimensions({ exceptType: "time" }));
+    KEYS = Array.isArray(KEYS) ? KEYS : [KEYS];
     const TIME = this._getFirstDimension({ type: "time" });
 
-    const grouping = this._getGrouping();
+    const subHooks = this._dataCube || this.getSubhooks(true);
 
-    utils.forEach(this._dataCube || this.getSubhooks(true), (hook, name) => {
+    const hooksPerKey = KEYS.map(_ => []);
+    const dataSourcePerKey = KEYS.map(_ => []);
+    //try to find hooks with entity queries for each subkey of KEYS
+    utils.forEach(subHooks, (hook, name) => {
+      if (hook.use === "property") {
+        const keyIndex = KEYS.indexOf(hook.getEntity().dim);
+        if (keyIndex !== -1 && !dataSourcePerKey[keyIndex].includes(hook.dataSource)) {
+          hooksPerKey[keyIndex].push(hook);
+          dataSourcePerKey[keyIndex].push(hook.dataSource);
+        }
+      }
+    });
 
+    //try to get keys from indicators if marker does not have hooks with entity queries
+    //in each dataSource for some subkey of KEYS
+    utils.forEach(subHooks, (hook, name) => {
+      if (hook.use === "indicator") {
+        hook.getDataKeys().forEach(key => {
+          const keyIndex = KEYS.indexOf(key);
+          if (keyIndex !== -1 && !dataSourcePerKey[keyIndex].includes(hook.dataSource)) {
+            hooksPerKey[keyIndex].push(hook);
+          }
+        });
+      }
+    });
+
+    hooksPerKey.forEach((hooks, keyIndex) => {
+      let keys = [];
+      hooks.forEach(hook => {
+        const hookKeys = hook.getDataKeys();
+        const hookKeyIndex = hookKeys.indexOf(KEYS[keyIndex]);
+        keys = keys.concat(Object.keys(hook.getNestedItems(hookKeys.concat(TIME))).map(key => [JSON.parse(key)[hookKeyIndex]]));
+      });
+      keys = utils.unique(keys);
+      resultKeys = resultKeys ? d3.cross(resultKeys, keys, (a, b) => a.concat(b)) : keys;
+    });
+
+    utils.forEach(subHooks, (hook, name) => {
       // If hook use is constant, then we can provide no additional info about keys
       // We can just hope that we have something else than constants =)
-      if (hook.use === "constant") return;
+      if (!hook._important || hook.use === "constant") return;
+
+      const hookKEYS = hook.getDataKeys();
+      const hookKEYSIndexes = hookKEYS.map(key => KEYS.indexOf(key)).reduce((indexes, index, i) => {
+        if (index !== -1) indexes[i] = index;
+        return indexes;
+      }, []);
+
+      if (!hookKEYSIndexes.length) return;
 
       // Get keys in data of this hook
-      const nested = hook.getNestedItems([KEY, TIME]);
+      const nested = hook.getNestedItems(hookKEYS.concat(TIME));
       const noDataPoints = hook.getHaveNoDataPointsPerKey();
 
-      if (nested["undefined"]) delete nested["undefined"];
-
-      let keys = Object.keys(nested);
+      const keys = Object.keys(nested);
       const keysNoDP = Object.keys(noDataPoints || []);
 
-      if (keys.length > 0 && grouping && grouping.key === KEY) {
-        const _grouping = grouping.grouping;
-        keys = keys.filter(key => (+key % _grouping) === 0);
-      }
-      // If ain't got nothing yet, set the list of keys to result
-      if (resultKeys.length == 0) resultKeys = keys;
+      // Remove the keys with no timepoints
+      const keysSizeEqual = KEYS.every((key, i) => key === hookKEYS[i]);
+      const filteredKeys = keys.reduce((keys, key) => {
+        if (keysNoDP.indexOf(key) == -1) keys[JSON.stringify(hookKEYSIndexes.map((_, i) => JSON.parse(key)[i]))] = true;
+        return keys;
+      }, {});
 
-      // Remove the keys from it that are not in this hook
-      if (hook._important) resultKeys = resultKeys.filter(f => keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1);
+      const resultKeysMapped = resultKeys.map(key => JSON.stringify(hookKEYSIndexes.map(index => key[index])));
+
+      resultKeys = resultKeys.filter((_, i) => filteredKeys[resultKeysMapped[i]]);
     });
-    return resultKeys.map(d => { const r = {}; r[KEY] = d; return r; });
+
+    if (resultKeys.length > _this.limit) {
+      utils.warn("MARKER getKeys(): only showing the first " + _this.limit + " markerElements of " + _this._name + ". The rest are not displayed because chart may become slow and crash. Set a higher number in marker.limit or apply entity filters");
+      resultKeys = resultKeys.slice(0, _this.limit);
+    }
+    return resultKeys.map(key => { const r = {}; KEYS.map((KEY, i) => r[KEY] = key[i]); return r; });
   },
 
   /**
@@ -379,19 +486,15 @@ const Marker = Model.extend({
   _getCachePath(keys) {
     //array of steps -- names of all frames
     const steps = this._parent.time.getAllSteps();
-    let cachePath = `${this.getClosestModel("locale").id} - ${steps[0]} - ${steps[steps.length - 1]}`;
+    let cachePath = `${this.getClosestModel("locale").id} - ${steps[0]} - ${steps[steps.length - 1]} - step:${this._parent.time.step}`;
     this._dataCube = this._dataCube || this.getSubhooks(true);
     let dataLoading = false;
-    const grouping = this._getGrouping();
     utils.forEach(this._dataCube, (hook, name) => {
       if (hook._loadCall) dataLoading = true;
       cachePath = cachePath + "_" +  hook._dataId + hook.which;
     });
     if (dataLoading) {
       return null;
-    }
-    if (grouping) {
-      cachePath = cachePath + "_grouping_" + grouping.key + ":" + grouping.grouping;
     }
     if (keys) {
       cachePath = cachePath + "_" + keys.join(",");
@@ -405,12 +508,10 @@ const Marker = Model.extend({
     const result = {};
     utils.forEach(space, entities => {
       if (entities.grouping) {
-        result.grouping = entities.grouping;
-        result.key = entities.dim;
-        return false;
+        result[entities.dim] = { grouping: entities.grouping };
       }
     });
-    return result.grouping ? result : false;
+    return utils.isEmpty(result) ? false : result;
   },
 
   _getAllDimensions(opts) {
@@ -568,65 +669,21 @@ const Marker = Model.extend({
           utils.forEach(pValues, (values, hook) => {
             dataBetweenFrames[hook] = {};
 
-            if (_this._multiDim && _this[hook].use == "indicator" && _this[hook].which !== _this._getFirstDimension({ type: "time" })) {
-              const hookDataBF = dataBetweenFrames[hook];
-              const query = _this[hook].dataSource.getData(_this[hook]._dataId, "query");
-              const TIME = query.animatable;
-              const KEY = query.select.key.slice(0);
-              if (TIME && KEY.indexOf(TIME) != -1) KEY.splice(KEY.indexOf(TIME), 1);
-
-              const lastIndex = KEY.length - 1;
-              const iterateKeys = function(firstKeyObject, lastKeyObject, firstKey, pValues, nValues, index) {
-                const keys = Object.keys(pValues);
-                for (let i = 0, j = keys.length; i < j; i++) {
-                  if (index == 0) {
-                    firstKey = keys[i];//root level
-                  }
-                  if (index == lastIndex) {
-                    mapValue(hookDataBF, firstKey, keys[i], firstKeyObject, lastKeyObject, pValues[keys[i]], nValues[keys[i]]);
-                  } else {
-                    if (index == 0) {
-                      lastKeyObject = firstKeyObject = {};
-                    }
-                    const nextIndex = index + 1;
-                    lastKeyObject[keys[i]] = {};
-                    iterateKeys(firstKeyObject, lastKeyObject[keys[i]], firstKey, pValues[keys[i]], nValues[keys[i]], nextIndex);
-                  }
-                }
-              };
-
-              iterateKeys(null, null, null, values, nValues[hook], 0);
-
-            } else {
-              //loop across the entities
-              utils.forEach(values, (val1, key) => {
-                const val2 = nValues[hook][key];
-                if (utils.isDate(val1)) {
-                  dataBetweenFrames[hook][key] = time;
-                } else if (!utils.isNumber(val1)) {
-                  //we can be interpolating string values
-                  dataBetweenFrames[hook][key] = val1;
-                } else {
-                  //interpolation between number and null should rerurn null, not a value in between (#1350)
-                  dataBetweenFrames[hook][key] = (val1 == null || val2 == null) ? null : val1 + ((val2 - val1) * fraction);
-                }
-              });
-            }
+            //loop across the entities
+            utils.forEach(values, (val1, key) => {
+              const val2 = nValues[hook][key];
+              if (utils.isDate(val1)) {
+                dataBetweenFrames[hook][key] = time;
+              } else if (!utils.isNumber(val1)) {
+                //we can be interpolating string values
+                dataBetweenFrames[hook][key] = val1;
+              } else {
+                //interpolation between number and null should rerurn null, not a value in between (#1350)
+                dataBetweenFrames[hook][key] = (val1 == null || val2 == null) ? null : val1 + ((val2 - val1) * fraction);
+              }
+            });
           });
           cb(dataBetweenFrames);
-
-          function mapValue(hookDataBF, firstKey, lastKey, firstKeyObject, lastKeyObject, val1, val2) {
-            hookDataBF[firstKey] = firstKeyObject[firstKey];
-            if (utils.isDate(val1)) {
-              lastKeyObject[lastKey] = time;
-            } else if (!utils.isNumber(val1)) {
-              //we can be interpolating string values
-              lastKeyObject[lastKey] = val1;
-            } else {
-              //interpolation between number and null should rerurn null, not a value in between (#1350)
-              lastKeyObject[lastKey] = (val1 == null || val2 == null) ? null : val1 + ((val2 - val1) * fraction);
-            }
-          }
 
         }, keys);
       }, keys);
@@ -637,7 +694,7 @@ const Marker = Model.extend({
     const _this = this;
     if (!this.cachedFrames) this.cachedFrames = {};
 
-    const KEY = this._getFirstDimension();
+    const KEYS = utils.unique(this._getAllDimensions({ exceptType: "time" }));
     const TIME = this._getFirstDimension({ type: "time" });
 
     if (!this.frameQueues) this.frameQueues = {}; //static queue of frames
@@ -655,37 +712,23 @@ const Marker = Model.extend({
       this.frameQueues[cachePath] = new Promise((resolve, reject) => {
 
         _this.partialResult[cachePath] = {};
+        _this.partialResult[cachePath].timeOrConstantHooks = [];
         steps.forEach(t => { _this.partialResult[cachePath][t] = {}; });
-
-        // Assemble the list of keys as an intersection of keys in all queries of all hooks
-        const keys = _this.getKeys();
 
         const deferredHooks = [];
         // Assemble data from each hook. Each frame becomes a vector containing the current configuration of hooks.
         // frame -> hooks -> entities: values
         utils.forEach(_this._dataCube, (hook, name) => {
-          if (hook.use === "constant") {
-            //special case: fill data with constant values
-            steps.forEach(t => {
-              _this.partialResult[cachePath][t][name] = {};
-              keys.forEach(key => {
-                _this.partialResult[cachePath][t][name][key[KEY]] = hook.which;
-              });
-            });
-          } else if (hook.which === KEY) {
+          if (hook.use === "constant" || hook.which === TIME) {
+            //data from hooks with use 'constant' or which 'time dimension' will be filled last
+            _this.partialResult[cachePath].timeOrConstantHooks.push({ name, which: hook.which });
+          } else if (KEYS.includes(hook.which)) {
             //special case: fill data with keys to data itself
+            const items = hook.getValidItems();
             steps.forEach(t => {
               _this.partialResult[cachePath][t][name] = {};
-              keys.forEach(key => {
-                _this.partialResult[cachePath][t][name][key[KEY]] = key[KEY];
-              });
-            });
-          } else if (hook.which === TIME) {
-            //special case: fill data with time points
-            steps.forEach(t => {
-              _this.partialResult[cachePath][t][name] = {};
-              keys.forEach(key => {
-                _this.partialResult[cachePath][t][name][key[KEY]] = new Date(t);
+              items.forEach(item => {
+                _this.partialResult[cachePath][t][name][item[hook.which]] = item[hook.which];
               });
             });
           } else {
@@ -716,10 +759,12 @@ const Marker = Model.extend({
             }));
           });
           Promise.all(promises).then(() => {
+            fillFromTimeOrConstantHooks();
             _this.cachedFrames[cachePath] = _this.partialResult[cachePath];
             resolve();
           });
         } else {
+          fillFromTimeOrConstantHooks();
           _this.cachedFrames[cachePath] = _this.partialResult[cachePath];
           resolve();
         }
@@ -736,7 +781,7 @@ const Marker = Model.extend({
         const promises = [];
         utils.forEach(_this._dataCube, (hook, name) => {
           //exception: we know that these are knonwn, no need to calculate these
-          if (hook.use !== "constant" && hook.which !== KEY && hook.which !== TIME) {
+          if (hook.use !== "constant" && !KEYS.includes(hook.which) && hook.which !== TIME) {
             (function(_hook, _name) {
               promises.push(new Promise((res, rej) => {
                 _hook.getFrame(steps, forceFrame, selected).then(response => {
@@ -749,6 +794,7 @@ const Marker = Model.extend({
         });
         if (promises.length > 0) {
           Promise.all(promises).then(() => {
+            fillFromTimeOrConstantHooks();
             if (!_this.cachedFrames[cachePath]) {
               _this.cachedFrames[cachePath] = {};
             }
@@ -761,11 +807,31 @@ const Marker = Model.extend({
       }
     });
 
+    function fillFromTimeOrConstantHooks() {
+      if (!_this.partialResult[cachePath].timeOrConstantHooks) return;
+
+      const { timeOrConstantHooks } = _this.partialResult[cachePath];
+      // Assemble the list of keys as an intersection of keys in all queries of all hooks
+      const keys = _this.getKeys();
+
+      //special case: fill data with time points or fill data with constant values
+      timeOrConstantHooks.forEach(({ which, name }) => {
+        const isTimeWhich = which === TIME;
+        steps.forEach(t => {
+          _this.partialResult[cachePath][t][name] = {};
+          keys.forEach(key => {
+            _this.partialResult[cachePath][t][name][utils.getKey(key, KEYS)] = isTimeWhich ? new Date(t) : which;
+          });
+        });
+      });
+      delete _this.partialResult[cachePath].timeOrConstantHooks;
+    }
+
   },
 
   listenFramesQueue(keys, cb) {
     const _this = this;
-    const KEY = this._getFirstDimension();
+    const KEYS = utils.unique(this._getAllDimensions({ exceptType: "time" }));
     const TIME = this._getFirstDimension({ type: "time" });
     const steps = this._parent.time.getAllSteps();
     const preparedFrames = {};
@@ -776,7 +842,7 @@ const Marker = Model.extend({
     let isDataLoaded = false;
 
     utils.forEach(_this._dataCube, (hook, name) => {
-      if (!(hook.use === "constant" || hook.which === KEY || hook.which === TIME)) {
+      if (!(hook.use === "constant" || KEYS.includes(hook.which) || hook.which === TIME)) {
         if (!dataIds.includes(hook._dataId)) {
           dataIds.push(hook._dataId);
 
@@ -818,7 +884,7 @@ const Marker = Model.extend({
 
     const findSelectedTime = function(iterator, findCB) {
       const point = iterator();
-      if (point == null) return;
+      if (point == null) return findCB(point);
       _this.getFrame(timePoints[point], values => {
         if (findEntityWithCompleteHooks(values)) {
           findCB(point);
@@ -859,6 +925,22 @@ const Marker = Model.extend({
     }));
 
     return Promise.all(promises).then(() => ({ "min": selectedEdgeTimes[0], "max": selectedEdgeTimes[1] }));
+  },
+
+
+  getCompoundLabelText(d, values) {
+    const DATAMANAGER = this._root.dataManager;
+    const KEYS = utils.unique(this._getAllDimensions({ exceptType: "time" }));
+    const labelNames = this.getLabelHookNames();
+
+    let text = KEYS
+      .filter(key => d[key] !== DATAMANAGER.getConceptProperty(key, "totals_among_entities"))
+      .map(key => values[labelNames[key]] && values[labelNames[key]][d[key]] || d[key])
+      .join(", ");
+
+    if (text === "") text = this._root.locale.getTFunction()("hints/grandtotal");
+
+    return text;
   },
 
 
