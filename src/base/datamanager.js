@@ -73,8 +73,8 @@ const DataManagerPrototype = {
    * Return tag entities with name and parents from all data sources
    * @return {array} Array of tag objects
    */
-  getTags() {
-    return this.getDimensionValues("tag", ["name", "parent"])
+  getTags(locale) {
+    return this.getDimensionValues("tag", ["name", "parent"], { language: locale })
       .then(results => this.mergeResults(results, ["tag"])); // using merge because key-duplicates terribly slow down treemenu
   },
 

@@ -659,7 +659,7 @@ const TreeMenu = Component.extend({
   },
 
   ready() {
-    this.model.marker._root.dataManager.getTags()
+    this.model.marker._root.dataManager.getTags(this.model.locale.id)
       .then(this._buildIndicatorsTree.bind(this))
       .then(this.updateView.bind(this));
   },
