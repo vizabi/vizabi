@@ -94,59 +94,28 @@ const Marker = Model.extend({
   },
 
   getAvailableData() {
-    const data = [];
 
     if (d3.keys(this._space).length === 0) return utils.warn("getAvailableData() is trying to access missing _space items of marker '" + this._name + "' which likely haven't been resoled in time");
     const dimensions = utils.unique(this.space.map(dim => this._space[dim].dim));
 
-    utils.forEach(this._root._data, dataSource => {
-      if (dataSource._type !== "data") return;
-
-      const indicatorsDB = dataSource.getConceptprops();
-
-      dataSource.dataAvailability.datapoints.forEach(kvPair => {
-        if (dimensions.length == kvPair.key.size && dimensions.every(dim => kvPair.key.has(dim))) {
-          data.push({
-            key: kvPair.key,
-            value: indicatorsDB[kvPair.value],
-            dataSource
-          });
-        }
-      });
-
-      // get all available entity properties for current marker space
-      const entitiesAvailability = [];
-      dataSource.dataAvailability.entities.forEach(kvPair => {
-        if (kvPair.value == null) return;
-        dimensions.forEach(dim => {
-          if (kvPair.key.has(dim) && kvPair.value.indexOf("is--") === -1) {
-            data.push({
-              key: Array.from(kvPair.key).map(concept => indicatorsDB[concept]),
-              value: indicatorsDB[kvPair.value],
-              dataSource
-            });
-          }
-        });
-      });
-
-    });
+    const availability = this._root.dataManager.getAvailabilityForMarkerKey(dimensions);
 
     // just first dataModel, can lead to problems if first data source doesn't contain dim-concept
     const firstDataModel = this._root.dataManager.getDataModels().values().next().value;
     dimensions
       .filter(dim => dim != null)
-      .forEach(dim => data.push({
+      .forEach(dim => availability.push({
         key: [firstDataModel.getConceptprops(dim)],
         value: firstDataModel.getConceptprops(dim),
         dataSource: firstDataModel
       }));
-    data.push({
+    availability.push({
       key: [firstDataModel.getConceptprops("_default")],
       value: firstDataModel.getConceptprops("_default"),
       dataSource: firstDataModel
     });
 
-    return data;
+    return availability;
   },
 
 

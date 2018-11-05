@@ -41,7 +41,47 @@ const DataManagerPrototype = {
   getCollectionFromKey(pKey) {
     if (pKey.length > 1) return "datapoints";
     else if (pKey[0] == "concept") return "concepts";
-    else return "entities";
+    return "entities";
+  },
+
+  getAvailabilityForMarkerKey(key) {
+    const results = new Map();
+
+    const addResult = (kvPair, dataModel) => {
+      const keyString = this.createKeyString(["key", "value"], kvPair);
+      const indicatorsDB = dataModel.getConceptprops();
+
+      results.set(keyString, {
+        key: Array.from(kvPair.key).map(concept => indicatorsDB[concept]),
+        value: indicatorsDB[kvPair.value],
+        dataSource: dataModel
+      });
+    };
+
+    // joins availability of datamodels
+    // assumes datamodels always have same data
+    for (const dataModel of this.dataModels.values()) {
+
+      dataModel.dataAvailability.datapoints.forEach(kvPair => {
+        if (key.length == kvPair.key.size && key.every(dim => kvPair.key.has(dim))) {
+          addResult(kvPair, dataModel);
+        }
+      });
+
+      // get all available entity properties for current marker space
+      dataModel.dataAvailability.entities.forEach(kvPair => {
+        if (kvPair.value == null) return;
+
+        key.forEach(dim => {
+          if (kvPair.key.has(dim) && kvPair.value.indexOf("is--") === -1) {
+            addResult({ key: dim, value: kvPair.value }, dataModel);
+          }
+        });
+      });
+
+    }
+
+    return Array.from(results.values());
   },
 
   getAvailableDataForKey(pKey, pValue = false) {
@@ -106,12 +146,16 @@ const DataManagerPrototype = {
     const keys = new Map();
     results.forEach(result => {
       result.forEach(row => {
-        const keyString = key.map(concept => row[concept]).join(",");
+        const keyString = this.createKeyString(key, row);
         if (!keys.has(keyString))
           keys.set(keyString, row);
       });
     });
     return Array.from(keys.values());
+  },
+
+  createKeyString(key, row) {
+    return key.map(concept => row[concept]).join(",");
   }
 
 };
