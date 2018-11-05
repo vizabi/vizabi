@@ -105,7 +105,7 @@ const EntitiesModel = DataConnected.extend({
     }
 
     const dim = this.dim;
-    this._entitySets = { [dim]: this._root.dataManager.getAvailableDataForKey(dim, null, "entities")
+    this._entitySets = { [dim]: this._root.dataManager.getAvailableDataForKey(dim, null)
       .filter(d => d.value !== dim && ["entity_set", "entity_domain"].includes(this._root.dataManager.getConceptProperty(d.value, "concept_type")))
       .map(d => d.value) };
 
