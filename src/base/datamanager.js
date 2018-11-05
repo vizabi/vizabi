@@ -38,12 +38,19 @@ const DataManagerPrototype = {
     return "Concept not found";
   },
 
-  getAvailableDataForKey(pKey, pValue, dataType) {
+  getCollectionFromKey(pKey) {
+    if (pKey.length > 1) return "datapoints";
+    else if (pKey[0] == "concept") return "concepts";
+    else return "entities";
+  },
+
+  getAvailableDataForKey(pKey, pValue = false) {
     this.updateDataModels();
 
+    const collection = this.getCollectionFromKey(pKey);
     const result = [];
     for (const dataModel of this.dataModels.values()) {
-      for (const { key, value } of (dataModel.dataAvailability || {})[dataType] || []) {
+      for (const { key, value } of (dataModel.dataAvailability || {})[collection] || []) {
         if (key.has(pKey) && (!pValue || value === pValue)) {
           result.push({ data: dataModel._name, key: pKey, value });
         }
