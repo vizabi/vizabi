@@ -52,7 +52,7 @@ const DataManagerPrototype = {
       const indicatorsDB = dataModel.getConceptprops();
 
       results.set(keyString, {
-        key: Array.from(kvPair.key).map(concept => indicatorsDB[concept]),
+        key: kvPair.key.map(concept => indicatorsDB[concept]),
         value: indicatorsDB[kvPair.value],
         dataSource: dataModel
       });
@@ -64,7 +64,7 @@ const DataManagerPrototype = {
 
       dataModel.dataAvailability.datapoints.forEach(kvPair => {
         if (key.length == kvPair.key.size && key.every(dim => kvPair.key.has(dim))) {
-          addResult(kvPair, dataModel);
+          addResult({ key: Array.from(kvPair.key), value: kvPair.value }, dataModel);
         }
       });
 
@@ -74,7 +74,7 @@ const DataManagerPrototype = {
 
         key.forEach(dim => {
           if (kvPair.key.has(dim) && kvPair.value.indexOf("is--") === -1) {
-            addResult({ key: dim, value: kvPair.value }, dataModel);
+            addResult({ key: [dim], value: kvPair.value }, dataModel);
           }
         });
       });
