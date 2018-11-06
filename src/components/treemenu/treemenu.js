@@ -826,7 +826,7 @@ const TreeMenu = Component.extend({
       if (!entry || entry.tags == "_none") return;
       if (!entry.tags) entry.tags = kvPair.dataSource._name || ROOT;
 
-      const use = entry.concept == "_default" ? "constant" : (kvPair.key.size > 1 || entry.concept_type === "time" ? "indicator" : "property");
+      const use = entry.concept == "_default" ? "constant" : (kvPair.key.length > 1 || entry.concept_type === "time" ? "indicator" : "property");
       const concept = {
         id: entry.concept,
         key: kvPair.key,
