@@ -827,7 +827,16 @@ const TreeMenu = Component.extend({
       if (!entry.tags) entry.tags = kvPair.dataSource._name || ROOT;
 
       const use = entry.concept == "_default" ? "constant" : (kvPair.key.size > 1 || entry.concept_type === "time" ? "indicator" : "property");
-      const concept = { id: entry.concept, key: kvPair.key, name: entry.name, name_catalog: entry.name_catalog, description: entry.description, dataSource: kvPair.dataSource._name, use };
+      const concept = {
+        id: entry.concept,
+        key: kvPair.key,
+        name: entry.name,
+        name_catalog: entry.name_catalog,
+        description: entry.description,
+        dataSource: kvPair.dataSource._name,
+        translateContributionLink: kvPair.dataSource.translateContributionLink,
+        use
+      };
 
       if (properties && kvPair.key.length == 1 && entry.concept != "_default" && entry.concept_type != "time") {
 
@@ -1343,7 +1352,6 @@ const TreeMenu = Component.extend({
               d.description = _this.translator("description/_default/" + targetModelType);
             }
             if (!d.description) d.description = noDescription;
-            d.translateContributionLink = _this.model.locale.getTranslateContributionLink();
             d.translateContributionText = _this.translator("dialogs/helptranslate");
             const deepLeaf = view.append("div").attr("class", css.menuHorizontal + " " + css.list_outer + " " + css.list_item_leaf);
             deepLeaf.on("click", d => {

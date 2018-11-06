@@ -29,8 +29,6 @@ const LocaleModel = DataConnected.extend({
   init(name, values, parent, bind) {
     this._type = "locale";
 
-    this._translateContributionLink = null; 
-    
     //same constructor, with same arguments
     this._super(name, values, parent, bind);
   },
@@ -111,15 +109,6 @@ const LocaleModel = DataConnected.extend({
 
   isRTL() {
     return (rtlLocales.indexOf(this.id) !== -1);
-  },
-
-  getTranslateContributionLink() {
-    return this._translateContributionLink;
-  },
-
-  setTranslateContributionLink(arg) {
-    this._translateContributionLink = arg;
-    return this;
   }
 
 });
