@@ -470,8 +470,13 @@ export class Storage {
       cb(dataId, time);
     });
     if (this._collection[dataId]["frames"][whatId]) {
+      //reduce frame array to get correct Date from frame key
+      const framesObj = framesArray.reduce((result, frame) => {
+        result[frame] = frame;
+        return result;
+      }, {});
       utils.forEach(this._collection[dataId]["frames"][whatId], (frame, key) => {
-        cb(dataId, new Date(key));
+        cb(dataId, framesObj[key]);
       });
     }
   }
