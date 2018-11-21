@@ -145,6 +145,7 @@ const Hook = DataConnected.extend({
   loadData(opts = {}) {
 
     // then start loading data
+    this.setReady(false);
 
     if (!this.which || this.use === "constant") return Promise.resolve();
 
@@ -156,8 +157,6 @@ const Hook = DataConnected.extend({
 
     //useful to check if in the middle of a load call
     this._loadCall = true;
-
-    this.setReady(false);
 
     utils.timeStamp("Vizabi Model: Loading Data: " + this._id);
 
