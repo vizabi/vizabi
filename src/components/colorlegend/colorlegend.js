@@ -488,15 +488,30 @@ const ColorLegend = Component.extend({
         const view = d3.select(this);
         const target = d[colorlegendDim];
 
-        const filterHash = _this.colorModel.getValidItems()
-          //filter so that only countries of the correct target remain
-          .filter(f => f[_this.colorModel.which] == target)
-          .reduce((result, d) => {
-            result[d[KEY]] = true;
-            return result;
-          }, {});
+        if (_this.colorModel.use == "indicator") {
+          _this.model.marker.getFrame(_this.model.time.value, frame => {
+            if (!frame) return;
 
-        _this._highlight(_this.markerKeys.filter(key => filterHash[key[KEY]]));
+            const filterHash = Object.keys(frame[_this.colorModel._name]).filter(key => frame[_this.colorModel._name][key] == target)
+              .reduce((result, key) => {
+                result[key] = true;
+                return result;
+              }, {});
+            
+            const KEY = _this.colorModel.getDataKeys();
+            _this._highlight(_this.markerKeys.filter(d => filterHash[utils.getKey(d, KEY)]));  
+          });
+        } else {
+          const filterHash = _this.colorModel.getValidItems()
+            //filter so that only countries of the correct target remain
+            .filter(f => f[_this.colorModel.which] == target)
+            .reduce((result, d) => {
+              result[d[KEY]] = true;
+              return result;
+            }, {});
+
+          _this._highlight(_this.markerKeys.filter(key => filterHash[key[KEY]]));
+        }
       },
 
       mouseout(d, i) {
