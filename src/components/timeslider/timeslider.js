@@ -528,7 +528,18 @@ const TimeSlider = Component.extend({
           }
         }
       }
+
+      let lastIndex;
+      if (_this.availableTimeFrames.some((range, index) => {
+        if (!(range[0] - _this.stepLimits[0]) && !(range[1] - _this.stepLimits[1])) {
+          lastIndex = index;
+          return true;
+        }
+      })) _this.availableTimeFrames = _this.availableTimeFrames.slice(lastIndex, 1);
+
     } else {
+      const steps = _this.model.time.getAllSteps();
+      _this.stepLimits = [steps[0], steps[steps.length - 1]];
       _this.availableTimeFrames = [];
       _this.completedTimeFrames = [];
     }
