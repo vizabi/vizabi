@@ -67,10 +67,16 @@ export default function axisSmart(_orient) {
       //add an invisible element that would represent hovered value
       g.selectAll(".vzb-axis-value")
         .data([null])
-        .enter().append("g")
-        .attr("class", "vzb-axis-value")
-        .classed("vzb-hidden", true)
-        .append("text");
+        .enter().call(selection => {
+          selection.append("g")
+            .attr("class", "vzb-axis-value")
+            .classed("vzb-hidden", true)
+            .append("text");
+          selection.append("g")
+            .attr("class", "vzb-axis-value vzb-axis-value-shadow")
+            .style("opacity", 0)
+            .append("text");           
+        });
 
       // patch the label positioning after the view is generated
       const padding = axis.tickPadding();
@@ -166,13 +172,15 @@ export default function axisSmart(_orient) {
       //set content and visibility of HL value
       g.select(".vzb-axis-value")
         .classed("vzb-hidden", highlightValue == "none");
+      g.select(".vzb-axis-value-shadow").select("text")
+        .text(highlightValue == "none" ? "" : options.formatter(highlightValue));
 
       let bbox;
       const o = {};
 
       if (highlightValue != "none") {
         // measure its width and height for collision resolving
-        bbox = g.select(".vzb-axis-value").node().getBBox();
+        bbox = g.select(".vzb-axis-value-shadow").node().getBBox();
 
         // clone a known options object (because we don't want to overwrite widthOfOneDigit / heightOfOneDigit in the original one
         o.bump = options.bump;
@@ -224,7 +232,8 @@ export default function axisSmart(_orient) {
 
         g.select(".vzb-axis-value")
           .select("text")
-          .transition("text")
+          .interrupt("text" + (highlightValue == "none" ? "on" : "off"))
+          .transition("text" + (highlightValue == "none" ? "off" : "on"))
           .delay(highlightTransDuration)
           .text(highlightValue == "none" ? "" : options.formatter(highlightValue));
 
@@ -239,20 +248,17 @@ export default function axisSmart(_orient) {
       } else {
         g.select(".vzb-axis-value")
           .interrupt()
-          .attr("transform", getTransform)
-          .transition();
+          .attr("transform", getTransform);
 
         g.select(".vzb-axis-value")
           .select("text")
-          .interrupt("text")
-          .text(highlightValue == "none" ? "" : options.formatter(highlightValue))
-          .transition();
+          .interrupt("texton").interrupt("textoff")
+          .text(highlightValue == "none" ? "" : options.formatter(highlightValue));
 
         g.selectAll(".tick:not(.vzb-hidden)").each(function(d, t) {
           d3.select(this).select("text")
             .interrupt()
-            .style("opacity", getOpacity(d, t, this))
-            .transition();
+            .style("opacity", getOpacity(d, t, this));
         });
 
       }
