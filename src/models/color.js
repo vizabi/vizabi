@@ -281,7 +281,7 @@ const ColorModel = Hook.extend({
       this.scale = d3.scaleUtc()
         .domain(domain)
         .range(range)
-        .interpolate(d3.interpolateCubehelix);
+        .interpolate(d3.interpolateRgb.gamma(2.2));
 
     } else if (!this.isDiscrete()) {
 
@@ -306,7 +306,7 @@ const ColorModel = Hook.extend({
       this.scale = d3[`scale${utils.capitalize(scaleType)}`]()
         .domain(domain)
         .range(range)
-        .interpolate(d3.interpolateCubehelix);
+        .interpolate(d3.interpolateRgb.gamma(2.2));
 
     } else {
       range = range.map(m => utils.isArray(m) ? m[0] : m);
