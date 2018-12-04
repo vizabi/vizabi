@@ -272,6 +272,9 @@ const ColorModel = Hook.extend({
         :
         { min: timeMdl.start, max: timeMdl.end };
 
+      if (!limits.min) limits.min = new Date();
+      if (!limits.max) limits.max = new Date();
+
       const singlePoint = (limits.max - limits.min == 0);
 
       domain = domain.sort((a, b) => a - b);
