@@ -210,7 +210,9 @@ const Tool = Component.extend({
   },
 
   loadSplashScreen() {
-    if (this.model.ui.splash) {
+    //if one of the hooks was configured to show time, then there is no point doing splash screen
+    const somethingShowsTime = this.model.state.marker.getSubhooks().some(h => h.which === this.model.state.time.dim);
+    if (this.model.ui.splash && !somethingShowsTime) {
       //TODO: cleanup hardcoded splash screen
       this.model.state.time.splash = true;
       return this.model.startLoading({
