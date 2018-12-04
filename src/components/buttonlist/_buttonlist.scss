@@ -154,7 +154,108 @@ $vzb-button-color-border: #cce6ed;
   }
 }
 
+&.vzb-small,
+&.vzb-medium {
+  .vzb-tool-sidebar .vzb-tool-buttonlist .vzb-buttonlist-btn[data-btn="dialogexpand"] {
+    display: none;  
+  }
+}
+
 &.vzb-large {
+  .vzb-tool-sidebar .vzb-tool-buttonlist .vzb-buttonlist-btn {
+    &[data-btn="dialogexpand"] {
+      @include rtl {
+        left: 54px;
+        right: auto;
+        .vzb-buttonlist-btn-icon .vzb-icon {
+          transform: rotateY(180deg) scaleY(1.4);
+        }
+      }
+      position: absolute;
+      top: calc(50% - 140px);
+      height: 200px;
+      width: 13px;
+      padding: 0;
+      right: 54px;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      cursor: pointer;
+
+      .vzb-buttonlist-btn-icon {
+        background-color: $vzb-color-primary-lightest;
+        transition: none;
+        border-right-width: 0;
+        border-radius: 6px;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex: 0 0 200px;
+        width: 0;
+        height: auto;
+        align-items: center;
+        justify-content: center;
+
+        .vzb-icon {
+          display: none;
+          flex: 0 0 9px;
+          align-self: center;
+          opacity: 0.5;
+          transform: scaleY(1.4);
+          stroke: $vzb-color-white;
+          stroke-width: 30px;
+        }
+      }
+
+      &:hover {
+        top: 20px;
+        bottom: 100px;
+        height: auto;
+        .vzb-buttonlist-btn-icon {
+          width: inherit;
+          border-right-width: 1px;
+          &::before {
+            content: "";
+            position: absolute;
+            height: calc(50% - 100px);
+            width: 1px;
+            transform-origin: top;
+            transform: scaleY(-1);
+            animation: expand 0.2s linear;
+            background-color: $vzb-button-color-border;
+            align-self: flex-start;
+          }
+          &::after {
+            content: "";
+            position: absolute;
+            height: calc(50% - 100px);
+            width: 1px;
+            transform-origin: bottom;
+            transform: scaleY(-1);
+            animation: expand 0.2s linear;
+            background-color: $vzb-button-color-border;
+            align-self: flex-end;
+          }
+          .vzb-icon {
+            display: block;
+          }
+        }
+      }
+
+      @keyframes expand {
+        0% {
+          transform: scaleY(0);
+        }
+      }
+
+      .vzb-buttonlist-btn-title {
+        display: none;
+      }
+    }
+  }
+
   &.vzb-dialog-expand-true {
     .vzb-tool-buttonlist {
       .vzb-buttonlist-btn {
@@ -165,6 +266,19 @@ $vzb-button-color-border: #cce6ed;
         width: $vzb-button-width-expand;
         &.vzb-dialog-side-btn {
           display: none;
+        }
+        &[data-btn="dialogexpand"] {
+          @include rtl {
+            left: 284px;
+            right: auto;
+            .vzb-buttonlist-btn-icon .vzb-icon {
+              transform: scaleY(1.4);
+            }
+          }
+          right: 284px;
+          .vzb-buttonlist-btn-icon .vzb-icon {
+            transform: rotateY(180deg) scaleY(1.4);
+          }
         }
       }
     }

@@ -28,6 +28,7 @@ const UI = Model.extend({
   getClassDefaults() {
     const defaults = {
       presentation: false,
+      dialogExpand: true,
       buttons: [],
       dialogs: {
         dialog: { find: { enableSelectShowSwitch: false } },

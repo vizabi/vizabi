@@ -116,6 +116,14 @@ const ButtonList = Component.extend({
         statebind: "ui.presentation",
         statebindfunc: this.setPresentationMode.bind(this)
       },
+      "dialogexpand": {
+        title: "buttons/dialog_expand",
+        icon: "angleDoubleLeft",
+        func: this.toggleDialogExpand.bind(this),
+        required: true,
+        statebind: "ui.dialogExpand",
+        statebindfunc: this.setDialogExpand.bind(this)
+      },
       "about": {
         title: "buttons/about",
         icon: "about",
@@ -318,7 +326,7 @@ const ButtonList = Component.extend({
       button_height = button.node().getBoundingClientRect().height + button_margin.top + button_margin.bottom;
 
       if (!button.classed(class_hidden)) {
-        if (!expandable || (_this.getLayoutProfile() !== "large")) {
+        if (!expandable || _this.getLayoutProfile() !== "large" || !_this.model.ui.dialogExpand) {
           buttons_width += button_width;
           buttons_height += button_height;
           //sort buttons between required and not required buttons.
@@ -472,6 +480,19 @@ const ButtonList = Component.extend({
     const btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
 
     btn.classed(class_active, boolActive);
+  },
+
+  toggleDialogExpand() {
+    this.model.ui.dialogExpand = !this.model.ui.dialogExpand;
+    this.setDialogExpand();
+  },
+
+  setDialogExpand() {
+    const rootEl = d3.select(this.root.element);
+    if (rootEl.classed("vzb-dialog-expand-true") !== this.model.ui.dialogExpand) {
+      rootEl.classed("vzb-dialog-expand-true", this.model.ui.dialogExpand);
+      this.root.trigger("resize");
+    }
   },
 
   toggleBubbleTrails() {
