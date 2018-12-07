@@ -122,7 +122,8 @@ const ButtonList = Component.extend({
         func: this.toggleDialogExpand.bind(this),
         required: true,
         statebind: "ui.dialogExpand",
-        statebindfunc: this.setDialogExpand.bind(this)
+        statebindfunc: this.setDialogExpand.bind(this),
+        ignoreSize: true
       },
       "about": {
         title: "buttons/about",
@@ -317,7 +318,7 @@ const ButtonList = Component.extend({
     let buttons_width = 0;
     let buttons_height = 0;
 
-    buttons.each(function(d, i) {
+    buttons.filter(d => !d.ignoreSize).each(function(d, i) {
       const button_data = d;
       const button = d3.select(this);
       const expandable = button_expand.indexOf(button_data.id) !== -1;
