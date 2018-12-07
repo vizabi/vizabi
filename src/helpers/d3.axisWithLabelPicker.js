@@ -33,13 +33,13 @@ export default function axisSmart(_orient) {
 
       // measure the width and height of one digit
       const widthSampleG = g.append("g").attr("class", "tick widthSampling");
-      const widthSampleT = widthSampleG.append("text").text("0");
+      const widthSampleT = widthSampleG.append("text").text("0M");
       if (!options.cssMargin) options.cssMargin = {};
       options.cssMargin.top = widthSampleT.style("margin-top");
       options.cssMargin.bottom = widthSampleT.style("margin-bottom");
       options.cssMargin.left = widthSampleT.style("margin-left");
       options.cssMargin.right = widthSampleT.style("margin-right");
-      options.widthOfOneDigit = widthSampleT.node().getBBox().width;
+      options.widthOfOneDigit = widthSampleT.node().getBBox().width * 0.5;
       options.heightOfOneDigit = widthSampleT.node().getBBox().height;
       widthSampleG.remove();
 
