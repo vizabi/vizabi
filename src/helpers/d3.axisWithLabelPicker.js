@@ -71,7 +71,14 @@ export default function axisSmart(_orient) {
           selection.append("g")
             .attr("class", "vzb-axis-value")
             .classed("vzb-hidden", true)
-            .append("text");
+            .append("text")
+            .each(function() {
+              const textEl = d3.select(this);
+              textEl.classed("stroke", true);
+              if (!textEl.style("paint-order").length) {
+                textEl.clone().classed("stroke", false);
+              }
+            });
           selection.append("g")
             .attr("class", "vzb-axis-value vzb-axis-value-shadow")
             .style("opacity", 0)
@@ -231,7 +238,7 @@ export default function axisSmart(_orient) {
           .attr("transform", getTransform);
 
         g.select(".vzb-axis-value")
-          .select("text")
+          .selectAll("text")
           .interrupt("text" + (highlightValue == "none" ? "on" : "off"))
           .transition("text" + (highlightValue == "none" ? "off" : "on"))
           .delay(highlightTransDuration)
@@ -251,7 +258,7 @@ export default function axisSmart(_orient) {
           .attr("transform", getTransform);
 
         g.select(".vzb-axis-value")
-          .select("text")
+          .selectAll("text")
           .interrupt("texton").interrupt("textoff")
           .text(highlightValue == "none" ? "" : options.formatter(highlightValue));
 
