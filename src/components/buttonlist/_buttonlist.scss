@@ -156,14 +156,14 @@ $vzb-button-color-border: #cce6ed;
 
 &.vzb-small,
 &.vzb-medium {
-  .vzb-tool-sidebar .vzb-tool-buttonlist .vzb-buttonlist-btn[data-btn="dialogexpand"] {
+  .vzb-tool-sidebar .vzb-tool-buttonlist .vzb-buttonlist-btn[data-btn="sidebarcollapse"] {
     display: none;  
   }
 }
 
 &.vzb-large {
   .vzb-tool-sidebar .vzb-tool-buttonlist .vzb-buttonlist-btn {
-    &[data-btn="dialogexpand"] {
+    &[data-btn="sidebarcollapse"] {
       @include rtl {
         left: 54px;
         right: auto;
@@ -267,7 +267,7 @@ $vzb-button-color-border: #cce6ed;
         &.vzb-dialog-side-btn {
           display: none;
         }
-        &[data-btn="dialogexpand"] {
+        &[data-btn="sidebarcollapse"] {
           @include rtl {
             left: 284px;
             right: auto;

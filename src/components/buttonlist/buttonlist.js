@@ -11,7 +11,6 @@ import * as iconset from "base/iconset";
 const class_active = "vzb-active";
 const class_hidden = "vzb-hidden";
 const class_active_locked = "vzb-active-locked";
-const class_expand_dialog = "vzb-dialog-side";
 const class_hide_btn = "vzb-dialog-side-btn";
 const class_unavailable = "vzb-unavailable";
 const class_vzb_fullscreen = "vzb-force-fullscreen";
@@ -116,13 +115,13 @@ const ButtonList = Component.extend({
         statebind: "ui.presentation",
         statebindfunc: this.setPresentationMode.bind(this)
       },
-      "dialogexpand": {
-        title: "buttons/dialog_expand",
+      "sidebarcollapse": {
+        title: "buttons/sidebar_collapse",
         icon: "angleDoubleLeft",
-        func: this.toggleDialogExpand.bind(this),
+        func: this.toggleSidebarCollapse.bind(this),
         required: true,
-        statebind: "ui.dialogExpand",
-        statebindfunc: this.setDialogExpand.bind(this),
+        statebind: "ui.sidebarCollapse",
+        statebindfunc: this.setSidebarCollapse.bind(this),
         ignoreSize: true
       },
       "about": {
@@ -327,7 +326,7 @@ const ButtonList = Component.extend({
       button_height = button.node().getBoundingClientRect().height + button_margin.top + button_margin.bottom;
 
       if (!button.classed(class_hidden)) {
-        if (!expandable || _this.getLayoutProfile() !== "large" || !_this.model.ui.dialogExpand) {
+        if (!expandable || _this.getLayoutProfile() !== "large" || _this.model.ui.sidebarCollapse) {
           buttons_width += button_width;
           buttons_height += button_height;
           //sort buttons between required and not required buttons.
@@ -483,15 +482,15 @@ const ButtonList = Component.extend({
     btn.classed(class_active, boolActive);
   },
 
-  toggleDialogExpand() {
-    this.model.ui.dialogExpand = !this.model.ui.dialogExpand;
-    this.setDialogExpand();
+  toggleSidebarCollapse() {
+    this.model.ui.sidebarCollapse = !this.model.ui.sidebarCollapse;
+    this.setSidebarCollapse();
   },
 
-  setDialogExpand() {
+  setSidebarCollapse() {
     const rootEl = d3.select(this.root.element);
-    if (rootEl.classed("vzb-dialog-expand-true") !== this.model.ui.dialogExpand) {
-      rootEl.classed("vzb-dialog-expand-true", this.model.ui.dialogExpand);
+    if (rootEl.classed("vzb-dialog-expand-true") == this.model.ui.sidebarCollapse) {
+      rootEl.classed("vzb-dialog-expand-true", !this.model.ui.sidebarCollapse);
       this.root.trigger("resize");
     }
   },

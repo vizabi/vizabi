@@ -10,7 +10,6 @@ import * as iconset from "base/iconset";
 //default existing buttons
 const class_active = "vzb-active";
 // var class_active_locked = "vzb-active-locked";
-// var class_expand_dialog = "vzb-dialog-side";
 // var class_hide_btn = "vzb-dialog-side-btn";
 // var class_unavailable = "vzb-unavailable";
 // var class_vzb_fullscreen = "vzb-force-fullscreen";

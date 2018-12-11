@@ -9,7 +9,6 @@ import Component from "base/component";
 
 //default existing dialogs
 const class_active = "vzb-active";
-const class_expand_dialog = "vzb-dialog-side";
 
 const Dialogs = Component.extend({
 
@@ -63,7 +62,7 @@ const Dialogs = Component.extend({
       dialog_sidebar = dialog_popup;
       (this.model.ui.dialogs || {}).sidebar = dialog_sidebar;
     }
-    if (dialog_sidebar.length !== 0 && this.model.ui.dialogExpand) {
+    if (dialog_sidebar.length !== 0 && !this.model.ui.sidebarCollapse) {
       this.rootEl.classed("vzb-dialog-expand-true", true);
     }
     this.dialog_popup = dialog_popup;
@@ -147,8 +146,8 @@ const Dialogs = Component.extend({
       let cls = dialogEl.attr("class").replace(" vzb-popup", "").replace(" vzb-sidebar", "");
 
       if (profile === "large" && _this.dialog_sidebar.indexOf(d.id) > -1) {
-        cls += _this.model.ui.dialogExpand ? " vzb-sidebar" : " vzb-popup";
-        if (_this.model.ui.dialogExpand) dialogEl.style("z-index", null);
+        cls += _this.model.ui.sidebarCollapse ? " vzb-popup" : " vzb-sidebar";
+        if (!_this.model.ui.sidebarCollapse) dialogEl.style("z-index", null);
       } else if (_this.dialog_popup.indexOf(d.id) > -1) {
         cls += " vzb-popup";
       }
