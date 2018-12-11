@@ -11,7 +11,6 @@ import * as iconset from "base/iconset";
 const class_active = "vzb-active";
 const class_hidden = "vzb-hidden";
 const class_active_locked = "vzb-active-locked";
-const class_expand_dialog = "vzb-dialog-side";
 const class_hide_btn = "vzb-dialog-side-btn";
 const class_unavailable = "vzb-unavailable";
 const class_vzb_fullscreen = "vzb-force-fullscreen";
@@ -115,6 +114,15 @@ const ButtonList = Component.extend({
         required: false,
         statebind: "ui.presentation",
         statebindfunc: this.setPresentationMode.bind(this)
+      },
+      "sidebarcollapse": {
+        title: "buttons/sidebar_collapse",
+        icon: "angleDoubleLeft",
+        func: this.toggleSidebarCollapse.bind(this),
+        required: true,
+        statebind: "ui.sidebarCollapse",
+        statebindfunc: this.setSidebarCollapse.bind(this),
+        ignoreSize: true
       },
       "about": {
         title: "buttons/about",
@@ -309,7 +317,7 @@ const ButtonList = Component.extend({
     let buttons_width = 0;
     let buttons_height = 0;
 
-    buttons.each(function(d, i) {
+    buttons.filter(d => !d.ignoreSize).each(function(d, i) {
       const button_data = d;
       const button = d3.select(this);
       const expandable = button_expand.indexOf(button_data.id) !== -1;
@@ -318,7 +326,7 @@ const ButtonList = Component.extend({
       button_height = button.node().getBoundingClientRect().height + button_margin.top + button_margin.bottom;
 
       if (!button.classed(class_hidden)) {
-        if (!expandable || (_this.getLayoutProfile() !== "large")) {
+        if (!expandable || _this.getLayoutProfile() !== "large" || _this.model.ui.sidebarCollapse) {
           buttons_width += button_width;
           buttons_height += button_height;
           //sort buttons between required and not required buttons.
@@ -472,6 +480,19 @@ const ButtonList = Component.extend({
     const btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
 
     btn.classed(class_active, boolActive);
+  },
+
+  toggleSidebarCollapse() {
+    this.model.ui.sidebarCollapse = !this.model.ui.sidebarCollapse;
+    this.setSidebarCollapse();
+  },
+
+  setSidebarCollapse() {
+    const rootEl = d3.select(this.root.element);
+    if (rootEl.classed("vzb-dialog-expand-true") == this.model.ui.sidebarCollapse) {
+      rootEl.classed("vzb-dialog-expand-true", !this.model.ui.sidebarCollapse);
+      this.root.trigger("resize");
+    }
   },
 
   toggleBubbleTrails() {
