@@ -213,31 +213,22 @@ $vzb-button-color-border: #cce6ed;
         top: 20px;
         bottom: 100px;
         height: auto;
+        &::before,
+        &::after {
+          content: "";
+          flex: 1 0 auto;
+          transform-origin: bottom;
+          width: 1px;
+          transform: scaleY(1);
+          animation: expand 0.2s linear;
+          background-color: $vzb-button-color-border;
+        }
+        &::after {
+          transform-origin: top;
+        }
         .vzb-buttonlist-btn-icon {
           width: inherit;
           border-right-width: 1px;
-          &::before {
-            content: "";
-            position: absolute;
-            height: calc(50% - 100px);
-            width: 1px;
-            transform-origin: top;
-            transform: scaleY(-1);
-            animation: expand 0.2s linear;
-            background-color: $vzb-button-color-border;
-            align-self: flex-start;
-          }
-          &::after {
-            content: "";
-            position: absolute;
-            height: calc(50% - 100px);
-            width: 1px;
-            transform-origin: bottom;
-            transform: scaleY(-1);
-            animation: expand 0.2s linear;
-            background-color: $vzb-button-color-border;
-            align-self: flex-end;
-          }
           .vzb-icon {
             display: block;
           }
