@@ -9,7 +9,6 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const SassLintPlugin = require('sasslint-webpack-plugin');
-const UnminifiedWebpackPlugin = require('unminified-webpack-plugin');
 const customLoader = require('custom-loader');
 
 const archiver = require('archiver');
@@ -142,9 +141,14 @@ module.exports = output => {
 
   const optimization = {};
 
+  const entry = {
+    'vizabi': path.resolve(__dirname, 'src', 'vizabi-gapminder'),
+  };
+
   if (__PROD__) {
+    entry["vizabi.min"] = entry["vizabi"];
+
     plugins.push(
-      new UnminifiedWebpackPlugin(),
       new AfterBuildPlugin(() => {
         const archive = archiver('zip');
         const files = [
@@ -171,6 +175,7 @@ module.exports = output => {
 
     optimization.minimizer = [
       new UglifyJsPlugin({
+        include: /\.min\.js$/,
         parallel: true,
         sourceMap: true,
         uglifyOptions: {
@@ -209,13 +214,11 @@ module.exports = output => {
 
     devtool: 'source-map',
 
-    entry: {
-      'vizabi': path.resolve(__dirname, 'src', 'vizabi-gapminder'),
-    },
+    entry,
 
     output: {
       path: output || path.resolve(__dirname, 'build'),
-      filename: __PROD__ ? '[name].min.js' : '[name].js',
+      filename: '[name].js',
       devtoolNamespace: "",
       library: 'Vizabi',
       libraryTarget: 'umd',
