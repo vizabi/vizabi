@@ -120,6 +120,7 @@ const EntitiesModel = DataConnected.extend({
       .concat(this._entitySets[dim].map(entitySetName => this._root.dataManager.getDimensionValues(entitySetName, ["name"], queryAddition)));
 
     return Promise.all(loadPromises).then(data => {
+      if (_this.dim !== dim) return;
       _this._entitySetsValues = { [dim]: data[0].length > 1 ? utils.unique([].concat(data[0]), d => d[dim]) : data[0] };
       _this._entitySetsData = { [dim]: {} };
       _this._entitySets[dim].forEach((key, index) => {
