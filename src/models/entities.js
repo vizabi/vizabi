@@ -105,9 +105,9 @@ const EntitiesModel = DataConnected.extend({
     }
 
     const dim = this.dim;
-    this._entitySets = { [dim]: this._root.dataManager.getAvailableDataForKey(dim, null)
+    this._entitySets = { [dim]: utils.unique(this._root.dataManager.getAvailableDataForKey(dim, null)
       .filter(d => d.value !== dim && ["entity_set", "entity_domain"].includes(this._root.dataManager.getConceptProperty(d.value, "concept_type")))
-      .map(d => d.value) };
+      .map(d => d.value)) };
 
     if (!this._entitySets[dim].length) {
       this._entitySetsValues = { [dim]: [] };
@@ -120,10 +120,10 @@ const EntitiesModel = DataConnected.extend({
       .concat(this._entitySets[dim].map(entitySetName => this._root.dataManager.getDimensionValues(entitySetName, ["name"], queryAddition)));
 
     return Promise.all(loadPromises).then(data => {
-      _this._entitySetsValues = { [dim]: data[0] };
+      _this._entitySetsValues = { [dim]: data[0].length > 1 ? utils.unique([].concat(data[0]), d => d[dim]) : data[0] };
       _this._entitySetsData = { [dim]: {} };
       _this._entitySets[dim].forEach((key, index) => {
-        _this._entitySetsData[dim][key] = data[index + 1];
+        _this._entitySetsData[dim][key] = data[index + 1].length > 1 ? utils.unique([].concat(data[index + 1]), d => d[key]) : data[index + 1];
       });
     });
   },
