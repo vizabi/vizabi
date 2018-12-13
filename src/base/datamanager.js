@@ -87,11 +87,12 @@ const DataManagerPrototype = {
   getAvailableDataForKey(pKey, pValue = false) {
     this.updateDataModels();
 
+    if (!Array.isArray(pKey)) pKey = [pKey];
     const collection = this.getCollectionFromKey(pKey);
     const result = [];
     for (const dataModel of this.dataModels.values()) {
       for (const { key, value } of (dataModel.dataAvailability || {})[collection] || []) {
-        if (key.has(pKey) && (!pValue || value === pValue)) {
+        if (key.size === pKey.length && pKey.every(_pKey => key.has(_pKey)) && (!pValue || value === pValue)) {
           result.push({ data: dataModel._name, key: pKey, value });
         }
       }
