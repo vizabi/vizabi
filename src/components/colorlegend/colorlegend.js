@@ -41,7 +41,7 @@ const ColorLegend = Component.extend({
         _this.updateView();
       },
       "change:color.palette": function(evt, path) {
-        if (!_this._readyOnce || (_this.colorModel.isDiscrete() && !_this.frame)) return;
+        if (!_this._readyOnce || (_this.colorModel.isDiscrete() && !_this.frame && !_this.colorModel.use === "constant")) return;
         _this.updateView();
       },
       "change:marker.highlight": function(evt, values) {
@@ -69,8 +69,9 @@ const ColorLegend = Component.extend({
         }
       },
       "translate:locale": function() {
-        _this._translateSelectDialog(_this.model.locale.getTFunction());
-        _this.colorPicker.translate(_this.model.locale.getTFunction());
+        _this._translateSelectDialog(_this.translator);
+        _this.colorPicker.translate(_this.translator);
+        if (_this.colorModel.use === "constant") _this._translateListLegend();
       }
     };
 
@@ -81,6 +82,7 @@ const ColorLegend = Component.extend({
   readyOnce() {
     const _this = this;
     this.element = d3.select(this.element);
+    this.translator = this.model.locale.getTFunction();
 
     //make color in options scrollable
     d3.select(this.placeholder.parentNode).classed("vzb-dialog-scrollable", true);
@@ -92,22 +94,20 @@ const ColorLegend = Component.extend({
         _this.ready();
       });
     }
-    this.listColorsEl = this.element
-      .append("div").attr("class", "vzb-cl-holder")
-      .append("div").attr("class", "vzb-cl-colorlist");
-
-    this.rainbowEl = this.listColorsEl.append("div").attr("class", "vzb-cl-rainbow");
+    this.wrapperEl = this.element.append("div").attr("class", "vzb-cl-holder");
+    this.listColorsEl = this.wrapperEl.append("div").attr("class", "vzb-cl-colorlist");
+    this.rainbowEl = this.wrapperEl.append("div").attr("class", "vzb-cl-rainbow");
     this.rainbowCanvasEl = this.rainbowEl.append("canvas");
-    this.minimapEl = this.listColorsEl.append("div").attr("class", "vzb-cl-minimap");
-    this.rainbowLegendEl = this.listColorsEl.append("div").attr("class", "vzb-cl-rainbow-legend");
+    this.minimapEl = this.wrapperEl.append("div").attr("class", "vzb-cl-minimap");
+    this.rainbowLegendEl = this.wrapperEl.append("div").attr("class", "vzb-cl-rainbow-legend");
     this.rainbowLegendSVG = this.rainbowLegendEl.append("svg");
     this.rainbowLegendG = this.rainbowLegendSVG.append("g");
     this.rainbowLegend = null;
 
-    this.labelScaleEl = this.listColorsEl.append("div").attr("class", "vzb-cl-labelscale");
+    this.labelScaleEl = this.wrapperEl.append("div").attr("class", "vzb-cl-labelscale");
     this.labelScaleSVG = this.labelScaleEl.append("svg");
     this.labelScaleG = this.labelScaleSVG.append("g");
-    this.subtitleDiv = this.listColorsEl.append("div").attr("class", "vzb-cl-subtitle");
+    this.subtitleDiv = this.wrapperEl.append("div").attr("class", "vzb-cl-subtitle");
     this.subtitleText = this.subtitleDiv.append("span").attr("class", "vzb-cl-subtitle-text");
 
     this.minimapSVG = this.minimapEl.append("svg");
@@ -119,17 +119,17 @@ const ColorLegend = Component.extend({
         d3.select(this.root.element)
     );
 
-    this.colorPicker.translate(this.model.locale.getTFunction());
+    this.colorPicker.translate(this.translator);
     this._initSelectDialog();
   },
 
   _initSelectDialog() {
-    this.moreOptionsHint = this.listColorsEl.append("span")
+    this.moreOptionsHint = this.wrapperEl.append("span")
       .classed("vzb-cl-more-hint vzb-hidden", true);
 
-    this.selectDialog = this.listColorsEl.append("div").classed("vzb-cl-select-dialog vzb-hidden", true);
+    this.selectDialog = this.wrapperEl.append("div").classed("vzb-cl-select-dialog vzb-hidden", true);
     this._initSelectDialogItems();
-    this._translateSelectDialog(this.model.locale.getTFunction());
+    this._translateSelectDialog(this.translator);
   },
 
   _initSelectDialogItems() {
@@ -187,270 +187,275 @@ const ColorLegend = Component.extend({
   },
 
   ready() {
-    const _this = this;
-
     this.KEYS = utils.unique(this.model.marker._getAllDimensions({ exceptType: "time" }));
     this.KEY = this.KEYS.join(",");
-    this.colorlegendDim = this.KEY;
+    this.which = this.KEY;
     this.canShowMap = false;
+    this.colorlegendMarkerArray = [];
 
     if (this.colorModel.isDiscrete() && this.colorModel.use !== "constant" && this.colorlegendMarker) {
       if (!this.colorlegendMarker._ready) return;
 
-      this.markerKeys = _this.model.marker.getKeys();
-      this.KEY = _this.colorModel.getDataKeys()[0];
+      this.markerArray = this.model.marker.getKeys();
+      this.KEY = this.colorModel.getDataKeys()[0];
 
-      this.colorlegendDim = this.colorModel.getColorlegendEntities().getDimension();
+      this.which = this.colorModel.getColorlegendEntities().getDimension();
 
       this.colorlegendMarker.getFrame(this.model.time.value, frame => {
         if (!frame) return utils.warn("colorlegend received empty frame in ready()");
-        _this.frame = frame;
-        _this.canShowMap = utils.keys((_this.frame || {}).hook_geoshape || {}).length;
+        this.frame = frame;
+        this.canShowMap = utils.keys((this.frame || {}).hook_geoshape || {}).length;
 
-        _this.colorlegendKeys = _this.colorlegendMarker.getKeys(_this.colorlegendDim);
+        this.colorlegendMarkerArray = this.colorlegendMarker.getKeys(this.which);
 
-        _this.colorlegendKeys.forEach(d => {
-          if (!((_this.frame || {}).hook_geoshape || {})[d[_this.colorlegendDim]]) _this.canShowMap = false;
+        this.colorlegendMarkerArray.forEach(d => {
+          if (!((this.frame || {}).hook_geoshape || {})[d[this.which]]) this.canShowMap = false;
         });
-        _this.updateView();
-        _this.updateGroupsOpacity();
+        this.updateView();
+        this.updateGroupsOpacity();
       });
-      return;
+    } else {
+      this.updateView();
+      this.updateGroupsOpacity();
     }
-
-    _this.updateView();
-    _this.updateGroupsOpacity();
   },
 
 
   updateView() {
     if (!this.element.selectAll) return utils.warn("colorlegend resize() aborted because element is not yet defined");
 
-    const _this = this;
-    const KEY = this.KEY;
-
-    const palette = this.colorModel.getPalette();
-    const canShowMap = this.canShowMap;
-
-    const colorlegendKeys = this.colorlegendKeys || [];
-
-    let colorOptions = this.listColorsEl.selectAll(".vzb-cl-option");
-
-    //Hide and show elements of the color legend
-    //Hide color legend entries if showing minimap or if color hook is a constant
-    //or if using a discrete palette that would map to all entities on the chart and therefore will be too long
-    //in the latter case we should show colors in the "find" list instead
-    const hideColorOptions = canShowMap
-      || this.colorModel.which == "_default"
-      || this.colorlegendMarker && this.colorlegendDim == this.KEY
-        && colorlegendKeys.length > 10 && utils.comparePlainObjects(this.colorModel.getColorlegendEntities().getFilter(), this.model.entities.getFilter());
-
-    colorOptions.classed("vzb-hidden", hideColorOptions);
-
-    this._updateSelectDialog();
-
-    //Hide rainbow element if showing minimap or if color is discrete
-    this.rainbowEl.classed("vzb-hidden", this.colorModel.isDiscrete());
-    this.labelScaleEl.classed("vzb-hidden", this.colorModel.isDiscrete());
-    this.rainbowLegendEl.classed("vzb-hidden", this.colorModel.isDiscrete());
-    //Hide minimap if no data to draw it
-    this.minimapEl.classed("vzb-hidden", !canShowMap || !this.colorModel.isDiscrete());
+    //Hide color legend if using a discrete palette that would map to all entities on the chart and therefore will be too long
+    //in this case we should show colors in the "find" list instead
+    const individualColors = this.colorlegendMarker
+      && this.which == this.KEY
+      && utils.comparePlainObjects(this.colorModel.getColorlegendEntities().getFilter(), this.model.entities.getFilter());
 
     this.subtitleDiv.classed("vzb-hidden", true);
+
+    this._updateRainbowLegend(!this.colorModel.isDiscrete());
+    this._updateListLegend(this.colorModel.isDiscrete() && !this.canShowMap && !individualColors);
+    this._updateMinimapLegend(this.colorModel.isDiscrete() && this.canShowMap);
+
+    this._updateSelectDialog();
+  },
+
+
+  _updateListLegend(isVisible) {
+
+    this.listColorsEl.classed("vzb-hidden", !isVisible);
+    if (!isVisible) return;
+
+    const KEY = this.KEY;
+    const _this = this;
     const cScale = this.colorModel.getScale();
 
-    if (!this.colorModel.isDiscrete()) {
+    let colorOptionsArray = [];
 
-      const gradientWidth = this.rainbowEl.node().getBoundingClientRect().width;
-      const paletteKeys = Object.keys(palette).map(parseFloat);
+    if (this.colorlegendMarkerArray.length) {
+      colorOptionsArray = this.which == KEY ? this.markerArray : this.colorlegendMarkerArray;
+    } else {
+      colorOptionsArray = Object.keys(this.colorModel.getPalette()).map(value => {
+        const result = {};
+        result[this.which] = value;
+        return result;
+      });
+    }
 
-      let domain;
-      let range;
-      const formatter = this.colorModel.getTickFormatter();
-      let fitIntoScale = null;
+    let colorOptions = this.listColorsEl.selectAll(".vzb-cl-option")
+      .data(utils.unique(colorOptionsArray, d => d[this.which]), d => d[this.which]);
 
-      const paletteLabels = this.colorModel.paletteLabels;
+    colorOptions.exit().remove();
 
-      if (paletteLabels) {
+    colorOptions = colorOptions.enter().append("div").attr("class", "vzb-cl-option")
+      .each(function() {
+        d3.select(this).append("div").attr("class", "vzb-cl-color-sample");
+        d3.select(this).append("div").attr("class", "vzb-cl-color-legend");
+      })
+      .on("mouseover", _this._interact().mouseover)
+      .on("mouseout", _this._interact().mouseout)
+      .on("click", (...args) => {
+        if (_this.colorModel.use === "constant") {
+          this._interact().clickToChangeColor(...args);
+        } else {
+          this._bindSelectDialogItems(...args);
+          this.selectDialog.classed("vzb-hidden", false);
+        }
+      })
+      .merge(colorOptions);
 
-        fitIntoScale = "optimistic";
+    colorOptions.each(function(d, index) {
+      d3.select(this).select(".vzb-cl-color-sample")
+        .style("background-color", cScale(d[_this.which]))
+        .style("border", "1px solid " + cScale(d[_this.which]));
+      //Apply names to color legend entries if color is a property
+      let label = _this.colorlegendMarker && _this.frame ? _this.frame.label[d[_this.which]] : null;
+      if (!label && label !== 0) label = d[_this.which];
+      if (_this.colorModel.use === "constant") label = _this.translator("indicator/_default/color");
+      d3.select(this).select(".vzb-cl-color-legend").text(label);
+    });
+  },
+  
+  _translateListLegend() {
+    this.listColorsEl.select(".vzb-cl-option .vzb-cl-color-legend").text(this.translator("indicator/_default/color"));
+  },
 
-        domain = paletteLabels.map(val => parseFloat(val));
-        const paletteMax = d3.max(domain);
-        range = domain.map(val => val / paletteMax * gradientWidth);
+  _updateMinimapLegend(isVisible) {
 
-      } else {
+    this.minimapEl.classed("vzb-hidden", !isVisible);
+    if (!isVisible) return;
 
-        domain = cScale.domain();
-        const paletteMax = d3.max(paletteKeys);
-        range = paletteKeys.map(val => val / paletteMax * gradientWidth);
+    const _this = this;
+    const cScale = this.colorModel.getScale();
 
-      }
+    const tempdivEl = this.minimapEl.append("div").attr("class", "vzb-temp");
 
-      const labelScaleType = (d3.min(domain) <= 0 && d3.max(domain) >= 0 && this.colorModel.scaleType === "log") ? "genericLog" : this.colorModel.scaleType;
+    this.minimapSVG.attr("viewBox", null);
+    this.minimapSVG.selectAll("g").remove();
+    this.minimapG = this.minimapSVG.append("g");
+    this.minimapG.selectAll("path")
+      .data(this.colorlegendMarkerArray, d => d[this.which])
+      .enter().append("path")
+      .on("mouseover", this._interact().mouseover)
+      .on("mouseout", this._interact().mouseout)
+      .on("click", (...args) => {
+        this._bindSelectDialogItems(...args);
+        this.selectDialog.classed("vzb-hidden", false);
+      })
+      .each(function(d) {
+        let shapeString = _this.frame.hook_geoshape[d[_this.which]].trim();
 
-      const labelScale = d3[`scale${utils.capitalize(labelScaleType === "time" ? "linear" : labelScaleType)}`]()
-        .domain(domain)
-        .range(range);
+        //check if shape string starts with svg tag -- then it's a complete svg
+        if (shapeString.slice(0, 4) == "<svg") {
+          //append svg element from string to the temporary div
+          tempdivEl.html(shapeString);
+          //replace the shape string with just the path data from svg
+          //TODO: this is not very resilient. potentially only the first path will be taken!
+          shapeString = tempdivEl.select("svg").select("path").attr("d");
+        }
 
-      const marginLeft = parseInt(this.rainbowEl.style("left"), 10) || 0;
-      const marginRight = parseInt(this.rainbowEl.style("right"), 10) || marginLeft;
+        d3.select(this)
+          .attr("d", shapeString)
+          .style("fill", cScale(d[_this.which]))
+          .append("title").text(_this.frame.label[d[_this.which]]);
 
-      this.labelScaleSVG.style("width", marginLeft + gradientWidth + marginRight + "px");
-      this.labelScaleG.attr("transform", "translate(" + marginLeft + ",0)");
-      this.rainbowLegendSVG.style("width", marginLeft + gradientWidth + marginRight + "px");
-      this.rainbowLegendG.attr("transform", "translate(" + marginLeft + ", " + 7 + ")");
-      const labelsAxis = axisSmart("bottom");
-      labelsAxis.scale(labelScale)
-        //.tickFormat(formatter)
-        .tickSizeOuter(0)
-        .tickPadding(6)
-        .tickSizeMinor(3, 0)
-        .labelerOptions({
-          scaleType: this.colorModel.scaleType,
-          toolMargin: {
-            right: marginRight,
-            left: marginLeft
-          },
-          showOuter: true,
-          formatter,
-          bump: marginLeft,
-          cssFontSize: "11px",
-          fitIntoScale
-        });
-
-      this.labelScaleG.call(labelsAxis);
-
-      const colorRange = cScale.range();
-
-      const gIndicators = range.map((val, i) => ({ val, color: colorRange[i], paletteKey: paletteKeys[i] }));
-      this.rainbowLegend = this.rainbowLegendG.selectAll("circle")
-        .data(gIndicators);
-      this.rainbowLegend.exit().remove();
-      this.rainbowLegend = this.rainbowLegend.enter().append("circle")
-        .attr("r", "6px")
-        .attr("stroke", "#000")
-        .on("click", _this._interact().clickToChangeColor)
-        .merge(this.rainbowLegend);
-
-      this.rainbowLegend.each(function(d, i) {
-        d3.select(this).attr("fill", d.color);
-        d3.select(this).attr("cx", d.val);
+        tempdivEl.html("");
       });
 
-      this.rainbowCanvasEl
-        .attr("width", gradientWidth)
-        .attr("height", 1)
-        .style("width", gradientWidth + "px")
-        .style("height", "100%");
+    const gbbox = this.minimapG.node().getBBox();
+    this.minimapSVG.attr("viewBox", "0 0 " + gbbox.width * 1.05 + " " + gbbox.height * 1.05);
+    tempdivEl.remove();
 
-      const context = this.rainbowCanvasEl.node().getContext("2d");
-      const image = context.createImageData(gradientWidth, 1);
-      for (let i = 0, j = -1, c; i < gradientWidth; ++i) {
-        c = d3.rgb(cScale(labelScale.invert(i)));
-        image.data[++j] = c.r;
-        image.data[++j] = c.g;
-        image.data[++j] = c.b;
-        image.data[++j] = 255;
-      }
-      context.putImageData(image, 0, 0);
+  },
 
-      const conceptProps = this.colorModel.getConceptprops();
-      const subtitle = utils.getSubtitle(conceptProps.name, conceptProps.name_short);
 
-      this.subtitleDiv.classed("vzb-hidden", subtitle == "");
-      this.subtitleText.text(subtitle);
+  _updateRainbowLegend(isVisible) {
 
-      colorOptions.classed("vzb-hidden", true);
+    //Hide rainbow element if showing minimap or if color is discrete
+    this.rainbowEl.classed("vzb-hidden", !isVisible);
+    this.labelScaleEl.classed("vzb-hidden", !isVisible);
+    this.rainbowLegendEl.classed("vzb-hidden", !isVisible);
+    if (!isVisible) return;
+
+    const gradientWidth = this.rainbowEl.node().getBoundingClientRect().width;
+    const paletteKeys = Object.keys(this.colorModel.getPalette()).map(parseFloat);
+    const cScale = this.colorModel.getScale();
+
+    let domain;
+    let range;
+    const formatter = this.colorModel.getTickFormatter();
+    let fitIntoScale = null;
+
+    const paletteLabels = this.colorModel.paletteLabels;
+
+    if (paletteLabels) {
+
+      fitIntoScale = "optimistic";
+
+      domain = paletteLabels.map(val => parseFloat(val));
+      const paletteMax = d3.max(domain);
+      range = domain.map(val => val / paletteMax * gradientWidth);
 
     } else {
 
-      //Check if geoshape is provided
-      if (!canShowMap) {
+      domain = cScale.domain();
+      const paletteMax = d3.max(paletteKeys);
+      range = paletteKeys.map(val => val / paletteMax * gradientWidth);
 
-        if (this.colorModel.which == "_default") {
-          colorOptions = colorOptions.data([]);
-        } else {
-          colorOptions = colorOptions.data(hideColorOptions ? [] : colorlegendKeys.length ? _this.colorlegendDim == KEY ? utils.unique(_this.markerKeys, key => key[KEY]) : colorlegendKeys : Object.keys(this.colorModel.getPalette()).map(value => {
-            const result = {};
-            result[_this.colorlegendDim] = value;
-            return result;
-          }), d => d[_this.colorlegendDim]);
-        }
-
-        colorOptions.exit().remove();
-
-        colorOptions = colorOptions.enter().append("div").attr("class", "vzb-cl-option")
-          .each(function() {
-            d3.select(this).append("div").attr("class", "vzb-cl-color-sample")
-              .on("click", (...args) => {
-                this._bindSelectDialogItems(...args);
-                this.selectDialog.classed("vzb-hidden", false);
-              });
-            d3.select(this).append("div").attr("class", "vzb-cl-color-legend");
-          })
-          .on("mouseover", _this._interact().mouseover)
-          .on("mouseout", _this._interact().mouseout)
-          .on("click", (...args) => {
-            this._bindSelectDialogItems(...args);
-            this.selectDialog.classed("vzb-hidden", false);
-          })
-          .merge(colorOptions);
-
-        colorOptions.each(function(d, index) {
-          d3.select(this).select(".vzb-cl-color-sample")
-            .style("background-color", cScale(d[_this.colorlegendDim]))
-            .style("border", "1px solid " + cScale(d[_this.colorlegendDim]));
-          //Apply names to color legend entries if color is a property
-          let label = _this.colorlegendMarker ? _this.frame.label[d[_this.colorlegendDim]] : null;
-          if (!label && label !== 0) label = d[_this.colorlegendDim];
-          d3.select(this).select(".vzb-cl-color-legend").text(label);
-        });
-
-      } else {
-
-        //Drawing a minimap from the hook data
-
-        const tempdivEl = this.minimapEl.append("div").attr("class", "vzb-temp");
-
-        this.minimapSVG.attr("viewBox", null);
-        this.minimapSVG.selectAll("g").remove();
-        this.minimapG = this.minimapSVG.append("g");
-        this.minimapG.selectAll("path")
-          .data(colorlegendKeys, d => d[_this.colorlegendDim])
-          .enter().append("path")
-          .on("mouseover", _this._interact().mouseover)
-          .on("mouseout", _this._interact().mouseout)
-          .on("click", (...args) => {
-            this._bindSelectDialogItems(...args);
-            this.selectDialog.classed("vzb-hidden", false);
-          })
-          .each(function(d) {
-            let shapeString = _this.frame.hook_geoshape[d[_this.colorlegendDim]].trim();
-
-            //check if shape string starts with svg tag -- then it's a complete svg
-            if (shapeString.slice(0, 4) == "<svg") {
-              //append svg element from string to the temporary div
-              tempdivEl.html(shapeString);
-              //replace the shape string with just the path data from svg
-              //TODO: this is not very resilient. potentially only the first path will be taken!
-              shapeString = tempdivEl.select("svg").select("path").attr("d");
-            }
-
-            d3.select(this)
-              .attr("d", shapeString)
-              .style("fill", cScale(d[_this.colorlegendDim]))
-              .append("title").text(_this.frame.label[d[_this.colorlegendDim]]);
-
-            tempdivEl.html("");
-          });
-
-        const gbbox = this.minimapG.node().getBBox();
-        this.minimapSVG.attr("viewBox", "0 0 " + gbbox.width * 1.05 + " " + gbbox.height * 1.05);
-        tempdivEl.remove();
-      }
     }
 
+    const labelScaleType = (d3.min(domain) <= 0 && d3.max(domain) >= 0 && this.colorModel.scaleType === "log") ? "genericLog" : this.colorModel.scaleType;
+
+    const labelScale = d3[`scale${utils.capitalize(labelScaleType === "time" ? "linear" : labelScaleType)}`]()
+      .domain(domain)
+      .range(range);
+
+    const marginLeft = parseInt(this.rainbowEl.style("left"), 10) || 0;
+    const marginRight = parseInt(this.rainbowEl.style("right"), 10) || marginLeft;
+
+    this.labelScaleSVG.style("width", marginLeft + gradientWidth + marginRight + "px");
+    this.labelScaleG.attr("transform", "translate(" + marginLeft + ",0)");
+    this.rainbowLegendSVG.style("width", marginLeft + gradientWidth + marginRight + "px");
+    this.rainbowLegendG.attr("transform", "translate(" + marginLeft + ", " + 7 + ")");
+    const labelsAxis = axisSmart("bottom");
+    labelsAxis.scale(labelScale)
+      //.tickFormat(formatter)
+      .tickSizeOuter(0)
+      .tickPadding(6)
+      .tickSizeMinor(3, 0)
+      .labelerOptions({
+        scaleType: this.colorModel.scaleType,
+        toolMargin: {
+          right: marginRight,
+          left: marginLeft
+        },
+        showOuter: true,
+        formatter,
+        bump: marginLeft,
+        cssFontSize: "11px",
+        fitIntoScale
+      });
+
+    this.labelScaleG.call(labelsAxis);
+
+    const colorRange = cScale.range();
+
+    const gIndicators = range.map((val, i) => ({ val, color: colorRange[i], paletteKey: paletteKeys[i] }));
+    this.rainbowLegend = this.rainbowLegendG.selectAll("circle")
+      .data(gIndicators);
+    this.rainbowLegend.exit().remove();
+    this.rainbowLegend = this.rainbowLegend.enter().append("circle")
+      .attr("r", "6px")
+      .attr("stroke", "#000")
+      .on("click", this._interact().clickToChangeColor)
+      .merge(this.rainbowLegend);
+
+    this.rainbowLegend.each(function(d, i) {
+      d3.select(this).attr("fill", d.color);
+      d3.select(this).attr("cx", d.val);
+    });
+
+    this.rainbowCanvasEl
+      .attr("width", gradientWidth)
+      .attr("height", 1)
+      .style("width", gradientWidth + "px")
+      .style("height", "100%");
+
+    const context = this.rainbowCanvasEl.node().getContext("2d");
+    const image = context.createImageData(gradientWidth, 1);
+    for (let i = 0, j = -1, c; i < gradientWidth; ++i) {
+      c = d3.rgb(cScale(labelScale.invert(i)));
+      image.data[++j] = c.r;
+      image.data[++j] = c.g;
+      image.data[++j] = c.b;
+      image.data[++j] = 255;
+    }
+    context.putImageData(image, 0, 0);
+
+    const conceptProps = this.colorModel.getConceptprops();
+    const subtitle = utils.getSubtitle(conceptProps.name, conceptProps.name_short);
+
+    this.subtitleDiv.classed("vzb-hidden", subtitle == "");
+    this.subtitleText.text(subtitle);
   },
 
   _updateSelectDialog() {
@@ -477,7 +482,7 @@ const ColorLegend = Component.extend({
     const _this = this;
     const KEYS = this.KEYS;
     const KEY = this.KEY;
-    const colorlegendDim = this.colorlegendDim;
+    const which = this.which;
 
     return {
       mouseover(d, i) {
@@ -486,7 +491,7 @@ const ColorLegend = Component.extend({
         if (!_this.colorModel.isDiscrete()) return;
 
         const view = d3.select(this);
-        const target = d[colorlegendDim];
+        const target = d[which];
 
         if (_this.colorModel.use == "indicator") {
           _this.model.marker.getFrame(_this.model.time.value, frame => {
@@ -497,11 +502,11 @@ const ColorLegend = Component.extend({
                 result[key] = true;
                 return result;
               }, {});
-            
+
             const KEY = _this.colorModel.getDataKeys();
-            _this._highlight(_this.markerKeys.filter(d => filterHash[utils.getKey(d, KEY)]));  
+            _this._highlight(_this.markerArray.filter(d => filterHash[utils.getKey(d, KEY)]));
           });
-        } else {
+        } else if (_this.colorModel.use == "property") {
           const filterHash = _this.colorModel.getValidItems()
             //filter so that only countries of the correct target remain
             .filter(f => f[_this.colorModel.which] == target)
@@ -510,7 +515,9 @@ const ColorLegend = Component.extend({
               return result;
             }, {});
 
-          _this._highlight(_this.markerKeys.filter(key => filterHash[key[KEY]]));
+          _this._highlight(_this.markerArray.filter(key => filterHash[key[KEY]]));
+        } else {
+          // in case of constant do nothing
         }
       },
 
@@ -526,7 +533,7 @@ const ColorLegend = Component.extend({
         const palette = _this.colorModel.getPalette();
         const defaultPalette = _this.colorModel.getDefaultPalette();
         const view = d3.select(this);
-        const target = !_this.colorModel.isDiscrete() ? d.paletteKey : d[colorlegendDim];
+        const target = !_this.colorModel.isDiscrete() ? d.paletteKey : d[which];
         _this.colorPicker
           .colorOld(palette[target])
           .colorDef(defaultPalette[target])
@@ -539,22 +546,22 @@ const ColorLegend = Component.extend({
         if (!_this.colorModel.isDiscrete()) return;
 
         const view = d3.select(this);
-        const target = d[colorlegendDim];
+        const target = d[which];
 
-        const oldShow = _this.model.entities.show[colorlegendDim] && _this.model.entities.show[colorlegendDim]["$in"] ?
-          utils.clone(_this.model.entities.show[colorlegendDim]["$in"]) :
+        const oldShow = _this.model.entities.show[which] && _this.model.entities.show[which]["$in"] ?
+          utils.clone(_this.model.entities.show[which]["$in"]) :
           [];
 
-        const entityIndex = oldShow.indexOf(d[colorlegendDim]);
+        const entityIndex = oldShow.indexOf(d[which]);
         if (entityIndex !== -1) {
           oldShow.splice(entityIndex, 1);
         } else {
-          oldShow.push(d[colorlegendDim]);
+          oldShow.push(d[which]);
         }
 
         const show = {};
         if (oldShow.length > 0)
-          show[colorlegendDim] = { "$in": oldShow };
+          show[which] = { "$in": oldShow };
 
         _this.model.entities.set({ show });
 
@@ -564,7 +571,7 @@ const ColorLegend = Component.extend({
         if (!_this.colorModel.isDiscrete()) return;
 
         const view = d3.select(this);
-        const target = d[colorlegendDim];
+        const target = d[which];
 
         const filterHash = _this.colorModel.getValidItems()
           //filter so that only countries of the correct target remain
@@ -575,7 +582,7 @@ const ColorLegend = Component.extend({
             return result;
           }, {});
 
-        const select = _this.markerKeys.filter(f => filterHash[f[KEY]])
+        const select = _this.markerArray.filter(f => filterHash[f[KEY]])
           .map(d => utils.clone(d, KEYS));
 
         if (select.filter(d => _this.model.marker.isSelected(d)).length == select.length) {
@@ -588,7 +595,7 @@ const ColorLegend = Component.extend({
   },
 
   resize() {
-    if (this.frame) this.updateView();
+    this.updateView();
     this.colorPicker.resize(d3.select(".vzb-colorpicker-svg"));
   },
 
@@ -604,11 +611,11 @@ const ColorLegend = Component.extend({
     const OPACITY_DIM = clMarker.opacityHighlightDim || 0.5;
     const OPACITY_HIGHLIGHT = 1;
 
-    const selection = _this.canShowMap ? ".vzb-cl-minimap path" : ".vzb-cl-option .vzb-cl-color-sample";
+    const selection = _this.canShowMap ? ".vzb-cl-minimap path" : ".vzb-cl-colorlist .vzb-cl-option .vzb-cl-color-sample";
 
-    this.listColorsEl.selectAll(selection).style("opacity", d => {
+    this.wrapperEl.selectAll(selection).style("opacity", d => {
       if (!highlight.length) return OPACITY_REGULAR;
-      return highlight.indexOf(d[_this.colorlegendDim]) > -1 ? OPACITY_HIGHLIGHT : OPACITY_DIM;
+      return highlight.indexOf(d[_this.which]) > -1 ? OPACITY_HIGHLIGHT : OPACITY_DIM;
     });
   }
 
