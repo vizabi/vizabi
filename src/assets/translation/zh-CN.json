@@ -41,6 +41,7 @@
     "dialogs/color/select-all": "Select all in that group",
     "dialogs/color/remove-else": "Remove everything else",
     "dialogs/color/edit-color": "Edit color",
+    "dialogs/color/edit-color-blocked-hint": "Dataset author made colors unchangeable for this indicator",
     "dialogs/find": "Select",
     "dialogs/presentation": "Look and feel",
     "hints/bubbl/setminsize": "Minimum bubble size:",
