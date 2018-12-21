@@ -191,6 +191,7 @@ const TimeSlider = Component.extend({
     this.select = this.element.select(".vzb-ts-slider-select");
     this.progressBar = this.element.select(".vzb-ts-slider-progress");
     this.slide = this.element.select(".vzb-ts-slider-slide");
+    this.forecastBoundary = this.element.select(".vzb-ts-slider-forecastboundary");
     this.handle = this.element.select(".vzb-ts-slider-handle");
     this.valueText = this.element.select(".vzb-ts-slider-value");
     this.playButtons = this.element.select(".vzb-ts-btns");
@@ -201,6 +202,10 @@ const TimeSlider = Component.extend({
 
     this.element.select(".vzb-ts-btn-pause").on("click", () => {
       _this.model.time.pause("soft");
+    });
+
+    this.forecastBoundary.on("click", () => {
+      _this._setTime(_this.model.time.lastBeforeForecast);
     });
 
     //Scale
@@ -386,6 +391,13 @@ const TimeSlider = Component.extend({
       .attr("r", this.profile.radius);
 
     this.sliderWidth = _this.slider.node().getBoundingClientRect().width;
+
+    this.forecastBoundary
+      .attr("transform", "translate(0," + this.height / 2 + ")")
+      .attr("x1", this.xScale(this.model.time.lastBeforeForecast) - this.profile.radius / 2)
+      .attr("x2", this.xScale(this.model.time.lastBeforeForecast) + this.profile.radius / 2)
+      .attr("y1", this.profile.radius)
+      .attr("y2", this.profile.radius);
 
     this.resizeSelectedLimiters();
     this._resizeProgressBar();
@@ -594,15 +606,20 @@ const TimeSlider = Component.extend({
 
         _this.model.time.dragStart();
         let posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
-        value = _this.xScale.invert(posX);
         const maxPosX = _this.width;
+
+        const forecastBoundaryPos = _this.xScale(_this.model.time.lastBeforeForecast);
+        const snappyMargin = 1.5 * _this.handle.attr("r");
 
         if (posX > maxPosX) {
           posX = maxPosX;
         } else if (posX < 0) {
           posX = 0;
+        } else if (forecastBoundaryPos - snappyMargin < posX && posX < forecastBoundaryPos + snappyMargin && !d3.event.sourceEvent.shiftKey) {
+          posX = forecastBoundaryPos;
         }
 
+        value = _this.xScale.invert(posX);
         //set handle position
         _this.handle.attr("cx", posX);
         _this.valueText.attr("transform", "translate(" + posX + "," + (_this.height / 2) + ")");

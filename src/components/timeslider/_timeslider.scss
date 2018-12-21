@@ -148,6 +148,15 @@ $vzb-ts-value-width: 40px;
         stroke: #fff;
         stroke-width: 4px;
       }
+      .vzb-ts-slider-forecastboundary {
+        @include opacity(0.2);
+        stroke: $vzb-ts-slider-color;
+        stroke-width: 3px;
+        cursor: pointer;
+        &:hover {
+          stroke-width: 7px;
+        }
+      }
       .vzb-ts-slider-value {
         user-select: none;
         display: none;
