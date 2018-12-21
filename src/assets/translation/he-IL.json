@@ -41,6 +41,7 @@
     "dialogs/color/select-all": "בחר הכל בקבוצה זו",
     "dialogs/color/remove-else": "הסר את כל השאר",
     "dialogs/color/edit-color": "ערוך צבע",
+    "dialogs/color/edit-color-blocked-hint": "Dataset author made colors unchangeable for this indicator",
     "dialogs/find": "בחר",
     "dialogs/presentation": "סגנון ומראה",
     "hints/bubbl/setminsize": "גודל בועה מינימלי:",
