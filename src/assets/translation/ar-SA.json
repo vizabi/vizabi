@@ -41,6 +41,7 @@
     "dialogs/color/select-all": "تحديد كل محتويات هذه المجموعة",
     "dialogs/color/remove-else": "إزالة كل شيء آخر",
     "dialogs/color/edit-color": "تعديل اللون",
+    "dialogs/color/edit-color-blocked-hint": "Dataset author made colors unchangeable for this indicator",
     "dialogs/find": "تحديد",
     "dialogs/presentation": "Look and feel",
     "hints/bubbl/setminsize": "الحد الأدنى لحجم الفقاعة:",
