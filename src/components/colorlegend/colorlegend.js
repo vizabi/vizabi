@@ -80,8 +80,6 @@ const ColorLegend = Component.extend({
   },
 
   readyOnce() {
-    const _this = this;
-    this.element = d3.select(this.element);
     this.translator = this.model.locale.getTFunction();
 
     //make color in options scrollable
@@ -89,11 +87,18 @@ const ColorLegend = Component.extend({
 
     this.colorModel = this.model.color;
     this.colorlegendMarker = this.colorModel.getColorlegendMarker();
-    if (this.colorlegendMarker) {
-      this.colorlegendMarker.on("ready", () => {
-        _this.ready();
-      });
-    }
+    if (this.colorlegendMarker) this.colorlegendMarker.on("ready", this.ready.bind(this));
+
+
+    this._initDOMElements();
+    this.colorPicker = new ColorPicker(utils.isArray(this.root.element) ? this.root.element : d3.select(this.root.element));
+
+    this.colorPicker.translate(this.translator);
+    this._initSelectDialog();
+  },
+
+  _initDOMElements() {
+    this.element = d3.select(this.element);
     this.wrapperEl = this.element.append("div").attr("class", "vzb-cl-holder");
     this.listColorsEl = this.wrapperEl.append("div").attr("class", "vzb-cl-colorlist");
     this.rainbowEl = this.wrapperEl.append("div").attr("class", "vzb-cl-rainbow");
@@ -112,15 +117,6 @@ const ColorLegend = Component.extend({
 
     this.minimapSVG = this.minimapEl.append("svg");
     this.minimapG = this.minimapSVG.append("g");
-
-    this.colorPicker = new ColorPicker(
-      utils.isArray(this.root.element) ?
-        this.root.element :
-        d3.select(this.root.element)
-    );
-
-    this.colorPicker.translate(this.translator);
-    this._initSelectDialog();
   },
 
   _initSelectDialog() {
@@ -159,7 +155,7 @@ const ColorLegend = Component.extend({
     this.selectAllButton.text("✅ " + t("dialogs/color/select-all"));
     this.removeElseButton.text("🗑️ " + t("dialogs/color/remove-else"));
     this.editColorButton.text("🎨 " + t("dialogs/color/edit-color"));
-    this.editColorButtonTooltip.text("Dataset author doesn't want you to change this");
+    this.editColorButtonTooltip.text(t("dialogs/color/edit-color-blocked-hint"));
   },
 
   _closeSelectDialog() {
@@ -294,7 +290,7 @@ const ColorLegend = Component.extend({
       d3.select(this).select(".vzb-cl-color-legend").text(label);
     });
   },
-  
+
   _translateListLegend() {
     this.listColorsEl.select(".vzb-cl-option .vzb-cl-color-legend").text(this.translator("indicator/_default/color"));
   },
