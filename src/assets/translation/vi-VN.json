@@ -41,6 +41,7 @@
     "dialogs/color/select-all": "Chọn tất cả trong nhóm đó",
     "dialogs/color/remove-else": "Loại bỏ tất cả mọi thứ khác",
     "dialogs/color/edit-color": "Chỉnh sửa màu sắc",
+    "dialogs/color/edit-color-blocked-hint": "Dataset author made colors unchangeable for this indicator",
     "dialogs/find": "Chọn",
     "dialogs/presentation": "Giao diện",
     "hints/bubbl/setminsize": "Kích thước tối thiểu bong bóng:",
