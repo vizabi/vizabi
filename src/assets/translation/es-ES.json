@@ -41,6 +41,7 @@
     "dialogs/color/select-all": "Seleccionar todos en ese grupo",
     "dialogs/color/remove-else": "Remover todo lo demás",
     "dialogs/color/edit-color": "Editar color",
+    "dialogs/color/edit-color-blocked-hint": "Dataset author made colors unchangeable for this indicator",
     "dialogs/find": "Seleccionar",
     "dialogs/presentation": "Mira y siente",
     "hints/bubbl/setminsize": "Tamaño mínimo de burbuja:",

@@ -41,6 +41,7 @@
     "dialogs/color/select-all": "เลือกทั้งหมดในกลุ่ม",
     "dialogs/color/remove-else": "เอาตัวเลือกอื่นออกทั้งหมด",
     "dialogs/color/edit-color": "แก้ไขสี",
+    "dialogs/color/edit-color-blocked-hint": "Dataset author made colors unchangeable for this indicator",
     "dialogs/find": "เลือก",
     "dialogs/presentation": "รูปแบบการแสดงผล",
     "hints/bubbl/setminsize": "ขนาดฟองอากาศที่เล็กที่สุด",

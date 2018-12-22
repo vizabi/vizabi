@@ -41,6 +41,7 @@
     "dialogs/color/select-all": "Подсветить всех в этой группе",
     "dialogs/color/remove-else": "Удалить всех остальных",
     "dialogs/color/edit-color": "Поменять цвет",
+    "dialogs/color/edit-color-blocked-hint": "Dataset author made colors unchangeable for this indicator",
     "dialogs/find": "Выбор",
     "dialogs/presentation": "Дизайн и фишки",
     "hints/bubbl/setminsize": "Минимальный размер кружка:",
