@@ -5,15 +5,17 @@ const path = require('path');
 
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const SassLintPlugin = require('sasslint-webpack-plugin');
-const UnminifiedWebpackPlugin = require('unminified-webpack-plugin');
 const customLoader = require('custom-loader');
 
 const archiver = require('archiver');
 
-const extractSrc = new ExtractTextPlugin('vizabi.css');
+const extractSrc = new MiniCssExtractPlugin({
+  filename: "vizabi.css"
+});
 
 const __PROD__ = process.env.NODE_ENV === 'production';
 const timestamp = new Date();
@@ -39,7 +41,7 @@ function AfterBuildPlugin(callback) {
   this.callback = callback;
 }
 AfterBuildPlugin.prototype.apply = function(compiler) {
-  compiler.plugin('done', this.callback);
+  compiler.hooks.done.tap('AfterBuildPlugin', this.callback);
 };
 
 customLoader.loaders = {
@@ -52,14 +54,14 @@ customLoader.loaders = {
   }
 };
 
-const loaders = [
+const rules = [
   {
     test: /\.js$/,
     exclude: /node_modules/,
-    loaders: [
+    use: [
       {
         loader: 'babel-loader',
-        query: {
+        options: {
           cacheDirectory: !__PROD__,
           presets: ['env']
         }
@@ -71,7 +73,8 @@ const loaders = [
     include: [
       path.resolve(__dirname, 'src')
     ],
-    loader: extractSrc.extract([
+    use: [
+      MiniCssExtractPlugin.loader,
       {
         loader: 'css-loader',
         options: {
@@ -85,12 +88,12 @@ const loaders = [
       {
         loader: 'sass-loader'
       }
-    ])
+    ]
   },
   {
     test: /\.cur$/,
     loader: 'file-loader',
-    query: {
+    options: {
       publicPath: path => path.split('/').slice(1).join('/'),
       name: 'preview/assets/cursors/[name].[ext]'
     }
@@ -136,23 +139,16 @@ module.exports = output => {
     })
   ];
 
+  const optimization = {};
+
+  const entry = {
+    'vizabi': path.resolve(__dirname, 'src', 'vizabi-gapminder'),
+  };
+
   if (__PROD__) {
+    entry["vizabi.min"] = entry["vizabi"];
+
     plugins.push(
-      new webpack.optimize.UglifyJsPlugin({
-        sourceMap: true,
-        compressor: {
-          screw_ie8: true,
-          warnings: false
-        },
-        mangle: {
-          screw_ie8: true
-        },
-        output: {
-          comments: false,
-          screw_ie8: true
-        }
-      }),
-      new UnminifiedWebpackPlugin(),
       new AfterBuildPlugin(() => {
         const archive = archiver('zip');
         const files = [
@@ -174,6 +170,24 @@ module.exports = output => {
         archive.glob('**/*', { cwd: 'src/assets/cursors', dot: true }, { prefix: 'assets/cursors' });
         archive.glob('en.json', { cwd: 'src/assets/translation', dot: true }, { prefix: 'assets/translation' });
         archive.finalize();
+      })
+    );
+
+    optimization.minimizer = [
+      new UglifyJsPlugin({
+        include: /\.min\.js$/,
+        parallel: true,
+        sourceMap: true,
+        uglifyOptions: {
+          compress: {
+            warnings: false
+          },
+          mangle: {
+          },
+          output: {
+            comments: false,
+          }
+        }
       }),
       new webpack.BannerPlugin({
         banner: [
@@ -188,20 +202,24 @@ module.exports = output => {
         ].join('\n'),
         raw: true
       })
-    )
+    ];
   }
 
   return {
+    mode: __PROD__ ? 'production': 'development',
+
+    performance: {
+      hints: false
+    },
 
     devtool: 'source-map',
 
-    entry: {
-      'vizabi': path.resolve(__dirname, 'src', 'vizabi-gapminder'),
-    },
+    entry,
 
     output: {
       path: output || path.resolve(__dirname, 'build'),
-      filename: __PROD__ ? '[name].min.js' : '[name].js',
+      filename: '[name].js',
+      devtoolNamespace: "",
       library: 'Vizabi',
       libraryTarget: 'umd',
       umdNamedDefine: true
@@ -224,10 +242,12 @@ module.exports = output => {
     },
 
     module: {
-      loaders,
+      rules,
     },
 
-    plugins,
+    optimization,
+
+    plugins
 
   };
 };
