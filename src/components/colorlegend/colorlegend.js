@@ -415,7 +415,7 @@ const ColorLegend = Component.extend({
 
     const colorRange = cScale.range();
 
-    const gIndicators = range.map((val, i) => ({ val, color: colorRange[i], paletteKey: paletteKeys[i] }));
+    const gIndicators = domain.map((val, i) => ({ val, color: colorRange[i], paletteKey: paletteKeys[i] }));
     this.rainbowLegend = this.rainbowLegendG.selectAll("circle")
       .data(gIndicators);
     this.rainbowLegend.exit().remove();
@@ -427,7 +427,7 @@ const ColorLegend = Component.extend({
 
     this.rainbowLegend.each(function(d, i) {
       d3.select(this).attr("fill", d.color);
-      d3.select(this).attr("cx", d.val);
+      d3.select(this).attr("cx", labelScale(d.val));
     });
 
     this.rainbowCanvasEl
