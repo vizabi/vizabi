@@ -1,10 +1,28 @@
 <div class='vzb-dialog-modal'>
   <div class="vzb-dialog-title"> 
-      <%=t ("buttons/speed") %>
+      <%=t ("buttons/time") %>
   </div>
       
   <div class="vzb-dialog-content">
-    <div class="vzb-dialog-placeholder"></div>
+    <p class="vzb-dialog-sublabel"><%=t ("hints/speed") %></p>
+      
+    <form class="vzb-dialog-paragraph">
+      <div class="vzb-speed-slider"></div>
+    </form>
+    
+    <p class="vzb-dialog-sublabel"><%=t ("hints/forecastoptions") %></p>
+    <form class="vzb-dialog-paragraph">
+      <div class="vzb-showforecast-switch"></div>
+      <div class="vzb-pausebeforeforecast-switch"></div>
+      <div class="vzb-showstripedpatternwhenforecast-switch"></div>
+      <div>
+        <span><%=t ("hints/endbeforeforecast") %></span>
+        <input type="text" class="vzb-endbeforeforecast-field" name="endbeforeforecast"/>
+      </div>
+      <div>
+        <span class="vzb-timeformatexample-hint"><%=t ("hints/timeformatexample") %>:</span>
+        <span class="vzb-timeformatexample-label"></span>
+      </div>
+    </form>
   </div>
-
 </div>

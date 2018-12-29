@@ -205,7 +205,7 @@ const TimeSlider = Component.extend({
     });
 
     this.forecastBoundary.on("click", () => {
-      _this._setTime(_this.model.time.lastBeforeForecast);
+      _this._setTime(_this.model.time.endBeforeForecast);
     });
 
     //Scale
@@ -392,12 +392,18 @@ const TimeSlider = Component.extend({
 
     this.sliderWidth = _this.slider.node().getBoundingClientRect().width;
 
+    const forecastBoundaryIsOn = this.model.time.end > this.model.time.endBeforeForecast;
     this.forecastBoundary
-      .attr("transform", "translate(0," + this.height / 2 + ")")
-      .attr("x1", this.xScale(this.model.time.lastBeforeForecast) - this.profile.radius / 2)
-      .attr("x2", this.xScale(this.model.time.lastBeforeForecast) + this.profile.radius / 2)
-      .attr("y1", this.profile.radius)
-      .attr("y2", this.profile.radius);
+      .classed("vzb-hidden", !forecastBoundaryIsOn);
+
+    if (forecastBoundaryIsOn) {
+      this.forecastBoundary
+        .attr("transform", "translate(0," + this.height / 2 + ")")
+        .attr("x1", this.xScale(this.model.time.endBeforeForecast) - this.profile.radius / 2)
+        .attr("x2", this.xScale(this.model.time.endBeforeForecast) + this.profile.radius / 2)
+        .attr("y1", this.profile.radius)
+        .attr("y2", this.profile.radius);
+    }
 
     this.resizeSelectedLimiters();
     this._resizeProgressBar();
@@ -608,14 +614,15 @@ const TimeSlider = Component.extend({
         let posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
         const maxPosX = _this.width;
 
-        const forecastBoundaryPos = _this.xScale(_this.model.time.lastBeforeForecast);
+        const forecastBoundaryIsOn = _this.model.time.end > _this.model.time.endBeforeForecast;
+        const forecastBoundaryPos = _this.xScale(_this.model.time.endBeforeForecast);
         const snappyMargin = 1.5 * _this.handle.attr("r");
 
         if (posX > maxPosX) {
           posX = maxPosX;
         } else if (posX < 0) {
           posX = 0;
-        } else if (forecastBoundaryPos - snappyMargin < posX && posX < forecastBoundaryPos + snappyMargin && !d3.event.sourceEvent.shiftKey) {
+        } else if (forecastBoundaryPos - snappyMargin < posX && posX < forecastBoundaryPos + snappyMargin && !d3.event.sourceEvent.shiftKey && forecastBoundaryIsOn) {
           posX = forecastBoundaryPos;
         }
 

@@ -91,6 +91,14 @@ const ButtonList = Component.extend({
         statebind: "ui.chart.trails",
         statebindfunc: this.setBubbleTrails.bind(this)
       },
+      "forecast": {
+        title: "buttons/forecast",
+        icon: "forecast",
+        func: this.toggleTimeForecast.bind(this),
+        required: false,
+        statebind: "state.time.showForecast",
+        statebindfunc: this.setTimeForecast.bind(this)
+      },
       "lock": {
         title: "buttons/lock",
         icon: "lock",
@@ -239,6 +247,7 @@ const ButtonList = Component.extend({
     this._prev_body_overflow = document.body.style.overflow;
 
     this.setBubbleTrails();
+    this.setTimeForecast();
     this.setBubbleLock();
     this.setInpercent();
     this.setPresentationMode();
@@ -508,6 +517,20 @@ const ButtonList = Component.extend({
 
     btn.classed(class_active_locked, trails);
     btn.classed(class_hidden, this.model.state.marker.select.length == 0);
+  },
+  toggleTimeForecast() {
+    this.model.state.time.showForecast = !this.model.state.time.showForecast;
+    this.setTimeForecast();
+  },
+  setTimeForecast() {
+    const showForecast = (this.model.state.time || {}).showForecast;
+    if (!showForecast && showForecast !== false) return;
+    const id = "forecast";
+    const btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
+    if (!btn.node()) return utils.warn("setBubbleTrails: no button '" + id + "' found in DOM. doing nothing");
+
+    btn.classed(class_active_locked, showForecast);
+    btn.classed(class_hidden, !this.model.state.time.endBeforeForecast);
   },
   toggleBubbleLock(id) {
     const active = (this.model.ui.chart || {}).lockActive;

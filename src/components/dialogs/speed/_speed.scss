@@ -1,0 +1,19 @@
+.vzb-tool-dialogs {
+  .vzb-dialogs-dialog {
+    &[data-dlg="speed"] {
+      .vzb-endbeforeforecast-field {
+        margin-left: 5px;
+        margin-right: 10px;
+        width: auto;
+        max-width: 30%;
+        padding: 5px;
+        display: inline-block;
+      }
+      .vzb-timeformatexample-label, 
+      .vzb-timeformatexample-hint {
+        color: $vzb-color-primary-light;
+        font-style: italic;
+      }
+    }
+  }
+}

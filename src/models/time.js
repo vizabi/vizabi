@@ -43,7 +43,8 @@ const TimeModel = DataConnected.extend({
       playing: false,
       loop: false,
       pauseBeforeForecast: true,
-      lastBeforeForecast: null,
+      showForecast: true,
+      endBeforeForecast: null,
       round: "round",
       delay: 150, //delay between animation frames
       delayThresholdX2: 90, //delay X2 boundary: if less -- then every other frame will be dropped and animation dely will be double the value
@@ -76,7 +77,7 @@ const TimeModel = DataConnected.extend({
     this._super(name, values, parent, bind);
     const _this = this;
     this.initFormatters();
-    if (!this.lastBeforeForecast) this.lastBeforeForecast = this.parse(this.formatDate(new Date()));
+    if (!this.endBeforeForecast) this.endBeforeForecast = this.parse(this.formatDate(new Date()));
     this.dragging = false;
     this.postponePause = false;
     this.allSteps = {};
@@ -95,6 +96,16 @@ const TimeModel = DataConnected.extend({
 
       "change:format": function() {
         _this.initFormatters();
+      },
+
+      "change:showForecast": function() {
+        _this.setReady(false);
+        _this.checkTimeLimits();
+      },
+
+      "change:endBeforeForecast": function() {
+        _this.setReady(false);
+        _this.checkTimeLimits();
       }
 
     });
@@ -156,6 +167,7 @@ const TimeModel = DataConnected.extend({
     //if all hooks are ready, check time limits and set time model to ready
     if ([...this.hooksToListen].every(hook => hook._ready)) {
       const minArray = [this.startOrigin], maxArray = [this.endOrigin];
+      if (!this.showForecast) maxArray.push(this.endBeforeForecast);
 
       this.hooksToListen.forEach(hook => {
         const tLimits = hook.getTimespan();
@@ -207,7 +219,7 @@ const TimeModel = DataConnected.extend({
    */
   _formatToDates() {
     const persistentValues = ["value"];
-    const date_attr = ["value", "start", "end", "startSelected", "endSelected", "lastBeforeForecast"];
+    const date_attr = ["value", "start", "end", "startSelected", "endSelected", "endBeforeForecast"];
     for (let i = 0; i < date_attr.length; i++) {
       const attr = date_attr[i];
       if (!utils.isDate(this[attr])) {
@@ -310,7 +322,7 @@ const TimeModel = DataConnected.extend({
   validateFormatting() {
     //make sure dates are transformed into dates at all times
     if (!utils.isDate(this.start) || !utils.isDate(this.end) || !utils.isDate(this.value)
-      || !utils.isDate(this.startSelected) || !utils.isDate(this.endSelected) || !utils.isDate(this.lastBeforeForecast)) {
+      || !utils.isDate(this.startSelected) || !utils.isDate(this.endSelected) || !utils.isDate(this.endBeforeForecast)) {
       this._formatToDates();
     }
   },
@@ -524,9 +536,9 @@ const TimeModel = DataConnected.extend({
           if (time >= _this.endSelected) {
             // if no playing needed anymore then make the last update persistent and not overshooting
             _this.getModelObject("value").set(_this.endSelected, null, true /*force the change and make it persistent for URL and history*/);
-          } else if (_this.pauseBeforeForecast && _this.value < _this.lastBeforeForecast && time >= _this.lastBeforeForecast) {
+          } else if (_this.pauseBeforeForecast && _this.value < _this.endBeforeForecast && time >= _this.endBeforeForecast) {
             _this.set("playing", false, null, false);
-            _this.getModelObject("value").set(_this.lastBeforeForecast, null, true /*force the change and make it persistent for URL and history*/);
+            _this.getModelObject("value").set(_this.endBeforeForecast, null, true /*force the change and make it persistent for URL and history*/);
           } else {
             _this.getModelObject("value").set(time, null, false /*make change non-persistent for URL and history*/);
           }
