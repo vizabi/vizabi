@@ -30,6 +30,9 @@ const UI = Model.extend({
       presentation: false,
       sidebarCollapse: false,
       buttons: [],
+      chart: {
+        showForecastOverlay: false
+      },
       dialogs: {
         dialog: { find: { enableSelectShowSwitch: false } },
         popup: [],

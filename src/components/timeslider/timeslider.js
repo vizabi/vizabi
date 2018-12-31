@@ -616,7 +616,7 @@ const TimeSlider = Component.extend({
 
         const forecastBoundaryIsOn = _this.model.time.end > _this.model.time.endBeforeForecast;
         const forecastBoundaryPos = _this.xScale(_this.model.time.endBeforeForecast);
-        const snappyMargin = 1.5 * _this.handle.attr("r");
+        const snappyMargin = _this.handle.attr("r");
 
         if (posX > maxPosX) {
           posX = maxPosX;
