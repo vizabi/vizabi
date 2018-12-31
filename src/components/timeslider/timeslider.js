@@ -616,13 +616,13 @@ const TimeSlider = Component.extend({
 
         const forecastBoundaryIsOn = _this.model.time.end > _this.model.time.endBeforeForecast;
         const forecastBoundaryPos = _this.xScale(_this.model.time.endBeforeForecast);
-        const snappyMargin = _this.handle.attr("r");
+        const snappyMargin = 0.5 * _this.handle.attr("r");
 
         if (posX > maxPosX) {
           posX = maxPosX;
         } else if (posX < 0) {
           posX = 0;
-        } else if (forecastBoundaryPos - snappyMargin < posX && posX < forecastBoundaryPos + snappyMargin && !d3.event.sourceEvent.shiftKey && forecastBoundaryIsOn) {
+        } else if ((Math.abs(posX - forecastBoundaryPos) < snappyMargin) && !d3.event.sourceEvent.shiftKey && forecastBoundaryIsOn) {
           posX = forecastBoundaryPos;
         }
 
