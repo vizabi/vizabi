@@ -45,6 +45,7 @@
     "dialogs/color/edit-color-blocked-hint": "Dataset author made colors unchangeable for this indicator",
     "dialogs/find": "تحديد",
     "dialogs/presentation": "Look and feel",
+    "dialogs/technical": "Technical",
     "hints/bubbl/setminsize": "الحد الأدنى لحجم الفقاعة:",
     "hints/bubbl/setmaxsize": "الحد الأقصى لحجم الفقاعة:",
     "hints/bubbl/setsize": "حجم الفقاعة:",
@@ -117,7 +118,7 @@
     "check/adaptMinMaxZoom": "احتوِ الفقاعات, صغر الصورة عندما تذهب",
     "check/presentation": "زيادة حجم النص للعرض",
     "check/enabled": "Chart decorations",
-    "check/enableSelectShowSwitch": "Unlock Select & Show nerdery 🤓",
+    "check/enableSelectShowSwitch": "Unlock Select & Show options",
     "check/removeLabelBox": "إزالة خانات التسمية",
     "check/zoomOnScrolling": "التكبير والتصغير باستخدام عجلة الماوس",
     "check/flipSides": "قلب الجوانب",
