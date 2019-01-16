@@ -55,10 +55,17 @@ const Speed = Dialog.extend("speed", {
   readyOnce() {
     this._super();
     const _this = this;
-    
+
     this.timeFormatExampleEl = this.element.select(".vzb-timeformatexample-label");
 
     this.forecastFieldEl = this.element.select(".vzb-endbeforeforecast-field")
+      .on("keypress", function() {
+        if (d3.event.charCode == 13 || d3.event.keyCode == 13) {
+          //this prevents form submission action with subsequent page reload
+          d3.event.preventDefault();
+          this.blur();
+        }
+      })
       .on("change", function() {
         const parsed = _this.model.state.time.parse(this.value);
         if (utils.isDate(parsed)) {
