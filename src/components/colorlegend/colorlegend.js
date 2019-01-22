@@ -184,16 +184,16 @@ const ColorLegend = Component.extend({
 
   ready() {
     this.KEYS = utils.unique(this.model.marker._getAllDimensions({ exceptType: "time" }));
-    this.KEY = this.KEYS.join(",");
+    this.KEY = this.colorModel.getDataKeys()[0];
+    this.markerArray = this.model.marker.getKeys();
     this.which = this.KEY;
     this.canShowMap = false;
     this.colorlegendMarkerArray = [];
+    this.legendHasOwnModel = ["entity_set", "entity_domain"]
+      .includes(this.colorModel.getConceptprops().concept_type);
 
-    if (this.colorModel.isDiscrete() && this.colorModel.use !== "constant" && this.colorlegendMarker) {
+    if (this.legendHasOwnModel && this.colorlegendMarker) {
       if (!this.colorlegendMarker._ready) return;
-
-      this.markerArray = this.model.marker.getKeys();
-      this.KEY = this.colorModel.getDataKeys()[0];
 
       this.which = this.colorModel.getColorlegendEntities().getDimension();
 
@@ -219,6 +219,17 @@ const ColorLegend = Component.extend({
 
   updateView() {
     if (!this.element.selectAll) return utils.warn("colorlegend resize() aborted because element is not yet defined");
+
+
+    /*POSSIBLE VIEWS:
+    Rainbow color legend (for countinuous indicators and properties)
+    Minimap color legend (for discrete properties where shapes are available from CL model)
+    List color legend (for other discarete indicators and properties)
+      - constant
+      - individual colors
+      - colors informed by CL model
+      - colors informed by scale
+    */
 
     //Hide color legend if using a discrete palette that would map to all entities on the chart and therefore will be too long
     //in this case we should show colors in the "find" list instead
@@ -250,7 +261,7 @@ const ColorLegend = Component.extend({
     if (this.colorlegendMarkerArray.length) {
       colorOptionsArray = this.which == KEY ? this.markerArray : this.colorlegendMarkerArray;
     } else {
-      colorOptionsArray = Object.keys(this.colorModel.getPalette()).map(value => {
+      colorOptionsArray = cScale.domain().map(value => {
         const result = {};
         result[this.which] = value;
         return result;
@@ -270,11 +281,11 @@ const ColorLegend = Component.extend({
       .on("mouseover", _this._interact().mouseover)
       .on("mouseout", _this._interact().mouseout)
       .on("click", (...args) => {
-        if (_this.colorModel.use === "constant") {
-          this._interact().clickToChangeColor(...args);
-        } else {
+        if (_this.legendHasOwnModel) {
           this._bindSelectDialogItems(...args);
           this.selectDialog.classed("vzb-hidden", false);
+        } else {
+          this._interact().clickToChangeColor(...args);
         }
       })
       .merge(colorOptions);

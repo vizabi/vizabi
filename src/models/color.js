@@ -134,11 +134,12 @@ const ColorModel = Hook.extend({
       const model = _this.getClosestModel(modelName);
       const marker = model.isHook() ? model._parent : model;
       const entities = marker.getClosestModel(marker.space[0]);
+      const conceptType = _this.getConceptprops().concept_type;
 
       //save the references here locally
       _this._syncModelReferences[modelName] = { model, marker, entities };
 
-      if (_this.isDiscrete() && _this.use !== "constant") _this._setSyncModel(model, marker, entities);
+      if (["entity_set", "entity_domain"].includes(conceptType)) _this._setSyncModel(model, marker, entities);
     });
   },
 
@@ -323,8 +324,8 @@ const ColorModel = Hook.extend({
 
         domain = [].concat(this.getUnique(this.which));
         range = domain.map((d, i) => paletteObject[d] || defaultPalette[defaultPaletteKeys[i % defaultPaletteKeys.length]]);
-        domain.push("_default");
-        range.push(paletteObject["_default"]);
+        //domain.push("_default");
+        //range.push(paletteObject["_default"]);
       }
 
       this.scale = d3[`scale${utils.capitalize(scaleType)}`]()
