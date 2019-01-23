@@ -184,7 +184,7 @@ const ColorLegend = Component.extend({
 
   ready() {
     this.KEYS = utils.unique(this.model.marker._getAllDimensions({ exceptType: "time" }));
-    this.KEY = this.colorModel.getDataKeys()[0];
+    this.KEY = this.colorModel._getFirstDimension();
     this.markerArray = this.model.marker.getKeys();
     this.which = this.KEY;
     this.canShowMap = false;
@@ -223,12 +223,12 @@ const ColorLegend = Component.extend({
 
     /*POSSIBLE VIEWS:
     Rainbow color legend (for countinuous indicators and properties)
-    Minimap color legend (for discrete properties where shapes are available from CL model)
+    Minimap color legend (for discrete properties where shapes are available via CL marker model)
     List color legend (for other discarete indicators and properties)
-      - constant
-      - individual colors
-      - colors informed by CL model
-      - colors informed by scale
+      - one constant
+      - list of individual colors for every color legend mark (every country is own color)
+      - list of colors informed by CL marker model (world regions)
+      - colors informed by scale (discrete indicators such as one in legal slavery case: legal/illegal switches over time)
     */
 
     //Hide color legend if using a discrete palette that would map to all entities on the chart and therefore will be too long
@@ -510,8 +510,7 @@ const ColorLegend = Component.extend({
                 return result;
               }, {});
 
-            const KEY = _this.colorModel.getDataKeys();
-            _this._highlight(_this.markerArray.filter(d => filterHash[utils.getKey(d, KEY)]));
+            _this._highlight(_this.markerArray.filter(d => filterHash[utils.getKey(d, _this.colorModel.getDataKeys())]));
           });
         } else if (_this.colorModel.use == "property") {
           const filterHash = _this.colorModel.getValidItems()

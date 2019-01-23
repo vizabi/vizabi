@@ -40,20 +40,31 @@ const Marker = Model.extend({
     this._super();
   },
 
-
+  /**
+   * Quietly sets this marker's first entity to have a different dimension,
+   * equal to "which" of model that initiated the sync.
+   * Needed for example for color legend, when by changing
+   * color from one entity set to a different entity set,
+   * the legend should request new labels and minimap shapes
+   * for the new entity set. Possibly from a different datasource too.
+   */
   _receiveSyncModelUpdate(sourceMdl) {
     const conceptType = sourceMdl.getConceptprops().concept_type;
     if (["entity_set", "entity_domain"].includes(conceptType)) {
 
       const newFilter = {
         dim: sourceMdl.which,
-        show: {}
+        filter: utils.clone(sourceMdl.getEntity().filter)
       };
       this.setDataSourceForAllSubhooks(sourceMdl.data);
       this.getFirstEntityModel().set(newFilter, false, false);
     }
   },
 
+  /**
+   * A shorthand for one-dimensional situations
+   * allows to get quickly to the entity model of this marker
+   */
   getFirstEntityModel() {
     return this._space[this.space[0]];
   },

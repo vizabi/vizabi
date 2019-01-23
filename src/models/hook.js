@@ -104,6 +104,12 @@ const Hook = DataConnected.extend({
     this._updateSyncModels();
   },
 
+  /**
+  * Tell synced models (list of which defined in confg)
+  * to update depending on the state of this model.
+  * Example: switch colors to a different entity set,
+  * stacking by colors in mountain chart should change accordingly
+  */
   _updateSyncModels() {
     const _this = this;
     this.syncModels.forEach(modelName => {
@@ -112,6 +118,10 @@ const Hook = DataConnected.extend({
     });
   },
 
+  /**
+  * Quietly sets a bunch of properties of this model to be same as
+  * the ones from the model that initiated the sync
+  */
   _receiveSyncModelUpdate(sourceMdl) {
     this.set({ which: sourceMdl.which, data: sourceMdl.data, spaceRef: sourceMdl.spaceRef }, false, false);
   },
@@ -658,7 +668,7 @@ const Hook = DataConnected.extend({
   },
 
   getEntity() {
-    return this._space[this.spaceRef] || this._parent._space[this.spaceRef] || this._parent._space[this._parent.getSpace()[0]];
+    return this._space[this.spaceRef] || this._parent._space[this.spaceRef] || this._parent.getFirstEntityModel();
   },
 
   getDataKeys() {

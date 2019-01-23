@@ -70,8 +70,10 @@ const StackModel = Hook.extend({
 
   // Stack model only gets synced with discrete models
   _receiveSyncModelUpdate(sourceMdl) {
-    if (!sourceMdl.isDiscrete()) return;
-    this._super(sourceMdl);
+    const conceptType = sourceMdl.getConceptprops().concept_type;
+    if (["entity_set", "entity_domain"].includes(conceptType) && this.use !== "constant") {
+      this._super(sourceMdl);
+    }
   },
 
   /**
