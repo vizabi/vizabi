@@ -45,6 +45,12 @@ const GroupModel = Hook.extend({
       utils.warn("group model: use must be 'property' or 'constant'. Resetting to property...");
       this.use = "property";
     }
+  },
+  
+  // Group model only gets synced with discrete models
+  _receiveSyncModelUpdate(sourceMdl) {
+    if (!sourceMdl.isDiscrete()) return;
+    this._super(sourceMdl);
   }
 
 });

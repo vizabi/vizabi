@@ -86,7 +86,7 @@ const ColorLegend = Component.extend({
     d3.select(this.placeholder.parentNode).classed("vzb-dialog-scrollable", true);
 
     this.colorModel = this.model.color;
-    this.colorlegendMarker = this.colorModel.getColorlegendMarker();
+    this.colorlegendMarker = this.colorModel.getClosestModel("marker_colorlegend");
     if (this.colorlegendMarker) this.colorlegendMarker.on("ready", this.ready.bind(this));
 
 
@@ -195,7 +195,7 @@ const ColorLegend = Component.extend({
     if (this.legendHasOwnModel && this.colorlegendMarker) {
       if (!this.colorlegendMarker._ready) return;
 
-      this.which = this.colorModel.getColorlegendEntities().getDimension();
+      this.which = this.colorlegendMarker.getFirstEntityModel().getDimension();
 
       this.colorlegendMarker.getFrame(this.model.time.value, frame => {
         if (!frame) return utils.warn("colorlegend received empty frame in ready()");
@@ -235,7 +235,7 @@ const ColorLegend = Component.extend({
     //in this case we should show colors in the "find" list instead
     const individualColors = this.colorlegendMarker
       && this.which == this.KEY
-      && utils.comparePlainObjects(this.colorModel.getColorlegendEntities().getFilter(), this.model.entities.getFilter());
+      && utils.comparePlainObjects(this.colorlegendMarker.getFirstEntityModel().getFilter(), this.model.entities.getFilter());
 
     this.subtitleDiv.classed("vzb-hidden", true);
 
@@ -613,7 +613,7 @@ const ColorLegend = Component.extend({
   updateGroupsOpacity(highlight = []) {
     const _this = this;
 
-    const clMarker = this.colorModel.getColorlegendMarker() || {};
+    const clMarker = this.colorlegendMarker || {};
     const OPACITY_REGULAR = clMarker.opacityRegular || 0.8;
     const OPACITY_DIM = clMarker.opacityHighlightDim || 0.5;
     const OPACITY_HIGHLIGHT = 1;

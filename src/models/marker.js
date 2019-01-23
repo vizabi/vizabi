@@ -40,6 +40,25 @@ const Marker = Model.extend({
     this._super();
   },
 
+
+  _receiveSyncModelUpdate(sourceMdl) {
+    const conceptType = sourceMdl.getConceptprops().concept_type;
+    if (["entity_set", "entity_domain"].includes(conceptType)) {
+
+      const newFilter = {
+        dim: sourceMdl.which,
+        show: {}
+      };
+      this.setDataSourceForAllSubhooks(sourceMdl.data);
+      this.getFirstEntityModel().set(newFilter, false, false);
+    }
+  },
+
+  getFirstEntityModel() {
+    return this._space[this.space[0]];
+  },
+
+
   setSpace(newSpace) {
     const subHooks = Object.keys(this.getSubhooks(true));
     const setProps = {};

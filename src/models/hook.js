@@ -17,6 +17,7 @@ const Hook = DataConnected.extend({
 
   getClassDefaults() {
     const defaults = {
+      syncModels: [],
       data: "data",
       which: null
     };
@@ -84,6 +85,8 @@ const Hook = DataConnected.extend({
 
     //support external page indicator frequency tracking
     this._root.trigger("change_hook_which", { "which": obj.which, "hook": this._name });
+
+    this._updateSyncModels();
   },
 
   setScaleType(newValue) {
@@ -98,6 +101,19 @@ const Hook = DataConnected.extend({
   afterPreload() {
     this.autoconfigureModel();
     if (!this.spaceRef) this.spaceRef = this.updateSpaceReference();
+    this._updateSyncModels();
+  },
+
+  _updateSyncModels() {
+    const _this = this;
+    this.syncModels.forEach(modelName => {
+      const model = _this.getClosestModel(modelName);
+      model._receiveSyncModelUpdate(this);
+    });
+  },
+
+  _receiveSyncModelUpdate(sourceMdl) {
+    this.set({ which: sourceMdl.which, data: sourceMdl.data, spaceRef: sourceMdl.spaceRef }, false, false);
   },
 
   autoconfigureModel(autoconfigResult) {

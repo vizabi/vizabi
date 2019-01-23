@@ -68,6 +68,12 @@ const StackModel = Hook.extend({
     return palettes;
   },
 
+  // Stack model only gets synced with discrete models
+  _receiveSyncModelUpdate(sourceMdl) {
+    if (!sourceMdl.isDiscrete()) return;
+    this._super(sourceMdl);
+  },
+
   /**
    * There must be no scale
    */
