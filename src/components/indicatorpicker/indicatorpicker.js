@@ -78,7 +78,8 @@ const IndPicker = Component.extend({
               let value = frame[mdl._name][utils.getKey(_highlightedEntity[0], KEYS)];
 
               // resolve strings via the color legend model
-              if (value && mdl._type === "color" && mdl.isDiscrete()) {
+              const conceptType = mdl.getConceptprops().concept_type;
+              if (value && mdl._type === "color" && ["entity_set", "entity_domain"].includes(conceptType)) {
                 const clModel = mdl.getColorlegendMarker();
                 if (clModel.label.getItems()[value]) value = clModel.label.getItems()[value];
               }

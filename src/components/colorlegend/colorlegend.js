@@ -86,7 +86,7 @@ const ColorLegend = Component.extend({
     d3.select(this.placeholder.parentNode).classed("vzb-dialog-scrollable", true);
 
     this.colorModel = this.model.color;
-    this.colorlegendMarker = this.colorModel.getColorlegendMarker();
+    this.colorlegendMarker = this.colorModel.getClosestModel("marker_colorlegend");
     if (this.colorlegendMarker) this.colorlegendMarker.on("ready", this.ready.bind(this));
 
 
@@ -184,18 +184,18 @@ const ColorLegend = Component.extend({
 
   ready() {
     this.KEYS = utils.unique(this.model.marker._getAllDimensions({ exceptType: "time" }));
-    this.KEY = this.KEYS.join(",");
+    this.KEY = this.colorModel._getFirstDimension();
+    this.markerArray = this.model.marker.getKeys();
     this.which = this.KEY;
     this.canShowMap = false;
     this.colorlegendMarkerArray = [];
+    this.legendHasOwnModel = ["entity_set", "entity_domain"]
+      .includes(this.colorModel.getConceptprops().concept_type);
 
-    if (this.colorModel.isDiscrete() && this.colorModel.use !== "constant" && this.colorlegendMarker) {
+    if (this.legendHasOwnModel && this.colorlegendMarker) {
       if (!this.colorlegendMarker._ready) return;
 
-      this.markerArray = this.model.marker.getKeys();
-      this.KEY = this.colorModel.getDataKeys()[0];
-
-      this.which = this.colorModel.getColorlegendEntities().getDimension();
+      this.which = this.colorlegendMarker.getFirstEntityModel().getDimension();
 
       this.colorlegendMarker.getFrame(this.model.time.value, frame => {
         if (!frame) return utils.warn("colorlegend received empty frame in ready()");
@@ -220,11 +220,22 @@ const ColorLegend = Component.extend({
   updateView() {
     if (!this.element.selectAll) return utils.warn("colorlegend resize() aborted because element is not yet defined");
 
+
+    /*POSSIBLE VIEWS:
+    Rainbow color legend (for countinuous indicators and properties)
+    Minimap color legend (for discrete properties where shapes are available via CL marker model)
+    List color legend (for other discarete indicators and properties)
+      - one constant
+      - list of individual colors for every color legend mark (every country is own color)
+      - list of colors informed by CL marker model (world regions)
+      - colors informed by scale (discrete indicators such as one in legal slavery case: legal/illegal switches over time)
+    */
+
     //Hide color legend if using a discrete palette that would map to all entities on the chart and therefore will be too long
     //in this case we should show colors in the "find" list instead
     const individualColors = this.colorlegendMarker
       && this.which == this.KEY
-      && utils.comparePlainObjects(this.colorModel.getColorlegendEntities().getFilter(), this.model.entities.getFilter());
+      && utils.comparePlainObjects(this.colorlegendMarker.getFirstEntityModel().getFilter(), this.model.entities.getFilter());
 
     this.subtitleDiv.classed("vzb-hidden", true);
 
@@ -250,7 +261,7 @@ const ColorLegend = Component.extend({
     if (this.colorlegendMarkerArray.length) {
       colorOptionsArray = this.which == KEY ? this.markerArray : this.colorlegendMarkerArray;
     } else {
-      colorOptionsArray = Object.keys(this.colorModel.getPalette()).map(value => {
+      colorOptionsArray = cScale.domain().map(value => {
         const result = {};
         result[this.which] = value;
         return result;
@@ -270,11 +281,11 @@ const ColorLegend = Component.extend({
       .on("mouseover", _this._interact().mouseover)
       .on("mouseout", _this._interact().mouseout)
       .on("click", (...args) => {
-        if (_this.colorModel.use === "constant") {
-          this._interact().clickToChangeColor(...args);
-        } else {
+        if (_this.legendHasOwnModel) {
           this._bindSelectDialogItems(...args);
           this.selectDialog.classed("vzb-hidden", false);
+        } else {
+          this._interact().clickToChangeColor(...args);
         }
       })
       .merge(colorOptions);
@@ -499,8 +510,7 @@ const ColorLegend = Component.extend({
                 return result;
               }, {});
 
-            const KEY = _this.colorModel.getDataKeys();
-            _this._highlight(_this.markerArray.filter(d => filterHash[utils.getKey(d, KEY)]));
+            _this._highlight(_this.markerArray.filter(d => filterHash[utils.getKey(d, _this.colorModel.getDataKeys())]));
           });
         } else if (_this.colorModel.use == "property") {
           const filterHash = _this.colorModel.getValidItems()
@@ -602,7 +612,7 @@ const ColorLegend = Component.extend({
   updateGroupsOpacity(highlight = []) {
     const _this = this;
 
-    const clMarker = this.colorModel.getColorlegendMarker() || {};
+    const clMarker = this.colorlegendMarker || {};
     const OPACITY_REGULAR = clMarker.opacityRegular || 0.8;
     const OPACITY_DIM = clMarker.opacityHighlightDim || 0.5;
     const OPACITY_HIGHLIGHT = 1;

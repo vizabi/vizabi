@@ -44,7 +44,6 @@ const ColorModel = Hook.extend({
       use: null,
       which: null,
       scaleType: null,
-      syncModels: [],
       palette: {},
       paletteLabels: null,
       allow: {
@@ -66,13 +65,10 @@ const ColorModel = Hook.extend({
 
     this._super(name, values, parent, bind);
 
-    this._syncModelReferences = {};
     this._hasDefaultColor = false;
 
     this.on("hook_change", () => {
       if (_this._readyOnce || _this._loadCall) return;
-
-      _this._setSyncModels();
 
       if (_this.palette && Object.keys(_this.palette._data).length !== 0) {
         const defaultPalette = _this.getDefaultPalette();
@@ -87,11 +83,6 @@ const ColorModel = Hook.extend({
         _this.set("palette", palette, false, false);
       }
     });
-  },
-
-  afterPreload() {
-    this._super();
-    this._setSyncModels();
   },
 
   // args: {colorID, shadeID}
@@ -124,43 +115,11 @@ const ColorModel = Hook.extend({
   setWhich(newValue) {
     if (this.palette) this.palette._data = {};
     this._super(newValue);
-    this._setSyncModels();
-  },
-
-  _setSyncModels() {
-    const _this = this;
-    this.syncModels.forEach(modelName => {
-      //fetch the model to sync, it's marker and entities
-      const model = _this.getClosestModel(modelName);
-      const marker = model.isHook() ? model._parent : model;
-      const entities = marker.getClosestModel(marker.space[0]);
-
-      //save the references here locally
-      _this._syncModelReferences[modelName] = { model, marker, entities };
-
-      if (_this.isDiscrete() && _this.use !== "constant") _this._setSyncModel(model, marker, entities);
-    });
-  },
-
-  _setSyncModel(model, marker, entities) {
-    if (model == marker) {
-      const newFilter = {
-        dim: this.which,
-        show: {}
-      };
-      marker.setDataSourceForAllSubhooks(this.data);
-      entities.set(newFilter, false, false);
-    } else {
-      if (model.isDiscrete()) model.set({ which: this.which, data: this.data, spaceRef: this.spaceRef }, false, false);
-    }
   },
 
   getColorlegendMarker() {
-    return (this._syncModelReferences["marker_colorlegend"] || {})["marker"];
-  },
-
-  getColorlegendEntities() {
-    return (this._syncModelReferences["marker_colorlegend"] || {})["entities"];
+    if (!this.colorlegendMarker) this.colorlegendMarker = this.getClosestModel("marker_colorlegend");
+    return this.colorlegendMarker;
   },
 
   /**
@@ -323,8 +282,8 @@ const ColorModel = Hook.extend({
 
         domain = [].concat(this.getUnique(this.which));
         range = domain.map((d, i) => paletteObject[d] || defaultPalette[defaultPaletteKeys[i % defaultPaletteKeys.length]]);
-        domain.push("_default");
-        range.push(paletteObject["_default"]);
+        //domain.push("_default");
+        //range.push(paletteObject["_default"]);
       }
 
       this.scale = d3[`scale${utils.capitalize(scaleType)}`]()
