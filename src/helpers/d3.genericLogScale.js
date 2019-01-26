@@ -8,6 +8,7 @@ export default function genericLog() {
     let delta = 5;
     let domain = logScale.domain();
     let range = logScale.range();
+    let interpolate = null;
     let interpolator = null;
     let rangePointingForward, domainPointingForward;
 
@@ -81,12 +82,18 @@ export default function genericLog() {
               + secondEps * rangePointingSign;
             scales = [
               _buildLinearScale(domainParts[0], [range[0], point1]),
-              _buildLogScale(domainParts[1], [point1,  range[range.length - 1]], !domainPointingForward)
+              _buildLogScale(domainParts[1], [point1,
+                //(TODO) trying to piecewise log scales
+                // ...(range.slice(range.findIndex(r => r > point1), -1) || []),
+                range[range.length - 1]], !domainPointingForward)
             ];
           } else if (domain[domain.length - 1] == 0 || abs(domain[domain.length - 1]) <= eps) { // example: [-val,-eps][-eps, 0..eps]
             point1 = range[range.length - 1] - (firstEps + secondEps) * rangePointKoef * rangePointingSign;
             scales = [
-              _buildLogScale(domainParts[0], [range[0], point1], domainPointingForward),
+              _buildLogScale(domainParts[0], [range[0],
+                //(TODO) trying to piecewise log scales
+                // ...(range.slice(1, range.findIndex(r => r > point1)) || []),
+                point1], domainPointingForward),
               _buildLinearScale(domainParts[1], [point1, range[range.length - 1]])
             ];
           }
@@ -94,9 +101,15 @@ export default function genericLog() {
           point1 = range[0] + rangeLength / (1 / rangePointKoef + 1) * rangePointingSign;
           point2 = range[0] + (rangeLength / (1 / rangePointKoef + 1) + firstEps + secondEps) * rangePointingSign;
           scales = [
-            _buildLogScale(domainParts[0], [range[0], point1], domainPointingForward),
+            _buildLogScale(domainParts[0], [range[0],
+              //(TODO) trying to piecewise log scales
+              // ...(range.slice(1, range.findIndex(r => r > point1)) || []),
+              point1], domainPointingForward),
             _buildLinearScale(domainParts[1], [point1, point2]),
-            _buildLogScale(domainParts[2], [point2, range[range.length - 1]], !domainPointingForward)
+            _buildLogScale(domainParts[2], [point2,
+              //(TODO) trying to piecewise log scales
+              // ...(range.slice(range.findIndex(r => r > point2), -1) || []),
+              range[range.length - 1]], !domainPointingForward)
           ];
         }
       }
@@ -116,19 +129,25 @@ export default function genericLog() {
           start = domain[domain.length - 1];
           end = domain[0];
         }
-        const _addSubdomain = function(first, second) {
+        const _addSubdomain = function(first, second, between = []) {
           if (domainPointingForward) {
-            domainParts.push([first, second]);
+            domainParts.push([first, ...between, second]);
           } else {
-            domainParts.unshift([second, first]);
+            domainParts.unshift([second, ...between.reverse(), first]);
           }
         };
         while (start != end) {
           if (end <= -eps || (start >= -eps && end <= eps) || start >= eps) {
-            _addSubdomain(start, end);
+            _addSubdomain(start, end
+            );
+            //(TODO) trying to piecewise log scales
+            //, domain.slice(domain.findIndex(d => d > eps), -1));
             start = end;
           } else if (start < -eps && end >= -eps) {
-            _addSubdomain(start, -eps);
+            _addSubdomain(start, -eps
+            );
+            //(TODO) trying to piecewise log scales
+            //, domain.slice(1, domain.findIndex(d => d > -eps)));
             start = -eps;
           } else if (start >= -eps && end >= eps) {
             _addSubdomain(start, eps);
@@ -235,7 +254,7 @@ export default function genericLog() {
       return scale;
     };
 
-    scale.domain = function(arg) {
+    scale.domain = function(arg, force) {
       if (!arguments.length)
         return domain;
 
@@ -262,6 +281,22 @@ export default function genericLog() {
       const min = d3.min(abs(domain).filter(val => !!val));
       if (min) eps = Math.min(eps, min / 100);
       buildDomain();
+
+      if (interpolate && !force) {
+        let interpolatorDomain = domain;
+        if (domainParts.length > 1) {
+          const _domain = domain;
+          const _range = interpolator ? interpolator.range() : range;
+
+          const limits = [domain[0], domain[domain.length - 1]];
+          interpolator = null;
+          scale.domain(limits, true).range(limits);
+          interpolatorDomain = _domain.map(d => scale(d));
+          scale.domain(_domain, true).range(_range);
+        }
+        interpolator = d3.scaleLinear().domain(interpolatorDomain).range(range).interpolate(interpolate);
+        scale.range(interpolator.domain(), true);
+      }
       return scale;
     };
 
@@ -299,23 +334,16 @@ export default function genericLog() {
     };
 
     scale.interpolate = function(arg) {
-      let interpolatorDomain = domain;
-      if (domainParts.length > 1) {
-        const _domain = domain;
-        const _range = range;
-        const limits = [domain[0], domain[domain.length - 1]];
-        scale.domain(limits).range(limits);
-        interpolatorDomain = _domain.map(d => scale(d));
-        scale.domain(_domain).range(_range);
-      }
-      interpolator = d3.scaleLinear().domain(interpolatorDomain).range(range).interpolate(arg);
-      scale.range(interpolator.domain(), true);
+      interpolate = arg;
+      if (!interpolate) interpolator = null;
+      scale.domain(domain);
       return scale;
     };
 
     scale.invert = function(arg) {
-      const currScale = getScaleByRange(arg);
-      return currScale.scale.invert(arg) * currScale.sign;
+      const _arg = interpolator ? interpolator.invert(arg) : arg;
+      const currScale = getScaleByRange(_arg);
+      return currScale.scale.invert(_arg) * currScale.sign;
     };
 
     scale.ticks = function(arg) {
