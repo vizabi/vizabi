@@ -107,6 +107,7 @@ const ColorLegend = Component.extend({
     this.rainbowLegendEl = this.wrapperEl.append("div").attr("class", "vzb-cl-rainbow-legend");
     this.rainbowLegendSVG = this.rainbowLegendEl.append("svg");
     this.rainbowLegendG = this.rainbowLegendSVG.append("g");
+    this.rainbowLegendG.append("rect");
     this.rainbowLegend = null;
 
     this.labelScaleEl = this.wrapperEl.append("div").attr("class", "vzb-cl-labelscale");
@@ -356,6 +357,7 @@ const ColorLegend = Component.extend({
 
 
   _updateRainbowLegend(isVisible) {
+    const _this = this;
 
     //Hide rainbow element if showing minimap or if color is discrete
     this.rainbowEl.classed("vzb-hidden", !isVisible);
@@ -364,8 +366,9 @@ const ColorLegend = Component.extend({
     if (!isVisible) return;
 
     const gradientWidth = this.rainbowEl.node().getBoundingClientRect().width;
-    const paletteKeys = Object.keys(this.colorModel.getPalette()).map(parseFloat);
+    const paletteKeys = Object.keys(this.colorModel.getPalette()).sort((a, b) => a - b).map(parseFloat);
     const cScale = this.colorModel.getScale();
+    const circleRadius = 6;
 
     let domain;
     let range;
@@ -392,9 +395,14 @@ const ColorLegend = Component.extend({
 
     const labelScaleType = (d3.min(domain) <= 0 && d3.max(domain) >= 0 && this.colorModel.scaleType === "log") ? "genericLog" : this.colorModel.scaleType;
 
-    const labelScale = d3[`scale${utils.capitalize(labelScaleType === "time" ? "linear" : labelScaleType)}`]()
+    this.labelScale = d3[`scale${utils.capitalize(labelScaleType === "time" ? "linear" : labelScaleType)}`]()
       .domain(domain)
       .range(range);
+
+    this.paletteScale = d3[`scale${utils.capitalize(labelScaleType === "time" ? "linear" : labelScaleType)}`]()
+      .domain(domain)
+      .range(paletteKeys)
+      .interpolate(d3.interpolate);
 
     const marginLeft = parseInt(this.rainbowEl.style("left"), 10) || 0;
     const marginRight = parseInt(this.rainbowEl.style("right"), 10) || marginLeft;
@@ -403,8 +411,8 @@ const ColorLegend = Component.extend({
     this.labelScaleG.attr("transform", "translate(" + marginLeft + ",0)");
     this.rainbowLegendSVG.style("width", marginLeft + gradientWidth + marginRight + "px");
     this.rainbowLegendG.attr("transform", "translate(" + marginLeft + ", " + 7 + ")");
-    const labelsAxis = axisSmart("bottom");
-    labelsAxis.scale(labelScale)
+    this.labelsAxis = axisSmart("bottom");
+    this.labelsAxis.scale(this.labelScale)
       //.tickFormat(formatter)
       .tickSizeOuter(0)
       .tickPadding(6)
@@ -422,24 +430,134 @@ const ColorLegend = Component.extend({
         fitIntoScale
       });
 
-    this.labelScaleG.call(labelsAxis);
+    this.labelScaleG.call(this.labelsAxis);
+
+    this.rainbowLegendG.select("rect")
+      .style("width", gradientWidth + "px")
+      .style("height", "20px")
+      .on("mousemove", function() {
+        _this.labelScaleG.call(_this.labelsAxis.highlightValue(_this.labelScale.invert(d3.mouse(this)[0])));
+      })
+      .on("mouseleave", () => _this.labelScaleG.call(_this.labelsAxis.highlightValue("none")))
+      .on("dblclick", function() {
+        let x = d3.mouse(this)[0];
+        x = x <= (circleRadius * 2) ? circleRadius * 2 : x >= (gradientWidth - circleRadius * 2) ? gradientWidth - circleRadius * 2 : x;
+        const color = cScale(_this.labelScale.invert(x));
+        const paletteKey = +_this.paletteScale(newValue).toFixed(2);
+        //console.log("rect dblclick", cScale.domain(), color, paletteKey, newValue);
+        _this.colorModel.setColor(color, "" + paletteKey, null, true, true);
+      });
 
     const colorRange = cScale.range();
 
-    const gIndicators = domain.map((val, i) => ({ val, color: colorRange[i], paletteKey: paletteKeys[i] }));
+    const gIndicators = domain.map((val, i) => ({ val,
+      isEdgePoint: i === 0 || i === domain.length - 1,
+      color: colorRange[i],
+      paletteKey: paletteKeys[i],
+      xMin: i - 1 < 0 ? 0 : this.labelScale(domain[i - 1]) + circleRadius * 2,
+      xMax: i + 1 >= domain.length ? gradientWidth : this.labelScale(domain[i + 1]) - circleRadius * 2
+    }));
+    //console.log(gIndicators);
+
+    const legendDrag = d3.drag()
+      .on("start", function start(d, i) {
+        const circle = d3.select(this);
+        let dragged = false;
+        let ghostCircle = null;
+
+        if (d.isEdgePoint) {
+          ghostCircle = circle.clone().lower().classed("ghost", true).style("opacity", 0.6);
+        }
+
+        circle.classed("dragging", true);
+
+        d3.event.on("drag", drag).on("end", end);
+
+        function drag(d) {
+          if (d3.event.x < 0) return;
+          if (d3.event.x > gradientWidth) return;
+          if (d3.event.x < d.xMin || d3.event.x > d.xMax) return;
+          if (!dragged && d3.event.dx !== 0) dragged = true;
+
+          circle.raise().attr("cx", d.x = d3.event.x);
+
+          if (dragged) {
+            let newValue = _this.labelScale.invert(d3.event.x);
+            const paletteKey = +_this.paletteScale(newValue).toFixed(2);
+            newValue = _this.paletteScale.invert(paletteKey);
+            _this.labelScaleG.call(_this.labelsAxis.highlightValue(newValue));
+
+            _this.colorModel.setColor(d.color, "" + paletteKey, !d.isEdgePoint ? "" + d.paletteKey : null, false);
+            //_this.colorModel.setColor(d.color, "" + paletteKey, null, false, true);
+            d.val = newValue;
+
+            if (d.isEdgePoint && d.paletteKey !== paletteKey) d.isEdgePoint = false;
+
+            d.paletteKey = paletteKey;
+          }
+          //console.log("dragged", d.xMin, d.xMax, d.index, d.isEdgePoint, _this.labelScale.domain());
+        }
+
+        function end(d) {
+          circle.classed("dragging", false);
+          if (ghostCircle) ghostCircle.remove();
+
+          if (dragged) {
+            let snapX = null;
+
+            if (d.x < (circleRadius * 2)) {
+              snapX = d.x < circleRadius ? 0 : (circleRadius * 2);
+            } else if (d.x > (gradientWidth - circleRadius * 2)) {
+              snapX = d.x > (gradientWidth - circleRadius) ? gradientWidth : (gradientWidth - circleRadius * 2);
+            }
+
+            utils.defer(() => {
+              if (snapX !== null) {
+                const newValue = _this.labelScale.invert(snapX);
+                const paletteKey = +_this.paletteScale(newValue).toFixed(2);
+                _this.colorModel.setColor(d.color, "" + paletteKey, "" + d.paletteKey, true);
+              } else {
+                _this.colorModel.setColor(d.color, "" + d.paletteKey, null, true, true);
+              }
+            });
+          }
+        }
+      });
+
+    let dblclick = false;
+    let lastClickId;
+
     this.rainbowLegend = this.rainbowLegendG.selectAll("circle")
       .data(gIndicators);
     this.rainbowLegend.exit().remove();
     this.rainbowLegend = this.rainbowLegend.enter().append("circle")
-      .attr("r", "6px")
+      .attr("r", circleRadius + "px")
       .attr("stroke", "#000")
-      .on("click", this._interact().clickToChangeColor)
+      .on("mouseenter", d => {
+        _this.labelScaleG.call(_this.labelsAxis.highlightValue(d.val));
+      })
+      .on("mouseleave", () => {
+        _this.labelScaleG.call(_this.labelsAxis.highlightValue("none"));
+      })
+      .on("click", (d, i) => {
+        const d3event = { pageX: d3.event.pageX, pageY: d3.event.pageY };
+        lastClickId = setTimeout(() => {
+          if (!dblclick) _this._interact().clickToChangeColor(d, i, d3event);
+          else {
+            clearTimeout(lastClickId);
+            dblclick = false;
+          }
+        }, 500);
+      })
+      .on("dblclick", d => {
+        dblclick = true;
+        if (d.isEdgePoint) return;
+        utils.defer(() => {
+          _this.colorModel.setColor(null, null, "" + d.paletteKey, true, true);
+        });
+      })
+      .call(legendDrag)
       .merge(this.rainbowLegend);
-
-    this.rainbowLegend.each(function(d, i) {
-      d3.select(this).attr("fill", d.color);
-      d3.select(this).attr("cx", labelScale(d.val));
-    });
 
     this.rainbowCanvasEl
       .attr("width", gradientWidth)
@@ -450,13 +568,18 @@ const ColorLegend = Component.extend({
     const context = this.rainbowCanvasEl.node().getContext("2d");
     const image = context.createImageData(gradientWidth, 1);
     for (let i = 0, j = -1, c; i < gradientWidth; ++i) {
-      c = d3.rgb(cScale(labelScale.invert(i)));
+      c = d3.rgb(cScale(this.labelScale.invert(i)));
       image.data[++j] = c.r;
       image.data[++j] = c.g;
       image.data[++j] = c.b;
       image.data[++j] = 255;
     }
     context.putImageData(image, 0, 0);
+
+    this.rainbowLegend.each(function(d, i) {
+      d3.select(this).attr("fill", d.color);
+      d3.select(this).attr("cx", d.x = _this.labelScale(d.val));
+    });
 
     const conceptProps = this.colorModel.getConceptprops();
     const subtitle = utils.getSubtitle(conceptProps.name, conceptProps.name_short);
@@ -533,7 +656,7 @@ const ColorLegend = Component.extend({
         if (!_this.colorModel.isDiscrete()) return;
         _this._unhighlight();
       },
-      clickToChangeColor(d, i) {
+      clickToChangeColor(d, i, d3event = d3.event) {
         //disable interaction if so stated in concept properties
         if (!_this.colorModel.isUserSelectable()) return;
         const palette = _this.colorModel.getPalette();
@@ -543,8 +666,8 @@ const ColorLegend = Component.extend({
         _this.colorPicker
           .colorOld(palette[target])
           .colorDef(defaultPalette[target])
-          .callback((value, isClick) => _this.colorModel.setColor(value, target, isClick))
-          .fitToScreen([d3.event.pageX, d3.event.pageY])
+          .callback((value, isClick) => _this.colorModel.setColor(value, target, null, isClick, isClick))
+          .fitToScreen([d3event.pageX, d3event.pageY])
           .show(true);
       },
       clickToShow(d, i) {

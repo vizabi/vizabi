@@ -88,6 +88,10 @@
     left: 0;
     height: 12px;
     position: absolute;
+    rect {
+      fill: transparent;
+      cursor: pointer;
+    }
     circle {
       cursor: pointer;
     }

@@ -74,11 +74,12 @@ const ColorModel = Hook.extend({
         const defaultPalette = _this.getDefaultPalette();
         const currentPalette = _this.getPalette();
         const palette = {};
+        const paletteHiddenKeys = _this.palette["_"] || [];
         //extend partial current palette with default palette and
         //switch current palette elements which equals
         //default palette elments to nonpersistent state
         Object.keys(defaultPalette).forEach(key => {
-          if (!currentPalette[key] || defaultPalette[key] == currentPalette[key]) palette[key] = defaultPalette[key];
+          if (!paletteHiddenKeys.includes(key) && (!currentPalette[key] || defaultPalette[key] == currentPalette[key])) palette[key] = defaultPalette[key];
         });
         _this.set("palette", palette, false, false);
       }
@@ -125,18 +126,54 @@ const ColorModel = Hook.extend({
   /**
    * set color
    */
-  setColor(value, pointer, persistent) {
+  setColor(value, pointer, oldPointer, persistent, force = false) {
+    //console.log(pointer, oldPointer)
     let range;
     const palette = this.getPalette();
+    const paletteKeysOld = Object.keys(palette);
+    const defaultPaletteKeys = Object.keys(this.getDefaultPalette());
+    const paletteObj = { [pointer]: value };
+
     if (this.isDiscrete()) {
       range = this.scale.range();
-      range[this.scale.domain().indexOf(pointer)] = value;
+      range[domain.indexOf(pointer)] = value;
     } else {
-      palette[pointer] = value;
-      range = utils.values(palette);
+      const paletteHiddenKeys = this.palette["_"];
+
+      if (oldPointer !== null) {
+        // console.log(domain, palette);
+        if (defaultPaletteKeys.includes(oldPointer) && !paletteHiddenKeys.includes(oldPointer)) {
+          paletteHiddenKeys.push(oldPointer);
+        }
+
+        if (paletteKeysOld.includes(oldPointer)) {
+          delete palette[oldPointer];
+          delete this.palette[oldPointer];
+          this.palette._data[oldPointer].off();
+          delete this.palette._data[oldPointer];
+        }
+        // console.log(domain, palette, "end");
+      }
+
+      if (pointer && paletteHiddenKeys.includes(pointer)) {
+        paletteHiddenKeys.splice(paletteHiddenKeys.indexOf(pointer), 1);
+      }
+
+      if (value && pointer) palette[pointer] = value;
+      else delete paletteObj[pointer];
+
+      range = Object.keys(palette).sort((a, b) => a - b).map(key => palette[key]);
+      paletteObj["_"] = paletteHiddenKeys;
+
+      if (!paletteKeysOld.includes(pointer)) {
+        //domain rebuild
+        const { scale } = this._buildColorScale(this.scaleType, palette);
+        this.scale.domain(scale.domain());
+      }
     }
     this.scale.range(range);
-    this.palette.set(pointer, value, persistent, persistent);
+    //console.log(this.scale.domain(), range, palette);
+    this.palette.set(paletteObj, force, persistent);
   },
 
 
@@ -199,11 +236,15 @@ const ColorModel = Hook.extend({
     //rebuild palette if it's empty
     if (!this.palette || Object.keys(this.palette._data).length === 0) {
       const palette = this.getDefaultPalette();
+      palette["_"] = [];
       this.set("palette", palette, false, false);
       const paletteLabels = this._getPaletteLabels();
       this.set("paletteLabels", paletteLabels, false, false);
     }
     const palette = this.palette.getPlainObject();
+
+    delete palette["_"];
+
     if (this.scaleType !== "ordinal") {
       delete palette["_default"];
     }
@@ -218,8 +259,18 @@ const ColorModel = Hook.extend({
     const _this = this;
 
     const paletteObject = _this.getPalette();
+
+    const { scaleType: newScaleType, scale } = this._buildColorScale(scaleType, paletteObject);
+
+    this.scale = scale;
+    this.scaleType = newScaleType;
+  },
+
+  _buildColorScale(scaleType, paletteObject) {
+    const _this = this;
     let domain = Object.keys(paletteObject);
     let range = utils.values(paletteObject);
+    let scale;
 
     this._hasDefaultColor = domain.indexOf("_default") > -1;
 
@@ -240,7 +291,7 @@ const ColorModel = Hook.extend({
       range = domain.map(m => singlePoint ? paletteObject[domain[0]] : paletteObject[m]);
       domain = domain.map(m => limits.min.valueOf() + m / 100 * (limits.max.valueOf() - limits.min.valueOf()));
 
-      this.scale = d3.scaleUtc()
+      scale = d3.scaleUtc()
         .domain(domain)
         .range(range)
         .interpolate(d3.interpolateRgb.gamma(2.2));
@@ -257,6 +308,8 @@ const ColorModel = Hook.extend({
       range = domain.map(m => singlePoint ? paletteObject[domain[0]] : paletteObject[m]);
       domain = domain.map(m => limits[0] + m / 100 * (limits[1] - limits[0]));
 
+      // let _epsdomain = d3.range(1,100,1).map(m => limits[0] + m / 100 * (limits[1] - limits[0]));
+
       if (d3.min(domain) <= 0 && d3.max(domain) >= 0 && scaleType === "log") scaleType = "genericLog";
 
       if (scaleType === "log" || scaleType === "genericLog") {
@@ -264,11 +317,18 @@ const ColorModel = Hook.extend({
           .domain(limits)
           .range(limits);
         domain = domain.map(d => s.invert(d));
+        // _epsdomain = _epsdomain.map(d => Math.abs(s.invert(d)));
       }
-      this.scale = d3[`scale${utils.capitalize(scaleType)}`]()
+      scale = d3[`scale${utils.capitalize(scaleType)}`]()
         .domain(domain)
         .range(range)
         .interpolate(d3.interpolateRgb.gamma(2.2));
+
+      // if (this.scale.eps) {
+      //   const eps = this.scale.eps();
+      //   this.scale.eps(Math.min(eps, d3.min(_epsdomain)/100));
+      //   console.log("eps1", this.scale.eps());
+      // }
 
     } else {
       range = range.map(m => utils.isArray(m) ? m[0] : m);
@@ -286,12 +346,12 @@ const ColorModel = Hook.extend({
         //range.push(paletteObject["_default"]);
       }
 
-      this.scale = d3[`scale${utils.capitalize(scaleType)}`]()
+      scale = d3[`scale${utils.capitalize(scaleType)}`]()
         .domain(domain)
         .range(range);
     }
 
-    this.scaleType = scaleType;
+    return { scale, scaleType };
   }
 
 });
