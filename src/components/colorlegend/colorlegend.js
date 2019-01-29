@@ -186,7 +186,7 @@ const ColorLegend = Component.extend({
     this.KEYS = utils.unique(this.model.marker._getAllDimensions({ exceptType: "time" }));
     this.KEY = this.colorModel._getFirstDimension();
     this.markerArray = this.model.marker.getKeys();
-    this.which = this.KEY;
+    this.which = this.colorModel.which;
     this.canShowMap = false;
     this.colorlegendMarkerArray = [];
     this.legendHasOwnModel = ["entity_set", "entity_domain"]
@@ -261,7 +261,7 @@ const ColorLegend = Component.extend({
     if (this.colorlegendMarkerArray.length) {
       colorOptionsArray = this.which == KEY ? this.markerArray : this.colorlegendMarkerArray;
     } else {
-      colorOptionsArray = cScale.domain().map(value => {
+      colorOptionsArray = Object.keys(this.colorModel.getPalette()).map(value => {
         const result = {};
         result[this.which] = value;
         return result;
