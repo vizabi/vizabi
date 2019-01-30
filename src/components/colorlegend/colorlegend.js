@@ -529,7 +529,7 @@ const ColorLegend = Component.extend({
 
               _this.colorModel.setColor(d.color, "" + paletteKey, !d.isEdgePoint ? "" + d.paletteKey : null, false);
               //interactive palette
-              _this.colorModel.setColor(d.color, "" + paletteKey, null, false, true);
+              //_this.colorModel.setColor(d.color, "" + paletteKey, null, false, true);
               d.val = newValue;
 
               if (d.isEdgePoint && d.paletteKey !== paletteKey) d.isEdgePoint = false;
