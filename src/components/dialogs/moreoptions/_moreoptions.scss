@@ -53,6 +53,17 @@
           }
         }
       }
+      &.vzb-active {
+        .vzb-accordion-section {
+          visibility: hidden;
+          .vzb-dialog-title>span:first-child {
+            visibility: visible;
+          }
+          &.vzb-accordion-active {
+            visibility: visible;
+          }
+        }
+      }
     }
   }
 }
