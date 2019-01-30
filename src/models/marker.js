@@ -54,7 +54,10 @@ const Marker = Model.extend({
 
       const newFilter = {
         dim: sourceMdl.which,
-        filter: utils.clone(sourceMdl.getEntity().filter)
+        //copy filter for which matching individual entities
+        //otherwise reset filter
+        filter: sourceMdl.which === sourceMdl._getFirstDimension() ?
+          utils.clone(sourceMdl.getEntity().filter) : {}
       };
       this.setDataSourceForAllSubhooks(sourceMdl.data);
       this.getFirstEntityModel().set(newFilter, false, false);
