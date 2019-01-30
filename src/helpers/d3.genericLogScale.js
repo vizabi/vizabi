@@ -4,8 +4,10 @@ export default function genericLog() {
     const _this = this;
     let scales = [];
     let domainParts = [];
-    let eps = 0.1;
-    let delta = 5;
+    const defaultEps = 0.1;
+    let eps = defaultEps;
+    const defaultDelta = 5;
+    let delta = defaultDelta;
     let domain = logScale.domain();
     let range = logScale.range();
     let interpolate = null;
@@ -237,6 +239,11 @@ export default function genericLog() {
         interpolator(currScale.scale(x * currScale.sign)) :
         currScale.scale(x * currScale.sign);
     }
+
+    scale.resetEpsDelta = function() {
+      eps = defaultEps;
+      delta = defaultDelta;
+    };
 
     scale.eps = function(arg) {
       if (!arguments.length)

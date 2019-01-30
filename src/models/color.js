@@ -127,22 +127,20 @@ const ColorModel = Hook.extend({
    * set color
    */
   setColor(value, pointer, oldPointer, persistent, force = false) {
-    //console.log(pointer, oldPointer)
     let range;
-    const palette = this.getPalette();
-    const paletteKeysOld = Object.keys(palette);
-    const defaultPaletteKeys = Object.keys(this.getDefaultPalette());
     const paletteObj = { [pointer]: value };
 
     if (this.isDiscrete()) {
       range = this.scale.range();
       range[domain.indexOf(pointer)] = value;
     } else {
+      const palette = this.getPalette();
+      const paletteKeysOld = Object.keys(palette);
+      const defaultPalette = this.getDefaultPalette();
       const paletteHiddenKeys = this.palette["_"];
 
       if (oldPointer !== null) {
-        // console.log(domain, palette);
-        if (defaultPaletteKeys.includes(oldPointer) && !paletteHiddenKeys.includes(oldPointer)) {
+        if (defaultPalette[oldPointer] && !paletteHiddenKeys.includes(oldPointer)) {
           paletteHiddenKeys.push(oldPointer);
         }
 
@@ -152,7 +150,6 @@ const ColorModel = Hook.extend({
           this.palette._data[oldPointer].off();
           delete this.palette._data[oldPointer];
         }
-        // console.log(domain, palette, "end");
       }
 
       if (pointer && paletteHiddenKeys.includes(pointer)) {
@@ -165,14 +162,20 @@ const ColorModel = Hook.extend({
       range = Object.keys(palette).sort((a, b) => a - b).map(key => palette[key]);
       paletteObj["_"] = paletteHiddenKeys;
 
-      if (!paletteKeysOld.includes(pointer)) {
+      if (paletteObj[pointer] && paletteObj[pointer] === defaultPalette[pointer]) {
+        //prevent false persistent on palette hidden keys
+        delete paletteObj["_"];
+        persistent = false;
+      }
+
+      if (!paletteKeysOld.includes(pointer) || oldPointer !== null) {
         //domain rebuild
         const { scale } = this._buildColorScale(this.scaleType, palette);
+        if (this.scale.resetEpsDelta) this.scale.resetEpsDelta();
         this.scale.domain(scale.domain());
       }
     }
     this.scale.range(range);
-    //console.log(this.scale.domain(), range, palette);
     this.palette.set(paletteObj, force, persistent);
   },
 
@@ -308,8 +311,6 @@ const ColorModel = Hook.extend({
       range = domain.map(m => singlePoint ? paletteObject[domain[0]] : paletteObject[m]);
       domain = domain.map(m => limits[0] + m / 100 * (limits[1] - limits[0]));
 
-      // let _epsdomain = d3.range(1,100,1).map(m => limits[0] + m / 100 * (limits[1] - limits[0]));
-
       if (d3.min(domain) <= 0 && d3.max(domain) >= 0 && scaleType === "log") scaleType = "genericLog";
 
       if (scaleType === "log" || scaleType === "genericLog") {
@@ -317,18 +318,12 @@ const ColorModel = Hook.extend({
           .domain(limits)
           .range(limits);
         domain = domain.map(d => s.invert(d));
-        // _epsdomain = _epsdomain.map(d => Math.abs(s.invert(d)));
       }
+
       scale = d3[`scale${utils.capitalize(scaleType)}`]()
         .domain(domain)
         .range(range)
         .interpolate(d3.interpolateRgb.gamma(2.2));
-
-      // if (this.scale.eps) {
-      //   const eps = this.scale.eps();
-      //   this.scale.eps(Math.min(eps, d3.min(_epsdomain)/100));
-      //   console.log("eps1", this.scale.eps());
-      // }
 
     } else {
       range = range.map(m => utils.isArray(m) ? m[0] : m);
