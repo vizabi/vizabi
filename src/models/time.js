@@ -291,11 +291,11 @@ const TimeModel = DataConnected.extend({
     }
 
     if (this.value < this.startSelected && this.value != null && this.startSelected != null) {
-      this.value = new Date(this.startSelected);
+      this.set("value", new Date(this.startSelected), null, false);
     }
 
     if (this.value > this.endSelected && this.value != null && this.endSelected != null) {
-      this.value = new Date(this.endSelected);
+      this.set("value", new Date(this.endSelected), null, false);
     }
     if (this.splash === false) {
       if ((!this.startSelected || this.startSelected < this.start) && this.start != null) {
@@ -309,9 +309,9 @@ const TimeModel = DataConnected.extend({
 
     //value has to be between start and end
     if (this.value < this.start && this.value != null && this.start != null) {
-      this.value = new Date(this.start);
+      this.set("value", new Date(this.start), null, false);
     } else if (this.value > this.end && this.value != null && this.end != null) {
-      this.value = new Date(this.end);
+      this.set("value", new Date(this.end), null, false);
     }
 
     if (this.playable === false && this.playing === true) {
