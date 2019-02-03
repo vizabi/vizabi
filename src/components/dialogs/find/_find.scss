@@ -38,8 +38,6 @@
           left: 0;
           bottom: -3px;
           background-color: $vzb-color-primary;
-
-          -webkit-transition: transform 0.4s;
           transition: transform 0.4s;
         }
 
@@ -64,11 +62,7 @@
         }
 
         input:checked + .vzb-switch-slider::before {
-          // -webkit-transform: translateX(30px);
-          // -ms-transform: translateX(30px);
           // transform: translateX(30px);
-          -webkit-transform: translateX(100%);
-          -ms-transform: translateX(100%);
           transform: translateX(100%);
         }
 
@@ -84,7 +78,7 @@
         padding: 0 10px;
       }
       .vzb-find-list {
-        transform: translateZ(0);        
+        transform: translateZ(0);
         .vzb-find-item.vzb-checked.vzb-separator {
           padding-bottom: 25px;
           border-bottom: 1px solid;
