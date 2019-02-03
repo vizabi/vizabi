@@ -1,0 +1,19 @@
+extends: stylelint-config-sass-guidelines
+rules:
+  indentation: null
+  max-nesting-depth: null
+  string-quotes: null
+  selector-max-compound-selectors: null
+  selector-no-qualifying-type: null
+  rule-empty-line-before: null
+  property-no-vendor-prefix:
+    - true
+    - ignoreProperties:
+      - appearance
+  order/properties-alphabetical-order: null
+  order/order:
+    - type: at-rule
+      name: extend
+    - type: at-rule
+      name: include
+  scss/at-extend-no-missing-placeholder: null

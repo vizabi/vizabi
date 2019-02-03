@@ -8,7 +8,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
-const SassLintPlugin = require('sasslint-webpack-plugin');
+const StyleLintPlugin = require('stylelint-webpack-plugin');
 const customLoader = require('custom-loader');
 
 const archiver = require('archiver');
@@ -86,7 +86,10 @@ const rules = [
         loader: 'postcss-loader'
       },
       {
-        loader: 'sass-loader'
+        loader: 'sass-loader',
+        options: {
+          implementation: require("sass")
+        }
       }
     ]
   },
@@ -121,12 +124,11 @@ module.exports = output => {
         to: path.resolve(output || path.resolve(__dirname, 'build'), 'assets', 'cursors')
       }
     ]),
-    new SassLintPlugin({
-      configFile: path.resolve(__dirname, '.sass-lint.yml'),
-      quiet: false,
+    new StyleLintPlugin({
+      context: path.resolve(__dirname),
+      configFile: path.resolve(__dirname, '.stylelintrc.yml'),
       syntax: 'scss',
-      glob: 'src/**/*.s?(a|c)ss',
-      ignorePlugins: ['extract-text-webpack-plugin']
+      files: 'src/**/*.s?(a|c)ss'
     }),
     new webpack.DefinePlugin({
       __VERSION: JSON.stringify(pkg.version),
