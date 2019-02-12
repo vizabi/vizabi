@@ -87,7 +87,7 @@
   .vzb-cl-rainbow-legend {
     top: 0;
     left: 0;
-    height: 12px;
+    height: 40px;
     position: absolute;
     rect {
       fill: transparent;
@@ -191,5 +191,8 @@
 .vzb-moreoptions {
   .vzb-cl-select-dialog-item-moreoptions {
     display: block;
+  }
+  .vzb-cl-labelscale {
+    height: 55px;
   }
 }

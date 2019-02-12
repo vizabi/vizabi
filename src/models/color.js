@@ -45,6 +45,7 @@ const ColorModel = Hook.extend({
       which: null,
       scaleType: null,
       palette: {},
+      paletteHiddenKeys: [],
       paletteLabels: null,
       allow: {
         scales: ["linear", "log", "genericLog", "time", "pow", "ordinal"]
@@ -70,16 +71,16 @@ const ColorModel = Hook.extend({
     this.on("hook_change", () => {
       if (_this._readyOnce || _this._loadCall) return;
 
-      if (_this.palette && Object.keys(_this.palette._data).length !== 0) {
+      if (_this.palette && Object.keys(_this.palette._data).length !== 0 || _this.paletteHiddenKeys.length) {
         const defaultPalette = _this.getDefaultPalette();
         const currentPalette = _this.getPalette();
         const palette = {};
-        const paletteHiddenKeys = _this.palette["_"] || [];
+        const paletteHiddenKeys = _this.paletteHiddenKeys;
         //extend partial current palette with default palette and
         //switch current palette elements which equals
         //default palette elments to nonpersistent state
         Object.keys(defaultPalette).forEach(key => {
-          if (!paletteHiddenKeys.includes(key) && (!currentPalette[key] || defaultPalette[key] == currentPalette[key])) palette[key] = defaultPalette[key];
+          if (!paletteHiddenKeys.includes(key) && (!currentPalette[key] || utils.rgbHex(defaultPalette[key]) == utils.rgbHex(currentPalette[key]))) palette[key] = defaultPalette[key];
         });
         _this.set("palette", palette, false, false);
       }
@@ -114,7 +115,10 @@ const ColorModel = Hook.extend({
   },
 
   setWhich(newValue) {
-    if (this.palette) this.palette._data = {};
+    if (this.palette) {
+      this.palette._data = {};
+      this.set("paletteHiddenKeys", [], false, true);
+    }
     this._super(newValue);
   },
 
@@ -127,8 +131,10 @@ const ColorModel = Hook.extend({
    * set color
    */
   setColor(value, pointer, oldPointer, persistent, force = false) {
+    if (value) value = utils.rgbHex(value);
+
     let range;
-    const paletteObj = { [pointer]: value };
+    const paletteObj = value && pointer ? { [pointer]: value } : {};
 
     if (this.isDiscrete()) {
       range = this.scale.range();
@@ -137,7 +143,7 @@ const ColorModel = Hook.extend({
       const palette = this.getPalette();
       const paletteKeysOld = Object.keys(palette);
       const defaultPalette = this.getDefaultPalette();
-      const paletteHiddenKeys = this.palette["_"];
+      const paletteHiddenKeys = this.paletteHiddenKeys;
 
       if (oldPointer !== null) {
         if (defaultPalette[oldPointer] && !paletteHiddenKeys.includes(oldPointer)) {
@@ -150,21 +156,29 @@ const ColorModel = Hook.extend({
           this.palette._data[oldPointer].off();
           delete this.palette._data[oldPointer];
         }
+
+        //use _default for emit palette change
+        if (!pointer) {
+          persistent = this.palette["_default"] !== defaultPalette["_default"];
+          force = true;
+          paletteObj["_default"] = this.palette["_default"];
+          this.set("paletteHiddenKeys", paletteHiddenKeys, true, true);
+        }
       }
 
       if (pointer && paletteHiddenKeys.includes(pointer)) {
         paletteHiddenKeys.splice(paletteHiddenKeys.indexOf(pointer), 1);
       }
 
-      if (value && pointer) palette[pointer] = value;
-      else delete paletteObj[pointer];
+      if (pointer && !this.palette[pointer] && !oldPointer) {
+        this.palette.set(pointer, null, false, false);
+      }
+
+      if (pointer && value) palette[pointer] = value;
 
       range = Object.keys(palette).sort((a, b) => a - b).map(key => palette[key]);
-      paletteObj["_"] = paletteHiddenKeys;
 
-      if (paletteObj[pointer] && paletteObj[pointer] === defaultPalette[pointer]) {
-        //prevent false persistent on palette hidden keys
-        delete paletteObj["_"];
+      if (paletteObj[pointer] && defaultPalette[pointer] && paletteObj[pointer] === utils.rgbHex(defaultPalette[pointer])) {
         persistent = false;
       }
 
@@ -237,16 +251,14 @@ const ColorModel = Hook.extend({
 
   getPalette() {
     //rebuild palette if it's empty
-    if (!this.palette || Object.keys(this.palette._data).length === 0) {
+    if ((!this.palette || Object.keys(this.palette._data).length === 0) && this.paletteHiddenKeys.length === 0) {
       const palette = this.getDefaultPalette();
-      palette["_"] = [];
       this.set("palette", palette, false, false);
+      this.set("paletteHiddenKeys", [], false, true);
       const paletteLabels = this._getPaletteLabels();
       this.set("paletteLabels", paletteLabels, false, false);
     }
     const palette = this.palette.getPlainObject();
-
-    delete palette["_"];
 
     if (this.scaleType !== "ordinal") {
       delete palette["_default"];

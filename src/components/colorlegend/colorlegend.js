@@ -475,8 +475,8 @@ const ColorLegend = Component.extend({
       }
 
       this.rainbowLegendG.select("rect")
-        .style("width", gradientWidth + "px")
-        .style("height", "20px")
+        .attr("width", gradientWidth)
+        .attr("height", 20)
         .on("mousemove", function() {
           _this.labelScaleG.call(_this.labelsAxis.highlightValue(_this.labelScale.invert(d3.mouse(this)[0])));
         })
@@ -492,22 +492,30 @@ const ColorLegend = Component.extend({
 
       const colorRange = cScale.range();
 
-      const gIndicators = domain.map((val, i) => ({ val,
+      const value0 = d3.min(domain) < 0 && d3.max(domain) > 0 ? this.labelScale(0) : null;
+      const gIndicators = domain.map((val, i) => ({ val, i, value0,
         isEdgePoint: i === 0 || i === domain.length - 1,
         color: colorRange[i],
         paletteKey: paletteKeys[i],
-        xMin: i - 1 < 0 ? 0 : this.labelScale(domain[i - 1]) + circleRadius * 2,
-        xMax: i + 1 >= domain.length ? gradientWidth : this.labelScale(domain[i + 1]) - circleRadius * 2
+        xMin: i - 1 < 0 ? 1 : this.labelScale(domain[i - 1]) + circleRadius * 2,
+        xMax: i + 1 >= domain.length ? gradientWidth - 1 : this.labelScale(domain[i + 1]) - circleRadius * 2
       }));
 
       const legendDrag = d3.drag()
         .on("start", function start(d, i) {
+          //click сompatible node raise
+          let nextSibling = this.nextSibling;
+          while (nextSibling) {
+            this.parentNode.insertBefore(nextSibling, this);
+            nextSibling = this.nextSibling;
+          }
+
           const circle = d3.select(this);
           let dragged = false;
           let ghostCircle = null;
 
           if (d.isEdgePoint) {
-            ghostCircle = circle.clone().lower().classed("ghost", true).style("opacity", 0.6);
+            ghostCircle = circle.clone().lower().classed("ghost", true).style("opacity", 0.8);
           }
 
           circle.classed("dragging", true);
@@ -520,16 +528,19 @@ const ColorLegend = Component.extend({
             if (d3.event.x < d.xMin || d3.event.x > d.xMax) return;
             if (!dragged && d3.event.dx !== 0) dragged = true;
 
-            circle.raise().attr("cx", d.x = d3.event.x);
+            d.x = d3.event.x;
+            if (d.value0 !== null) {
+              d.x = (d.x < d.value0 - 3 || d.x > d.value0 + 3) ? d.x : d.value0;
+            }
+
+            circle.attr("cx", d.x);
 
             if (dragged) {
-              const newValue = _this.labelScale.invert(d3.event.x);
+              const newValue = _this.labelScale.invert(d.x);
               const paletteKey = +_this.paletteScaleLinear(_this.domainScale(newValue));
               _this.labelScaleG.call(_this.labelsAxis.highlightValue(newValue));
 
-              _this.colorModel.setColor(d.color, "" + paletteKey, !d.isEdgePoint ? "" + d.paletteKey : null, false);
-              //interactive palette
-              //_this.colorModel.setColor(d.color, "" + paletteKey, null, false, true);
+              _this.colorModel.setColor(d.color, "" + paletteKey, !d.isEdgePoint ? "" + d.paletteKey : "-1", false);
               d.val = newValue;
 
               if (d.isEdgePoint && d.paletteKey !== paletteKey) d.isEdgePoint = false;
@@ -555,6 +566,7 @@ const ColorLegend = Component.extend({
                 if (snapX !== null) {
                   const newValue = _this.labelScale.invert(snapX);
                   const paletteKey = +_this.paletteScaleLinear(_this.domainScale(newValue));
+                  _this.colorModel.setColor(d.color, "" + paletteKey, "" + d.paletteKey, false, false);
                   _this.colorModel.setColor(d.color, "" + paletteKey, "" + d.paletteKey, true, true);
                 } else {
                   _this.colorModel.setColor(d.color, "" + d.paletteKey, null, true, true);
@@ -568,7 +580,7 @@ const ColorLegend = Component.extend({
       let lastClickId;
 
       this.rainbowLegend = this.rainbowLegendG.selectAll("circle")
-        .data(gIndicators);
+        .data(gIndicators, d => d.i);
       this.rainbowLegend.exit().remove();
       this.rainbowLegend = this.rainbowLegend.enter().append("circle")
         .attr("r", circleRadius + "px")
@@ -685,7 +697,7 @@ const ColorLegend = Component.extend({
         _this.colorPicker
           .colorOld(palette[target])
           .colorDef(defaultPalette[target])
-          .callback((value, isClick) => _this.colorModel.setColor(value, target, null, isClick, isClick))
+          .callback((value, isClick) => _this.colorModel.setColor(value, "" + target, null, isClick, isClick))
           .fitToScreen([d3event.pageX, d3event.pageY])
           .show(true);
       },
