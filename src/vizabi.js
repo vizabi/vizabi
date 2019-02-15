@@ -104,8 +104,19 @@ d3.time.format.iso = function(f) {
   return format;
 };
 
-
-d3.scaleGenericlog = genericLog;
+d3.scaleGenericlog = function() {
+  const scale = d3.scaleSymlog().constant(0.1);
+  scale.eps = function(eps) {
+    if (arguments.length) {
+      this.constant(eps);
+    } else {
+      return this.constant();
+    }
+    return this;
+  };
+  return scale;
+};
+//genericLog;
 d3.selection.prototype.onTap = onTap;
 d3.selection.prototype.onLongTap = onLongTap;
 
