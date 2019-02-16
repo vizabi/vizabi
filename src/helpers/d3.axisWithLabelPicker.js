@@ -82,7 +82,7 @@ export default function axisSmart(_orient) {
           selection.append("g")
             .attr("class", "vzb-axis-value vzb-axis-value-shadow")
             .style("opacity", 0)
-            .append("text");           
+            .append("text");
         });
 
       // patch the label positioning after the view is generated
@@ -523,7 +523,7 @@ export default function axisSmart(_orient) {
       };
 
       if (options.scaleType == "genericLog" || options.scaleType == "log") {
-        const eps = axis.scale().eps ? axis.scale().eps() : 0;
+        const eps = axis.scale().constant ? axis.scale().constant() : 0;
 
         const spawnZero = bothSidesUsed ? [0] : [];
 
