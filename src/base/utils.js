@@ -1712,3 +1712,12 @@ export const getOSname = () => {
 
   return OSName;
 };
+
+export const rgbHex = value => {
+  const hex = value => {
+    value = Math.max(0, Math.min(255, Math.round(value) || 0));
+    return (value < 16 ? "0" : "") + value.toString(16);
+  };
+  const valueRGB = d3.color(value).rgb();
+  return "#" + hex(valueRGB.r) + hex(valueRGB.g) + hex(valueRGB.b);
+};
