@@ -131,8 +131,14 @@ export default function axisSmart(_orient) {
 
       const tickLengthOut = axis.tickSizeMinor().outbound;
       const tickLengthIn = axis.tickSizeMinor().inbound;
+
+      //hide minor ticks that are outside the available viewport (when axis is zoomed ticks may stick out)
+      if (options.viewportLength) {
+        minorTicks
+          .classed("vzb-hidden", d => scale(d) < 0 || scale(d) > options.viewportLength);
+      }
+
       minorTicks
-        .classed("vzb-hidden", d => scale(d) < 0 || scale(d) > options.viewportLength)
         .attr("y1", orient == HORIZONTAL ? (axis.orient() == "top" ? 1 : -1) * tickLengthIn : scale)
         .attr("y2", orient == HORIZONTAL ? (axis.orient() == "top" ? -1 : 1) * tickLengthOut : scale)
         .attr("x1", orient == VERTICAL ? (axis.orient() == "right" ? -1 : 1) * tickLengthIn : scale)
