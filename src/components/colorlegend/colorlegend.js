@@ -403,13 +403,13 @@ const ColorLegend = Component.extend({
     const marginRight = parseInt(this.rainbowEl.style("right"), 10) || marginLeft;
 
     this.labelScaleSVG.style("width", marginLeft + gradientWidth + marginRight + "px");
-    this.labelScaleG.attr("transform", "translate(" + marginLeft + ",0)");
+    this.labelScaleG.attr("transform", "translate(" + marginLeft + ",2)");
     this.labelsAxis = axisSmart("bottom");
     this.labelsAxis.scale(this.labelScale)
       //.tickFormat(formatter)
-      .tickSizeOuter(0)
-      .tickPadding(6)
-      .tickSizeMinor(3, 0)
+      .tickSizeOuter(5)
+      .tickPadding(8)
+      .tickSizeMinor(3, -3)
       .labelerOptions({
         scaleType: this.colorModel.scaleType,
         toolMargin: {

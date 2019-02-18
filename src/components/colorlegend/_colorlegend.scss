@@ -73,8 +73,8 @@
       right: 0;
       top: 25px;
       height: 20px;
-      .tick line {
-        stroke: none;
+      .tick-minor {
+        stroke: $vzb-color-grey-dark;
       }
     }
     .vzb-cl-subtitle {
