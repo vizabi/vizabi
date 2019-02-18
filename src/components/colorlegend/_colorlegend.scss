@@ -76,6 +76,9 @@
       .tick-minor {
         stroke: $vzb-color-grey-dark;
       }
+      text {
+        font-size: $vzb-font-size-small;
+      }
     }
     .vzb-cl-subtitle {
       top: 30px;

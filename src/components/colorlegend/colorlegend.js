@@ -416,10 +416,10 @@ const ColorLegend = Component.extend({
           right: marginRight,
           left: marginLeft
         },
-        showOuter: true,
+        showOuter: false,
         formatter,
         bump: marginLeft,
-        cssFontSize: "11px",
+        cssFontSize: "8px",
         fitIntoScale
       });
 
