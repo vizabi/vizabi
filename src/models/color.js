@@ -348,13 +348,12 @@ const ColorModel = Hook.extend({
 
         domain = [].concat(this.getUnique(this.which));
         range = domain.map((d, i) => paletteObject[d] || defaultPalette[defaultPaletteKeys[i % defaultPaletteKeys.length]]);
-        //domain.push("_default");
-        //range.push(paletteObject["_default"]);
       }
 
       scale = d3[`scale${utils.capitalize(scaleType)}`]()
         .domain(domain)
-        .range(range);
+        .range(range)
+        .unknown(paletteObject["_default"]);
     }
 
     return { scale, scaleType };
