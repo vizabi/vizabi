@@ -261,7 +261,7 @@ const ColorLegend = Component.extend({
     if (this.colorlegendMarkerArray.length) {
       colorOptionsArray = this.which == KEY ? this.markerArray : this.colorlegendMarkerArray;
     } else {
-      colorOptionsArray = Object.keys(this.colorModel.getPalette()).map(value => {
+      colorOptionsArray = cScale.domain().map(value => {
         const result = {};
         result[this.which] = value;
         return result;
