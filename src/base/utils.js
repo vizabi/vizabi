@@ -2,7 +2,7 @@ import interpolator from "vizabi-interpolators/interpolators";
 
 
 export const d3json = function(path, callback) {
-  if (window.fetch) {
+  if ("fetch" in window) {
     // we should use fetch as often as possible
     fetch(path)
       .then(response => {
@@ -20,7 +20,7 @@ export const d3json = function(path, callback) {
 };
 
 export const d3text = function(path, callback) {
-  if (window.fetch) {
+  if ("fetch" in window) {
     // we should use fetch as often as possible
     fetch(path)
       .then(response => {
