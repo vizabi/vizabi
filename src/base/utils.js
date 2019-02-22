@@ -2,39 +2,15 @@ import interpolator from "vizabi-interpolators/interpolators";
 
 
 export const d3json = function(path, callback) {
-  if ("fetch" in window) {
-    // we should use fetch as often as possible
-    fetch(path)
-      .then(response => {
-        if (response.ok) return response.json();
-        callback(new Error);
-      })
-      .then(jsonData => {
-        callback(null, jsonData);
-      })
-      .catch(error => callback(error));
-  } else {
-    // we should use d3/XMLHttpRequest functionality for old browsers
-    d3.json(path, callback);
-  }
+  d3.json(path)
+    .then(response => callback(null, response))
+    .catch(error => callback(error));
 };
 
 export const d3text = function(path, callback) {
-  if ("fetch" in window) {
-    // we should use fetch as often as possible
-    fetch(path)
-      .then(response => {
-        if (response.ok) return response.text();
-        callback(new Error);
-      })
-      .then(data => {
-        callback(null, data);
-      })
-      .catch(error => callback(error));
-  } else {
-    // we should use d3/XMLHttpRequest functionality for old browsers
-    d3.text(path, callback);
-  }
+  d3.text(path)
+    .then(response => callback(null, response))
+    .catch(error => callback(error));
 };
 
 /*
