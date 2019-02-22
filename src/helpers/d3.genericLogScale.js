@@ -16,7 +16,7 @@ export default function genericLog() {
         return scaleDomain();
       }
       const min = d3.min(abs(domain).filter(val => !!val));
-      if (min) scale.constant(Math.min(defaultConstant, min / 100));
+      //if (min) scale.constant(Math.min(defaultConstant, min / 100));
 
       return scaleDomain(domain);
     };

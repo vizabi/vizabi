@@ -340,20 +340,26 @@ export class Storage {
     }, []);
 
     // get min/max for the filtered rows
-    let min;
-    let max;
+    let min = filtered[0];
+    let max = min;
+    let minAbsNear0 = Math.abs(filtered.find(v => v != 0));
     const limits = {};
     for (let i = 0; i < filtered.length; i += 1) {
       const c = filtered[i];
-      if (typeof min === "undefined" || c < min) {
+      if (c < min) {
         min = c;
-      }
-      if (typeof max === "undefined" || c > max) {
+      } else if (c > max) {
         max = c;
+      }
+      if (c > 0 && c < minAbsNear0) {
+        minAbsNear0 = c;
+      } else if (c < 0 && c > -minAbsNear0) {
+        minAbsNear0 = -c;
       }
     }
     limits.min = min || 0;
     limits.max = max || 100;
+    limits.minAbsNear0 = minAbsNear0 || (min === 0 ? max : min);
     return limits;
   }
 
@@ -425,7 +431,7 @@ export class Storage {
   getFrames(dataId, framesArray, keys, conceptprops) {
     const _this = this;
     //if(dataId === false) return Promise.resolve([]);
-    
+
     const whatId = getCacheKey(dataId, framesArray, keys);
     if (!this._collectionPromises[dataId][whatId]) {
       this._collectionPromises[dataId][whatId] = {
@@ -451,7 +457,7 @@ export class Storage {
   getFrame(dataId, framesArray, neededFrame, keys) {
     const _this = this;
     //if(dataId === false) return Promise.resolve([]);
-    
+
     const whatId = getCacheKey(dataId, framesArray, keys);
     return new Promise((resolve, reject) => {
       if (_this._collection[dataId]["frames"][whatId] && _this._collection[dataId]["frames"][whatId][neededFrame]) {

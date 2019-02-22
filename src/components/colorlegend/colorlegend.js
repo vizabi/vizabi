@@ -395,8 +395,8 @@ const ColorLegend = Component.extend({
 
     const labelScaleType = (d3.min(domain) <= 0 && d3.max(domain) >= 0 && this.colorModel.scaleType === "log") ? "genericLog" : this.colorModel.scaleType;
 
-    this.labelScale = d3[`scale${utils.capitalize(labelScaleType === "time" ? "linear" : labelScaleType)}`]()
-      .domain(domain)
+    this.labelScale = cScale.copy()
+      .interpolate(d3.interpolate)
       .range(range);
 
     const marginLeft = parseInt(this.rainbowEl.style("left"), 10) || 0;
@@ -452,7 +452,7 @@ const ColorLegend = Component.extend({
     if (this.rainbowLegendEl.style("display") !== "none") {
       const edgeDomain = d3.extent(domain);
 
-      this.domainScale = d3[`scale${utils.capitalize(labelScaleType === "time" ? "linear" : labelScaleType)}`]()
+      this.domainScale = this.labelScale.copy()
         .domain(edgeDomain)
         .range(edgeDomain);
 

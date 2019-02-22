@@ -312,9 +312,9 @@ const ColorModel = Hook.extend({
 
     } else if (!this.isDiscrete()) {
 
-      let limits = this.getLimits(this.which);
+      const limitsObj = this.getLimits(this.which);
       //default domain is based on limits
-      limits = [limits.min, limits.max];
+      const limits = [limitsObj.min, limitsObj.max];
 
       const singlePoint = (limits[1] - limits[0] == 0);
 
@@ -327,7 +327,8 @@ const ColorModel = Hook.extend({
       if (scaleType === "log" || scaleType === "genericLog") {
         const s = d3.scaleGenericlog()
           .domain(limits)
-          .range(limits);
+          .range(limits)
+          .constant(limitsObj.minAbsNear0);
         domain = domain.map(d => s.invert(d));
       }
 
@@ -336,6 +337,9 @@ const ColorModel = Hook.extend({
         .range(range)
         .interpolate(d3.interpolateRgb.gamma(2.2));
 
+      if (scale.constant) {
+        scale.constant(limitsObj.minAbsNear0);
+      }
     } else {
       range = range.map(m => utils.isArray(m) ? m[0] : m);
 
