@@ -8,11 +8,11 @@ import Hook from "models/hook";
 const defaultPalettes = {
   "_continuous": {
     "_default": "#ffb600",
-    "0": "hsl(270, 80%, 55%)",
-    "25": "hsl(202.5, 80%, 55%)",
-    "50": "hsl(135, 80%, 55%)",
-    "75": "hsl(48, 70%, 62%)",
-    "100": "hsl(0, 80%, 55%)"
+    "0": "#8c30e8", //"hsl(270, 80%, 55%)",
+    "25": "#30a3e8", //"hsl(202.5, 80%, 55%)",
+    "50": "#30e85e", //"hsl(135, 80%, 55%)",
+    "75": "#e2c75a", //"hsl(48, 70%, 62%)",
+    "100": "#e83030" //"hsl(0, 80%, 55%)"
   },
   "_discrete": {
     "_default": "#ffb600",
@@ -80,7 +80,7 @@ const ColorModel = Hook.extend({
         //switch current palette elements which equals
         //default palette elments to nonpersistent state
         Object.keys(defaultPalette).forEach(key => {
-          if (!paletteHiddenKeys.includes(key) && (!currentPalette[key] || utils.rgbHex(defaultPalette[key]) == utils.rgbHex(currentPalette[key]))) palette[key] = defaultPalette[key];
+          if (!paletteHiddenKeys.includes(key) && (!currentPalette[key] || defaultPalette[key] == d3.color(currentPalette[key]).hex())) palette[key] = defaultPalette[key];
         });
         _this.set("palette", palette, false, false);
       }
@@ -131,7 +131,7 @@ const ColorModel = Hook.extend({
    * set color
    */
   setColor(value, pointer, oldPointer, persistent, force = false) {
-    if (value) value = utils.rgbHex(value);
+    if (value) value = d3.color(value).hex();
 
     let range;
     const paletteObj = value && pointer ? { [pointer]: value } : {};
@@ -178,7 +178,7 @@ const ColorModel = Hook.extend({
 
       range = Object.keys(palette).sort((a, b) => a - b).map(key => palette[key]);
 
-      if (paletteObj[pointer] && defaultPalette[pointer] && paletteObj[pointer] === utils.rgbHex(defaultPalette[pointer])) {
+      if (paletteObj[pointer] && defaultPalette[pointer] && paletteObj[pointer] === defaultPalette[pointer]) {
         persistent = false;
       }
 
