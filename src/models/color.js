@@ -138,7 +138,7 @@ const ColorModel = Hook.extend({
 
     if (this.isDiscrete()) {
       range = this.scale.range();
-      range[domain.indexOf(pointer)] = value;
+      range[this.scale.domain().indexOf(pointer)] = value;
     } else {
       const palette = this.getPalette();
       const paletteKeysOld = Object.keys(palette);
