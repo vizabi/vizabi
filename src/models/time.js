@@ -77,7 +77,7 @@ const TimeModel = DataConnected.extend({
     this._super(name, values, parent, bind);
     const _this = this;
     this.initFormatters();
-    if (!this.endBeforeForecast) this.set("endBeforeForecast", this.parse(this.formatDate(new Date())), null, false);
+    if (!this.endBeforeForecast) this.set("endBeforeForecast", this.decrementTime(this.parse(this.formatDate(new Date()))), null, false);
     this.dragging = false;
     this.postponePause = false;
     this.allSteps = {};
