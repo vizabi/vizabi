@@ -559,6 +559,11 @@ const TimeModel = DataConnected.extend({
     return d3["utc" + is.interval].offset(time, -is.step);
   },
 
+  ceilTime(time) {
+    const is = this.getIntervalAndStep();
+    return d3["utc" + is.interval].ceil(time);
+  },
+
   /**
    * Stops playing the time, clearing the interval
    */
