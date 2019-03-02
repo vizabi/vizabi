@@ -75,9 +75,9 @@ const AxisModel = Hook.extend({
       this.scale = d3.scaleUtc().domain(domain);
 
     } else {
-
+      let limits;
       if (!this.isDiscrete()) {
-        const limits = this.getLimits(this.which);
+        limits = this.getLimits(this.which);
         //default domain is based on limits
         domain = [limits.min, limits.max];
         //fixBaseline can override the domain if defined and if limits.min isn't negative
@@ -94,6 +94,9 @@ const AxisModel = Hook.extend({
       const _scaleType = (scaleType === "ordinal" ? "point" : scaleType) || "linear";
       this.scale = d3[`scale${utils.capitalize(_scaleType)}`]()
         .domain(domain);
+      if (this.scale.constant) {
+        this.scale.constant(limits.minAbsNear0);
+      }
     }
 
     this.scaleType = scaleType;
