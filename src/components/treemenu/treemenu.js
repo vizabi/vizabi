@@ -439,34 +439,37 @@ const MenuItem = Class.extend({
     if (submenu.node()) {
       this.submenu = new Menu(this, submenu, options);
     }
-    this.entity.select("." + css.list_item_label).on("mouseenter", function() {
-      if (utils.isTouchDevice()) return;
-
-      if (_this.parentMenu.direction == MENU_HORIZONTAL && !d3.select(this).attr("children")) {
-        _this.openSubmenu();
-      } else if (!_this.parentMenu.hasActiveParentNeighbour()) {
-        _this.closeNeighbors();
-      }
-      _this.marqueeToggle(true);
-    }).on("click.item", function() {
-      if (utils.isTouchDevice()) return;
-      d3.event.stopPropagation();
-      if (_this.parentMenu.direction == MENU_HORIZONTAL) {
-        _this.openSubmenu();
+    this.entity.select("." + css.list_item_label).call(select => {
+      if (utils.isTouchDevice()) {
+        select.onTap(evt => {
+          d3.event.stopPropagation();
+          if (_this.parentMenu.direction == MENU_VERTICAL) {
+            const view = _this.entity.select("." + css.list_item_label);
+            //only for leaf nodes
+            if (!view.attr("children")) return;
+          }
+          _this.toggleSubmenu();
+        });
       } else {
-        const view = d3.select(this);
-        //only for leaf nodes
-        if (!view.attr("children")) return;
-        _this.toggleSubmenu();
+        select.on("mouseenter", function() {
+          if (_this.parentMenu.direction == MENU_HORIZONTAL && !d3.select(this).attr("children")) {
+            _this.openSubmenu();
+          } else if (!_this.parentMenu.hasActiveParentNeighbour()) {
+            _this.closeNeighbors();
+          }
+          _this.marqueeToggle(true);
+        }).on("click.item", function() {
+          d3.event.stopPropagation();
+          if (_this.parentMenu.direction == MENU_HORIZONTAL) {
+            _this.openSubmenu();
+          } else {
+            const view = d3.select(this);
+            //only for leaf nodes
+            if (!view.attr("children")) return;
+            _this.toggleSubmenu();
+          }
+        });
       }
-    }).onTap(evt => {
-      d3.event.stopPropagation();
-      if (_this.parentMenu.direction == MENU_VERTICAL) {
-        const view = _this.entity.select("." + css.list_item_label);
-        //only for leaf nodes
-        if (!view.attr("children")) return;
-      }
-      _this.toggleSubmenu();
     });
     return this;
   },
