@@ -1284,7 +1284,7 @@ const TreeMenu = Component.extend({
       this.dataFiltered = dataFiltered;
     }
 
-    this.wrapper.select("ul").remove();
+    this.wrapper.classed("vzb-hidden", !useDataFiltered).select("ul").remove();
 
     let title = "";
     if (this._title || this._title === "") {
@@ -1303,8 +1303,8 @@ const TreeMenu = Component.extend({
 
     this._maxChildCount = 0;
 
-    const noDescription = _this.translator("hints/nodescr");
-
+    const noDescriptionText = _this.translator("hints/nodescr");
+    const helpTranslateText = _this.translator("dialogs/helptranslate");
     function createSubmeny(select, data, toplevel) {
       if (!data.children) return;
       _this._maxChildCount = Math.max(_this._maxChildCount, data.children.length);
@@ -1354,8 +1354,8 @@ const TreeMenu = Component.extend({
               d.name = _this.translator("indicator/_default/" + targetModelType);
               d.description = _this.translator("description/_default/" + targetModelType);
             }
-            if (!d.description) d.description = noDescription;
-            d.translateContributionText = _this.translator("dialogs/helptranslate");
+            if (!d.description) d.description = noDescriptionText;
+            d.translateContributionText = helpTranslateText;
             const deepLeaf = view.append("div").attr("class", css.menuHorizontal + " " + css.list_outer + " " + css.list_item_leaf);
             deepLeaf.on("click", d => {
               _this._selectIndicator({ concept: d.id, key: d.key, dataSource: d.dataSource, use: d.use });
@@ -1405,6 +1405,7 @@ const TreeMenu = Component.extend({
     this.selectedNode = null;
     createSubmeny(this.wrapper, dataFiltered, true);
     this.menuEntity = new Menu(null, this.wrapper.selectAll("." + css.list_top_level), this.OPTIONS);
+    this.wrapper.classed("vzb-hidden", false);
     if (this.menuEntity) this.menuEntity.setDirection(this.OPTIONS.MENU_DIRECTION);
     if (this.menuEntity) this.menuEntity.setWidth(this.activeProfile.col_width, true, true);
 
