@@ -34,6 +34,15 @@ const defaultPalettes = {
   }
 };
 
+const comparePossiblyArrays = function comparePossiblyArrays(a, b) {
+  if (!Array.isArray(a) && !Array.isArray(b)) {
+    return d3.color(a).hex() == d3.color(b).hex();
+  } else if (Array.isArray(a) && Array.isArray(b)) {
+    return utils.arrayEquals(a, b);
+  }
+  return false;
+};
+
 const ColorModel = Hook.extend({
 
   /**
@@ -80,7 +89,7 @@ const ColorModel = Hook.extend({
         //switch current palette elements which equals
         //default palette elments to nonpersistent state
         Object.keys(defaultPalette).forEach(key => {
-          if (!paletteHiddenKeys.includes(key) && (!currentPalette[key] || defaultPalette[key] == d3.color(currentPalette[key]).hex())) palette[key] = defaultPalette[key];
+          if (!paletteHiddenKeys.includes(key) && (!currentPalette[key] || comparePossiblyArrays(defaultPalette[key], currentPalette[key]))) palette[key] = defaultPalette[key];
         });
         _this.set("palette", palette, false, false);
       }

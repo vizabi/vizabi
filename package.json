@@ -1,6 +1,6 @@
 {
   "name": "vizabi",
-  "version": "0.40.13",
+  "version": "0.40.14",
   "description": "Vizabi Framework, Interactive charts and visualization tools animated through time",
   "main": "build/vizabi.js",
   "scripts": {
