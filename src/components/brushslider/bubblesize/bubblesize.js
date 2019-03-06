@@ -44,9 +44,6 @@ const BubbleSize = BrushSlider.extend({
     const profiles = utils.extend({}, PROFILES);
     this.profiles = utils.extend(profiles, this.profiles || {});
 
-    //this.template = this.template || require("./bubblesize.html");
-
-
     this.model_expects = [{
       name: "submodel",
       type: "size"
@@ -78,7 +75,6 @@ const BubbleSize = BrushSlider.extend({
 
   readyHandler(evt) {
     this._super(evt);
-    this.sizeScaleMinMax = this.model.submodel.getScale().domain();
     this._setLabelsText();
   },
 
@@ -94,18 +90,6 @@ const BubbleSize = BrushSlider.extend({
     this.showArcs = _this.model.submodel.showArcs !== false;
 
     this.padding.bottom = this.options.BAR_WIDTH + this.options.TEXT_PARAMS.MAX_HEIGHT;
-
-    //For return to round thumbs
-    //var thumbArc = d3.arc()
-    //  .outerRadius(thumbHeight * 0.5)
-    //  .startAngle(0)
-    //  .endAngle(2 * Math.PI)
-
-    //For return to circles
-    //.attr("d", "M0 0 l" + thumbHeight + " " + (-thumbHeight * 0.5) + "v" + thumbHeight + "Z")
-
-    //For return to round thumbs
-    //.attr("d", thumbArc)
 
     if (_this.showArcs) {
       this.sliderEl.selectAll(".vzb-bs-slider-thumb-arc").data([0, 0]).enter()
@@ -124,21 +108,7 @@ const BubbleSize = BrushSlider.extend({
 
     this.sliderLabelsEl = this.sliderEl.selectAll("text.vzb-bs-slider-thumb-label");
 
-    //For return to circles
-    // var circleLabelTransform = function(d, i) {
-    //    var dX = i ? textMargin.h + _this.xScale(d) : -textMargin.h,
-    //        dY = -textMargin.v;
-    //    return "translate(" + (dX) + "," + (dY) + ")";
-    // }
-
-    //const extent = _this.model.submodel.extent || [options.EXTENT_MIN, options.EXTENT_MAX];
-    //this._moveBrush(extent);
-
-    this.sizeScaleMinMax = this.model.submodel.getScale().domain();
-
-    if (this.sizeScaleMinMax) {
-      this._setLabelsText();
-    }
+    this._setLabelsText();
   },
 
   ready() {
@@ -215,10 +185,17 @@ const BubbleSize = BrushSlider.extend({
   },
 
   _setLabelsText() {
-    const _this = this;
-    const texts = [_this.model.submodel.getTickFormatter()(_this.sizeScaleMinMax[0]), _this.model.submodel.getTickFormatter()(_this.sizeScaleMinMax[1])];
-    _this.sliderLabelsEl
-      .text((d, i) => texts[i]);
+    let texts = [];
+
+    if (this.model.submodel.use === "constant") {
+      texts = ["", ""];
+    } else {
+      const formatter = this.model.submodel.getTickFormatter();
+      const sizeScaleMinMax = this.model.submodel.getScale().domain();
+      texts = [formatter(sizeScaleMinMax[0]), formatter(sizeScaleMinMax[1])];
+    }
+
+    this.sliderLabelsEl.text((d, i) => texts[i]);
   }
 
 });
