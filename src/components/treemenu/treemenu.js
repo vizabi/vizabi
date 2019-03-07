@@ -80,10 +80,13 @@ const Menu = Class.extend({
   init(parent, menu, options) {
     const _this = this;
     this.parent = parent;
-    this.entity = menu;
     this.OPTIONS = options;
     this.width = this.OPTIONS.MIN_COL_WIDTH;
     this.direction = this.OPTIONS.MENU_DIRECTION;
+
+    this.OPTIONS.createSubmenu(menu, menu.datum(), parent === null);
+    this.entity = parent === null ? menu.selectAll("." + css.list_top_level) : menu.select("." + css.list_outer);
+
     this._setDirectionClass();
     this.menuItems = [];
     let menuItemsHolder;
@@ -96,7 +99,7 @@ const Menu = Class.extend({
       });
     });
     if (menuItemsHolder.empty()) menuItemsHolder = this.entity;
-    menu.selectAll("." + css.list_item)
+    this.entity.selectAll("." + css.list_item)
       .filter(function() {
         return this.parentNode == menuItemsHolder.node();
       })
@@ -106,6 +109,7 @@ const Menu = Class.extend({
     if (!this.menuItems.length && this.isActive()) {
       this.buildLeaf();
     }
+    this.setWidth(this.OPTIONS.COL_WIDTH, false, true);
     return this;
   },
   setWidth(width, recursive, immediate) {
@@ -367,7 +371,7 @@ const Menu = Class.extend({
   },
   findItemById(id) {
     for (let i = 0; i < this.menuItems.length; i++) {
-      if (this.menuItems[i].entity.data().id == id) {
+      if (this.menuItems[i].entity.datum().id == id) {
         return this.menuItems[i];
       }
       if (this.menuItems[i].submenu) {
@@ -435,10 +439,6 @@ const MenuItem = Class.extend({
     const _this = this;
     this.parentMenu = parent;
     this.entity = item;
-    const submenu = item.select("." + css.list_outer);
-    if (submenu.node()) {
-      this.submenu = new Menu(this, submenu, options);
-    }
     this.entity.select("." + css.list_item_label).call(select => {
       if (utils.isTouchDevice()) {
         select.onTap(evt => {
@@ -448,11 +448,17 @@ const MenuItem = Class.extend({
             //only for leaf nodes
             if (!view.attr("children")) return;
           }
+          if (!_this.submenu) {
+            _this.submenu = new Menu(_this, _this.entity, options);
+          }
           _this.toggleSubmenu();
         });
       } else {
         select.on("mouseenter", function() {
           if (_this.parentMenu.direction == MENU_HORIZONTAL && !d3.select(this).attr("children")) {
+            if (!_this.submenu) {
+              _this.submenu = new Menu(_this, _this.entity, options);
+            }
             _this.openSubmenu();
           } else if (!_this.parentMenu.hasActiveParentNeighbour()) {
             _this.closeNeighbors();
@@ -460,6 +466,9 @@ const MenuItem = Class.extend({
           _this.marqueeToggle(true);
         }).on("click.item", function() {
           d3.event.stopPropagation();
+          if (!_this.submenu) {
+            _this.submenu = new Menu(_this, _this.entity, options);
+          }
           if (_this.parentMenu.direction == MENU_HORIZONTAL) {
             _this.openSubmenu();
           } else {
@@ -469,6 +478,11 @@ const MenuItem = Class.extend({
             _this.toggleSubmenu();
           }
         });
+      }
+
+      if (options.selectedPath[0] === select.datum().id) {
+        options.selectedPath.shift();
+        _this.submenu = new Menu(_this, _this.entity, options);
       }
     });
     return this;
@@ -1098,7 +1112,7 @@ const TreeMenu = Component.extend({
       scrollToItem(this.wrapper.node(), this.selectedNode);
       _this.menuEntity.marqueeToggleAll(true);
     } else {
-      const selectedItem = this.menuEntity.findItemById(d3.select(this.selectedNode).data().id);
+      const selectedItem = this.menuEntity.findItemById(d3.select(this.selectedNode).datum().id);
       selectedItem.submenu.calculateMissingWidth(0, () => {
         _this.menuEntity.marqueeToggleAll(true);
       });
@@ -1302,112 +1316,29 @@ const TreeMenu = Component.extend({
       .attr("placeholder", this.translator("placeholder/search") + "...");
 
     this._maxChildCount = 0;
-
-    const noDescriptionText = _this.translator("hints/nodescr");
-    const helpTranslateText = _this.translator("dialogs/helptranslate");
-    function createSubmeny(select, data, toplevel) {
-      if (!data.children) return;
-      _this._maxChildCount = Math.max(_this._maxChildCount, data.children.length);
-      const _select = toplevel ? select : select.append("div")
-        .classed(css.list_outer, true);
-
-      const li = _select.append("ul")
-        .classed(css.list, !toplevel)
-        .classed(css.list_top_level, toplevel)
-        .classed("vzb-dialog-scrollable", true)
-        .selectAll("li")
-        .data(data.children, d => d["id"])
-        .enter()
-        .append("li");
-
-      li.append("span")
-        .classed(css.list_item_label, true)
-        // .attr("info", function(d) {
-        //   return d.id;
-        // })
-        .attr("children", d => d.children ? "true" : null)
-        .attr("type", d => d.type ? d.type : null)
-        .on("click", function(d) {
-          const view = d3.select(this);
-          //only for leaf nodes
-          if (view.attr("children")) return;
-          d3.event.stopPropagation();
-          _this._selectIndicator({ concept: d.id, key: d.key, dataSource: d.dataSource, use: d.use });
-        })
-        .append("span")
-        .text(d => {
-          //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-          const translated = d.id === "_default" ? _this.translator("indicator/_default/" + targetModelType) : d.name_catalog || d.name || d.id;
-          if (!translated && translated !== "") utils.warn("translation missing: NAME of " + d.id);
-          return translated || "";
-        });
-
-      li.classed(css.list_item, true)
-        .classed(css.hasChild, d => d["children"])
-        .classed(css.isSpecial, d => d["special"])
-        .each(function(d) {
-          const view = d3.select(this);
-
-          //deepLeaf
-          if (!d.children) {
-            if (d.id === "_default") {
-              d.name = _this.translator("indicator/_default/" + targetModelType);
-              d.description = _this.translator("description/_default/" + targetModelType);
-            }
-            if (!d.description) d.description = noDescriptionText;
-            d.translateContributionText = helpTranslateText;
-            const deepLeaf = view.append("div").attr("class", css.menuHorizontal + " " + css.list_outer + " " + css.list_item_leaf);
-            deepLeaf.on("click", d => {
-              _this._selectIndicator({ concept: d.id, key: d.key, dataSource: d.dataSource, use: d.use });
-            });
-          }
-
-          if (d.id == _this._targetModel[_this._targetProp]) {
-            let parent;
-            if (_this.selectedNode && toplevel) {
-              parent = _this.selectedNode.parentNode;
-              d3.select(_this.selectedNode)
-                .select("." + css.list_item_leaf).classed("active", false);
-              while (!(utils.hasClass(parent, css.list_top_level))) {
-                if (parent.tagName == "UL") {
-                  d3.select(parent.parentNode)
-                    .classed("active", false);
-                }
-                parent = parent.parentNode;
-              }
-            }
-            if (!_this.selectedNode || toplevel) {
-              parent = this.parentNode;
-              d3.select(this).classed("item-active", true)
-                .select("." + css.list_item_leaf).classed("active", true);
-              while (!(utils.hasClass(parent, css.list_top_level))) {
-                if (parent.tagName == "UL") {
-                  d3.select(parent.parentNode)
-                    .classed("active", true);
-                }
-                if (parent.tagName == "LI") {
-                  d3.select(parent).classed("item-active", true);
-                }
-                parent = parent.parentNode;
-              }
-              _this.selectedNode = this;
-            }
-          }
-          createSubmeny(view, d);
-        });
-    }
+    let selected = _this._targetModel[_this._targetProp];
+    const selectedPath = [];
+    utils.eachTree(dataFiltered, (f, parent) => {
+      if (f.children && f.children.length > _this._maxChildCount) _this._maxChildCount = f.children.length;
+      if (f.id === selected && parent) {
+        selectedPath.unshift(f.id);
+        selected = parent.id;
+      }
+    });
+    this.OPTIONS.selectedPath = selectedPath;
 
     if (this.OPTIONS.IS_MOBILE) {
       this.OPTIONS.MENU_DIRECTION = MENU_VERTICAL;
     } else {
       this.OPTIONS.MENU_DIRECTION = MENU_HORIZONTAL;
     }
+    this.OPTIONS.createSubmenu = this.createSubmenu.bind(this);
+    this.OPTIONS.COL_WIDTH = this.activeProfile.col_width;
+
     this.selectedNode = null;
-    createSubmeny(this.wrapper, dataFiltered, true);
-    this.menuEntity = new Menu(null, this.wrapper.selectAll("." + css.list_top_level), this.OPTIONS);
+    this.wrapper.datum(dataFiltered);
+    this.menuEntity = new Menu(null, this.wrapper, this.OPTIONS);
     this.wrapper.classed("vzb-hidden", false);
-    if (this.menuEntity) this.menuEntity.setDirection(this.OPTIONS.MENU_DIRECTION);
-    if (this.menuEntity) this.menuEntity.setWidth(this.activeProfile.col_width, true, true);
 
     this.setHorizontalMenuHeight();
 
@@ -1454,6 +1385,99 @@ const TreeMenu = Component.extend({
     return this;
   },
 
+  createSubmenu(select, data, toplevel) {
+    if (!data.children) return;
+    const _this = this;
+    const noDescriptionText = _this.translator("hints/nodescr");
+    const helpTranslateText = _this.translator("dialogs/helptranslate");
+    const targetModelType = _this._targetModel._type;
+    const _select = toplevel ? select : select.append("div")
+      .classed(css.list_outer, true);
+
+    const li = _select.append("ul")
+      .classed(css.list, !toplevel)
+      .classed(css.list_top_level, toplevel)
+      .classed("vzb-dialog-scrollable", true)
+      .selectAll("li")
+      .data(data.children, d => d["id"])
+      .enter()
+      .append("li");
+
+    li.append("span")
+      .classed(css.list_item_label, true)
+      // .attr("info", function(d) {
+      //   return d.id;
+      // })
+      .attr("children", d => d.children ? "true" : null)
+      .attr("type", d => d.type ? d.type : null)
+      .on("click", function(d) {
+        const view = d3.select(this);
+        //only for leaf nodes
+        if (view.attr("children")) return;
+        d3.event.stopPropagation();
+        _this._selectIndicator({ concept: d.id, key: d.key, dataSource: d.dataSource, use: d.use });
+      })
+      .append("span")
+      .text(d => {
+        //Let the indicator "_default" in tree menu be translated differnetly for every hook type
+        const translated = d.id === "_default" ? _this.translator("indicator/_default/" + targetModelType) : d.name_catalog || d.name || d.id;
+        if (!translated && translated !== "") utils.warn("translation missing: NAME of " + d.id);
+        return translated || "";
+      });
+
+    li.classed(css.list_item, true)
+      .classed(css.hasChild, d => d["children"])
+      .classed(css.isSpecial, d => d["special"])
+      .each(function(d) {
+        const view = d3.select(this);
+
+        //deepLeaf
+        if (!d.children) {
+          if (d.id === "_default") {
+            d.name = _this.translator("indicator/_default/" + targetModelType);
+            d.description = _this.translator("description/_default/" + targetModelType);
+          }
+          if (!d.description) d.description = noDescriptionText;
+          d.translateContributionText = helpTranslateText;
+          const deepLeaf = view.append("div").attr("class", css.menuHorizontal + " " + css.list_outer + " " + css.list_item_leaf);
+          deepLeaf.on("click", d => {
+            _this._selectIndicator({ concept: d.id, key: d.key, dataSource: d.dataSource, use: d.use });
+          });
+        }
+
+        if (d.id == _this._targetModel[_this._targetProp]) {
+          let parent;
+          if (_this.selectedNode && toplevel) {
+            parent = _this.selectedNode.parentNode;
+            d3.select(_this.selectedNode)
+              .select("." + css.list_item_leaf).classed("active", false);
+            while (!(utils.hasClass(parent, css.list_top_level))) {
+              if (parent.tagName == "UL") {
+                d3.select(parent.parentNode)
+                  .classed("active", false);
+              }
+              parent = parent.parentNode;
+            }
+          }
+          if (!_this.selectedNode || toplevel) {
+            parent = this.parentNode;
+            d3.select(this).classed("item-active", true)
+              .select("." + css.list_item_leaf).classed("active", true);
+            while (!(utils.hasClass(parent, css.list_top_level))) {
+              if (parent.tagName == "UL") {
+                d3.select(parent.parentNode)
+                  .classed("active", true);
+              }
+              if (parent.tagName == "LI") {
+                d3.select(parent).classed("item-active", true);
+              }
+              parent = parent.parentNode;
+            }
+            _this.selectedNode = this;
+          }
+        }
+      });
+  },
 
   updateView() {
     const _this = this;

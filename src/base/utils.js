@@ -1435,6 +1435,13 @@ export const pruneTree = function(tree, filterCallback) {
   return filteredTree;
 };
 
+export const eachTree = function(tree, filterCallback, parentTree) {
+  if (tree.hasOwnProperty("children")) {
+    tree.children.forEach(childrenTree => eachTree(childrenTree, filterCallback, tree));
+  }
+  filterCallback(tree, parentTree);
+};
+
 export const setIcon = function(element, icon) {
   element.selectAll("*").remove();
   element.node().appendChild(
