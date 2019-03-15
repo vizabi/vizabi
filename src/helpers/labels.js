@@ -287,7 +287,7 @@ const label = function(context) {
 
       const diffX1 = _X0 - _X;
       const diffY1 = _Y0 - _Y;
-      const textBBox = labelGroup.select("text").node().getBBox();
+      const textBBox = cache.textBBox;
       let diffX2 = -textBBox.width * 0.5;
       let diffY2 = -height * 0.2;
       const labels = _this.model.ui.chart.labels;
@@ -681,7 +681,7 @@ const Labels = Class.extend({
 
     //turn off stroke because ie11/edge return stroked bounding box for text
     _text.style("stroke", "none");
-    const contentBBox = _text.node().getBBox();
+    const contentBBox = cached.textBBox = _text.node().getBBox();
     _text.style("stroke", null);
 
     const rect = labelGroup.selectAll("rect");
@@ -697,17 +697,22 @@ const Labels = Class.extend({
 
       this.updateLabelCloseGroupSize(labelCloseGroup, labelCloseHeight);
 
-      rect.attr("width", contentBBox.width + 8)
-        .attr("height", contentBBox.height * 1.2)
-        .attr("x", -contentBBox.width - 4)
-        .attr("y", -contentBBox.height * 0.85)
+      //cache label bound rect for reposition
+      const rectBBox = cached.rectBBox = {
+        x: -contentBBox.width - 4,
+        y: -contentBBox.height * 0.85,
+        width: contentBBox.width + 8,
+        height: contentBBox.height * 1.2
+      };
+      cached.rectOffsetX = rectBBox.width + rectBBox.x;
+      cached.rectOffsetY = rectBBox.height + rectBBox.y;
+
+      rect.attr("width", rectBBox.width)
+        .attr("height", rectBBox.height)
+        .attr("x", rectBBox.x)
+        .attr("y", rectBBox.y)
         .attr("rx", contentBBox.height * 0.2)
         .attr("ry", contentBBox.height * 0.2);
-
-      //cache label bound rect for reposition
-      cached.rectBBox = rect.node().getBBox();
-      cached.rectOffsetX = cached.rectBBox.width + cached.rectBBox.x;
-      cached.rectOffsetY = cached.rectBBox.height + cached.rectBBox.y;
     }
 
     const glowRect = labelGroup.select(".vzb-label-glow");
