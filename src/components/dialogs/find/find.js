@@ -96,7 +96,7 @@ const Find = Dialog.extend("find", {
     this.opacity_nonselected = this.element.select(".vzb-dialog-bubbleopacity");
 
     this.element.select(".vzb-dialog-title-switch .vzb-switch-slider").classed("vzb-hidden", !this.enableSelectShowSwitch);
-    this.element.select(".vzb-dialog-title-switch").style("pointer-events", this.enableSelectShowSwitch ? "auto" : "none");    
+    this.element.select(".vzb-dialog-title-switch").style("pointer-events", this.enableSelectShowSwitch ? "auto" : "none");
     this.element.select(".vzb-find-filter-selector").classed("vzb-hidden", !this.enablePicker);
     this.element.select(".vzb-dialog-title").classed("vzb-title-two-rows", this.enablePicker);
 
@@ -228,15 +228,17 @@ const Find = Dialog.extend("find", {
       _this.items.append("label")
         .attr("for", (d, i) => "-find-" + i + "-" + _this._id)
         .text(d => d.name)
-        .attr("title", function(d) {
-          return this.offsetWidth < this.scrollWidth ? d.name : null;
-        })
         .on("mouseover", d => {
           if (!utils.isTouchDevice() && !d.brokenData) _this.model.state.marker.highlightMarker(d);
         })
         .on("mouseout", d => {
           if (!utils.isTouchDevice()) _this.model.state.marker.clearHighlighted();
         });
+
+      _this.items.each(function(d) {
+        d.nameIfEllipsis = this.offsetWidth < this.scrollWidth ? d.name : "";
+      });
+
       utils.preventAncestorScrolling(_this.element.select(".vzb-dialog-scrollable"));
 
       _this.redrawDataPoints(values);
@@ -251,27 +253,25 @@ const Find = Dialog.extend("find", {
     const _this = this;
     const KEYS = this.KEYS;
 
-    _this.items
-      .each(function(d) {
-        const view = d3.select(this).select("label");
-        d.brokenData = false;
+    _this.items.each(function(d) {
+      const view = d3.select(this).select("label");
+      d.brokenData = false;
 
-        utils.forEach(_this.importantHooks, name => {
-          if (_this.model.state.marker[name].use == "constant") return;
-          const hook = values[name];
-          if (!hook) return;
-          const value = hook[utils.getKey(d, KEYS)];
-          if (!value && value !== 0) {
-            d.brokenData = true;
-            return false;
-          }
-        });
-
-        const nameIfEllipsis = this.offsetWidth < this.scrollWidth ? d.name : "";
-        view
-          .classed("vzb-find-item-brokendata", d.brokenData)
-          .attr("title", nameIfEllipsis + (d.brokenData ? (nameIfEllipsis ? " | " : "") + _this.model.state.time.formatDate(_this.time) + ": " + _this.translator("hints/nodata") : ""));
+      utils.forEach(_this.importantHooks, name => {
+        if (_this.model.state.marker[name].use == "constant") return;
+        const hook = values[name];
+        if (!hook) return;
+        const value = hook[utils.getKey(d, KEYS)];
+        if (!value && value !== 0) {
+          d.brokenData = true;
+          return false;
+        }
       });
+
+      view
+        .classed("vzb-find-item-brokendata", d.brokenData)
+        .attr("title", d.nameIfEllipsis + (d.brokenData ? (d.nameIfEllipsis ? " | " : "") + _this.model.state.time.formatDate(_this.time) + ": " + _this.translator("hints/nodata") : ""));
+    });
   },
 
   selectDataPoints() {
