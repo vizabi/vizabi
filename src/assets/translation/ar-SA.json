@@ -42,7 +42,7 @@
     "dialogs/color/select-all": "تحديد كل محتويات هذه المجموعة",
     "dialogs/color/remove-else": "إزالة كل شيء آخر",
     "dialogs/color/edit-color": "تعديل اللون",
-    "dialogs/color/edit-color-blocked-hint": "Dataset author made colors unchangeable for this indicator",
+    "dialogs/color/edit-color-blocked-hint": "ادلي مؤلف مجموعه البيانات ألوان غير قابله للتغيير لهذا المؤشر",
     "dialogs/find": "تحديد",
     "dialogs/presentation": "الشكل والمظهر",
     "dialogs/technical": "فني",
