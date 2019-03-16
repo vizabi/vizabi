@@ -111,7 +111,7 @@
     "scaletype/genericLog": "سجل عام",
     "scaletype/time": "الوقت",
     "scaletype/ordinal": "ترتيبي",
-    "check/showForecast": "Show forecast",
+    "check/showForecast": "عرض التنبؤ",
     "check/pauseBeforeForecast": "Pause before forecast",
     "check/showForecastOverlay": "Show forecast overlay",
     "check/panWithArrow": "إسمح بالتحريك بإستعمال مؤشر الماوس",
