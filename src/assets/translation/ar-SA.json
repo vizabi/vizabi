@@ -148,7 +148,7 @@
     "reader/error/repeatedKeys": "Looks like your file contains repeated line for key \"{{key}}\" with indicator \"{{indicator}}\". <br><br> The valid file should have one line for each key,indicator pair, that is, the data should not be ambiguous. <br> See the tutorial <a href='https://vizabi.org/tutorials/2017/04/03/show-your-data/' target='_blank'>here</a> for more help. <br><br> You may also need to restart the app <br> <a href='https://getsatisfaction.com/gapminder/' target='_blank'>Contact us</a> if still in trouble.",
     "reader/error/generic": "غير قادر على قراءة البيانات",
     "crash/intro": "لقد اكتشف مشكلة في برنامجنا لم نصلحها بعد",
-    "crash/outro": "If you are on Gapminder.org the error is already reported (no personal data is collected). But if this is urgent you can <a href='mailto' target='_blank'>send an email directly to Angie</a><br><br>We'll try to fix it as soon as possible!<br>♥️ Gapminder team",
+    "crash/outro": "إذا كنت تستخدم Gapminder.org ، فقد تم الإبلاغ عن الخطأ بالفعل (يتم جمع أية بيانات شخصية). ولكن إذا كان هذا عاجل يمكنك <a href='mailto' target='_blank'>إرسال بريد إلكتروني مباشرة إلى إنجي</a><br><br>سنحاول إصلاحه بأسرع وقت ممكن!<br> فريق Gapminder ♥️",
     "crash/expand": "<a>فني تفاصيل</a>",
     "connection/error": "حدثت مشكلة أثناء تحميل بيانات التخطيط الخاص بك. قد يحدث هذا إذا فُقِج الاتصال بالإنترنت. تأكد من أن لديك اتصالاً ثم حاول مرة أخرى."
 }
