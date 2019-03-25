@@ -384,6 +384,7 @@ const Labels = Class.extend({
   ready() {
     this.KEYS = this.context.KEYS;
     this.KEY = this.context.KEY;
+    this._clearInitialFontSize();
     this.updateIndicators();
     this.updateLabelSizeLimits();
     //this.updateLabelsOnlyTextSize();
@@ -568,7 +569,7 @@ const Labels = Class.extend({
     const _cssPrefix = this.options.CSS_PREFIX;
 
     // only for selected entities
-    if (_this.model.marker.isSelected(d) && _this.entityLabels != null) {
+    if (d.isSelected && _this.entityLabels != null) {
       if (_this.cached[d[KEY]] == null) this.selectDataPoints();
 
       const cached = _this.cached[d[KEY]];
@@ -674,15 +675,35 @@ const Labels = Class.extend({
         const range = _this.labelSizeTextScale.range();
         const fontSize = range[0] + Math.sqrt((_this.labelSizeTextScale(valueLST) - range[0]) * (range[1] - range[0]));
         _text.attr("font-size", fontSize + "px");
+        cached.fontSize = fontSize;
+        if (!cached.initFontSize) cached.initFontSize = fontSize;
       } else {
         _text.attr("font-size", null);
+        cached.fontSize = parseFloat(_text.style("font-size"));
+        if (!cached.initFontSize) cached.initFontSize = cached.fontSize;
       }
+    } else {
+      cached.fontSize = parseFloat(_text.style("font-size"));
+      if (!cached.initFontSize) cached.initFontSize = cached.fontSize;
     }
 
-    //turn off stroke because ie11/edge return stroked bounding box for text
-    _text.style("stroke", "none");
-    const contentBBox = cached.textBBox = _text.node().getBBox();
-    _text.style("stroke", null);
+    let contentBBox;
+    if (!cached.initTextBBox) {
+      //turn off stroke because ie11/edge return stroked bounding box for text
+      _text.style("stroke", "none");
+      cached.initTextBBox = _text.node().getBBox();
+      _text.style("stroke", null);
+      contentBBox = cached.textBBox = {
+        width: cached.initTextBBox.width,
+        height: cached.initTextBBox.height
+      };
+    }
+
+    const scale = cached.fontSize / cached.initFontSize;
+    cached.textBBox.width = cached.initTextBBox.width * scale;
+    cached.textBBox.height = cached.initTextBBox.height * scale;
+
+    contentBBox = cached.textBBox;
 
     const rect = labelGroup.selectAll("rect");
 
@@ -719,6 +740,14 @@ const Labels = Class.extend({
     if (glowRect.attr("stroke") !== cached.scaledC0) {
       glowRect.attr("stroke", cached.scaledC0);
     }
+  },
+
+  _clearInitialFontSize() {
+    utils.forEach(this.cached, cache => {
+      if (!cache) return;
+      cache.initFontSize = null;
+      cache.initTextBBox = null;
+    });
   },
 
   updateLabelCloseGroupSize(labelCloseGroup, labelCloseHeight) {
