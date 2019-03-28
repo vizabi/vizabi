@@ -167,8 +167,9 @@ const ButtonList = Component.extend({
     this._active_comp = false;
 
     this.model_binds = {
-      "change:state.marker.select": function(evt) {
+      "change:state.marker.select": function(evt, path) {
         if (!_this._readyOnce) return;
+        if (path.indexOf("select.labelOffset") !== -1) return;
 
         _this.setBubbleTrails();
         _this.setBubbleLock();

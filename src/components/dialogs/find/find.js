@@ -39,7 +39,9 @@ const Find = Dialog.extend("find", {
     }
 
     this.model_binds = {
-      "change:state.marker.select": function(evt) {
+      "change:state.marker.select": function(evt, path) {
+        if (path.indexOf("select.labelOffset") !== -1) return;
+
         _this.items.order();
         _this.selectDataPoints();
         _this.showHideButtons();
