@@ -24,7 +24,7 @@ const label = function(context) {
       .on("drag", function(d, i) {
         const KEY = _this.KEY;
         if (!_this.model.ui.chart.labels.dragging) return;
-        if (!this.druging) _this.druging = d[KEY];
+        if (!_this.dragging) _this.dragging = d[KEY];
         const cache = _this.cached[d[KEY]];
         cache.labelFixed = true;
 
@@ -46,9 +46,9 @@ const label = function(context) {
       })
       .on("end", (d, i) => {
         const KEY = _this.KEY;
-        if (_this.druging) {
+        if (_this.dragging) {
           const cache = _this.cached[d[KEY]];
-          _this.druging = null;
+          _this.dragging = null;
           cache.labelOffset[0] = cache.labelX_;
           cache.labelOffset[1] = cache.labelY_;
           _this.model.marker.setLabelOffset(d, [cache.labelX_, cache.labelY_]);
@@ -116,8 +116,8 @@ const label = function(context) {
       if (!isTooltip) {
         container
           .call(labelDragger)
-          .on("mouseover", function(d) {
-            if (utils.isTouchDevice()) return;
+          .on("mouseenter", function(d) {
+            if (utils.isTouchDevice() || _this.dragging) return;
             _this.model.marker.highlightMarker(d);
             const KEY = _this.KEY || _this.context.KEY;
             // hovered label should be on top of other labels: if "a" is not the hovered element "d", send "a" to the back
@@ -125,8 +125,8 @@ const label = function(context) {
             d3.select(this).selectAll("." + _cssPrefix + "-label-x")
               .classed("vzb-transparent", false);
           })
-          .on("mouseout", function(d) {
-            if (utils.isTouchDevice()) return;
+          .on("mouseleave", function(d) {
+            if (utils.isTouchDevice() || _this.dragging) return;
             _this.model.marker.clearHighlighted();
             d3.select(this).selectAll("." + _cssPrefix + "-label-x")
               .classed("vzb-transparent", true);
@@ -395,8 +395,10 @@ const Labels = Class.extend({
 
     this.model = this.context.model;
 
-    this.model.on("change:marker.select", () => {
+    this.model.on("change:marker.select", (evt, path) => {
       if (!_this.context._readyOnce) return;
+      if (path.indexOf("select.labelOffset") !== -1) return;
+
       //console.log("EVENT change:entities:select");
       _this.selectDataPoints();
     });
@@ -563,7 +565,7 @@ const Labels = Class.extend({
     const _this = this;
     const KEYS = this.KEYS;
     const KEY = this.KEY;
-    if (d[KEY] == _this.druging)
+    if (d[KEY] == _this.dragging)
       return;
 
     const _cssPrefix = this.options.CSS_PREFIX;

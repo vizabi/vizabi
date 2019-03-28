@@ -131,6 +131,8 @@ const TimeSlider = Component.extend({
         }
       },
       "change:marker.select": function(evt, path) {
+        if (path.indexOf("select.labelOffset") !== -1) return;
+
         _this.setSelectedLimits();
       }
     };
