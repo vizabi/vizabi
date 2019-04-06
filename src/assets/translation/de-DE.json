@@ -97,7 +97,7 @@
     "popbyage/yearOlds": "-year-olds",
     "popbyage/locked": "locked year",
     "popbyage/title": "Population by age",
-    "placeholder/search": "Search",
+    "placeholder/search": "Suche",
     "scaletype/linear": "linear",
     "scaletype/log": "log",
     "incomegroups/level1": "Einkommen Level 1",
@@ -149,6 +149,6 @@
     "reader/error/generic": "Was unable to read the data",
     "crash/intro": "You've discovered a problem in our software that we didn't fix yet",
     "crash/outro": "If you are on Gapminder.org the error is already reported (no personal data is collected). But if this is urgent you can <a href='mailto' target='_blank'>send an email directly to Angie</a><br><br>We'll try to fix it as soon as possible!<br>♥️ Gapminder team",
-    "crash/expand": "<a>technical details</a>",
-    "connection/error": "A problem occurred while loading the data for your chart. This may happen if internet connection disappeared. Make sure you have a good one and try again."
+    "crash/expand": "<a>technische Details</a>",
+    "connection/error": "Beim Laden der Daten für Ihr Diagramm ist ein Problem aufgetreten. Dies kann passieren, wenn die Internetverbindung abgebrochen ist. Stellen Sie sicher, dass Sie eine Internetverbindung haben und versuchen Sie es erneut."
 }
