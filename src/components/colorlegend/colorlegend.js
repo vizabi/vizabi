@@ -594,7 +594,7 @@ const ColorLegend = Component.extend({
         .on("click", (d, i) => {
           const d3event = { pageX: d3.event.pageX, pageY: d3.event.pageY };
           lastClickId = setTimeout(() => {
-            if (!dblclick) _this._interact().clickToChangeColor(d, i, d3event);
+            if (!dblclick) _this._interact().clickToChangeColor(d, i, null, d3event);
             else {
               clearTimeout(lastClickId);
               dblclick = false;
@@ -687,7 +687,7 @@ const ColorLegend = Component.extend({
         if (!_this.colorModel.isDiscrete()) return;
         _this._unhighlight();
       },
-      clickToChangeColor(d, i, d3event = d3.event) {
+      clickToChangeColor(d, i, group, d3event = d3.event) {
         //disable interaction if so stated in concept properties
         if (!_this.colorModel.isUserSelectable()) return;
         const palette = _this.colorModel.getPalette();
