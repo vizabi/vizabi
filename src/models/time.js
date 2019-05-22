@@ -470,7 +470,7 @@ const TimeModel = DataConnected.extend({
     if (this.round === "floor") op = "floor";
     const is = this.getIntervalAndStep();
     const time = d3["utc" + is.interval][op](this[what]);
-    if ((this.value - time) != 0 || (this.value - this.start) == 0 || (this.value - this.end) == 0) {
+    if ((this.value - time) != 0 || (this.value - this.start) == 0 || (this.value - this.end) == 0 || (this.value - this.endBeforeForecast) == 0) {
       this.set(what, time, true); //3rd argumennt forces update
     }
   },
