@@ -571,7 +571,7 @@ const Labels = Class.extend({
     const _cssPrefix = this.options.CSS_PREFIX;
 
     // only for selected entities
-    if (d.isSelected && _this.entityLabels != null) {
+    if (_this.model.marker.isSelected(d)  && _this.entityLabels != null) {
       if (_this.cached[d[KEY]] == null) this.selectDataPoints();
 
       const cached = _this.cached[d[KEY]];
