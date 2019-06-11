@@ -728,7 +728,7 @@ export default function axisSmart(_orient) {
       }
 
 
-      if (tickValues != null && tickValues.length <= 2 && !bothSidesUsed) {
+      if (tickValues != null && tickValues.length < 2 && !bothSidesUsed) {
         //remove min tick if min, max ticks have collision between them
         tickValues = Math.abs(axis.scale()(min) - axis.scale()(max)) < (labelsStackOnTop ?
           (options.heightOfOneDigit) :
