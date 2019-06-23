@@ -147,8 +147,8 @@
     "reader/error/emptyHeaders": "Please check if there are empty lines above the column headers. The valid file should not have these. See the tutorial <a href='https://vizabi.org/tutorials/2017/04/03/show-your-data/' target='_blank'>here</a> for more help. You may also need to restart the app now. <a href='https://getsatisfaction.com/gapminder/' target='_blank'>Contact us</a> if still in trouble.",
     "reader/error/repeatedKeys": "Looks like your file contains repeated line for key \"{{key}}\" with indicator \"{{indicator}}\". <br><br> The valid file should have one line for each key,indicator pair, that is, the data should not be ambiguous. <br> See the tutorial <a href='https://vizabi.org/tutorials/2017/04/03/show-your-data/' target='_blank'>here</a> for more help. <br><br> You may also need to restart the app <br> <a href='https://getsatisfaction.com/gapminder/' target='_blank'>Contact us</a> if still in trouble.",
     "reader/error/generic": "Daten konnten nicht gelesen werden",
-    "crash/intro": "You've discovered a problem in our software that we didn't fix yet",
-    "crash/outro": "If you are on Gapminder.org the error is already reported (no personal data is collected). But if this is urgent you can <a href='mailto' target='_blank'>send an email directly to Angie</a><br><br>We'll try to fix it as soon as possible!<br>♥️ Gapminder team",
+    "crash/intro": "Sie haben ein Problem gefunden, dass wir noch nicht behoben haben",
+    "crash/outro": "Falls Sie auf Gapminder.org sind, wurde der Fehler bereits gemeldet (keine persönlichen Daten werden gesammelt). Aber falls dies dringend ist, können <a href='mailto' target='_blank'>eine Email direkt an Angie schicken</a><br><br>Wir werden versuchen, es so bald wie möglich zu beheben!<br>♥️ Gapminder Team",
     "crash/expand": "<a>technische Details</a>",
     "connection/error": "Beim Laden der Daten für Ihr Diagramm ist ein Problem aufgetreten. Dies kann passieren, wenn die Internetverbindung abgebrochen ist. Stellen Sie sicher, dass Sie eine Internetverbindung haben und versuchen Sie es erneut."
 }
