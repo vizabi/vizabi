@@ -112,7 +112,13 @@ const DataManagerPrototype = {
     return Promise.all(
       [...this.getDataModels().values()].filter(ds => ds.getConceptprops(conceptID)).map(
         dataModel => dataModel.load(query, undefined, true)
-          .then(dataId => dataModel.getData(dataId).map(m => { m.dataSourceName = dataModel._name; return m; }))
+          .then(dataId => {
+            if (dataModel.getData(dataId) instanceof Error) {
+              console.log("❌ Got something wrong with this data, as either key or values might not be found on the server, see details below (query, dataid and the content that came back), placeholdering with empty array instead", query, dataId, dataModel.getData(dataId));
+              return [];
+            }
+            return dataModel.getData(dataId).map(m => { m.dataSourceName = dataModel._name; return m; });
+          })
       )
     );
   },
