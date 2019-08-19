@@ -10,6 +10,7 @@ export default Component.extend({
 
     this.checkbox = config.checkbox;
     this.submodel = config.submodel;
+    this.prefix = config.prefix;
 
     this.model_expects = [{
       name: "mdl"
@@ -59,7 +60,7 @@ export default Component.extend({
     const modelExists = this.parentModel && (this.parentModel[this.checkbox] || this.parentModel[this.checkbox] === false);
     this.labelEl.classed("vzb-hidden", !modelExists);
     if (modelExists) {
-      this.labelEl.text(this.translator("check/" + this.checkbox));
+      this.labelEl.text(this.translator("check/" + (this.prefix ? this.prefix + "/" : "") + this.checkbox));
       this.checkEl.property("checked", !!this.parentModel[this.checkbox]);
     }
   },
