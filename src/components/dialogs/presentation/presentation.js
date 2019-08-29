@@ -29,6 +29,21 @@ const Presentation = Dialog.extend("presentation", {
       placeholder: ".vzb-decorations-switch",
       model: ["ui.chart.decorations", "locale"],
       checkbox: "enabled"
+    }, {
+      component: simplecheckbox,
+      placeholder: ".vzb-time-background-switch",
+      model: ["ui.chart", "locale"],
+      checkbox: "timeInBackground"
+    }, {
+      component: simplecheckbox,
+      placeholder: ".vzb-time-trails-switch",
+      model: ["ui.chart", "locale"],
+      checkbox: "timeInTrails"
+    }, {
+      component: simplecheckbox,
+      placeholder: ".vzb-format-si-prefix-switch",
+      model: ["ui", "locale"],
+      checkbox: "numberFormatSIPrefix"
     }];
 
     this._super(config, parent);
