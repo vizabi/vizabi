@@ -380,6 +380,7 @@ const TimeSlider = Component.extend({
       .tickSizeMinor(0, 0);
 
     this.axis.attr("transform", "translate(0," + this.height / 2 + ")")
+      .classed("vzb-hidden", this.model.ui.presentation)
       .call(this.xAxis);
 
     this.select.attr("transform", "translate(0," + this.height / 2 + ")");
