@@ -333,22 +333,23 @@ const ColorModel = Hook.extend({
 
       if (d3.min(domain) <= 0 && d3.max(domain) >= 0 && scaleType === "log") scaleType = "genericLog";
 
+      scale = d3[`scale${utils.capitalize(scaleType)}`]();
+
+      if (scaleType === "genericLog") {
+        scale.constant(limitsObj.minAbsNear0);
+      }
+
       if (scaleType === "log" || scaleType === "genericLog") {
-        const s = d3.scaleGenericlog()
+        const s = scale.copy()
           .domain(limits)
-          .range(limits)
-          .constant(limitsObj.minAbsNear0);
+          .range(limits);
         domain = domain.map(d => s.invert(d));
       }
 
-      scale = d3[`scale${utils.capitalize(scaleType)}`]()
-        .domain(domain)
+      scale.domain(domain)
         .range(range)
         .interpolate(d3.interpolateRgb.gamma(2.2));
 
-      if (scale.constant) {
-        scale.constant(limitsObj.minAbsNear0);
-      }
     } else {
       range = range.map(m => utils.isArray(m) ? m[0] : m);
 
