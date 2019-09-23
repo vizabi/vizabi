@@ -128,7 +128,7 @@
     "check/rbh/enabled": "Enable Robinhood plugin",
     "check/timeInBackground": "Time in background",
     "check/timeInTrails": "Time in trails label",
-    "check/numberFormatSIPrefix": "SI suffix in numbers",
+    "check/numberFormatSIPrefix": "SI-Suffix bei Zahlen",
     "treemenu/other_datasets": "Weitere Daten...",
     "indicator/_default/axis": "Konstant",
     "indicator/_default/size": "Eine Größe",
