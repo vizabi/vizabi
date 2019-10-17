@@ -123,6 +123,7 @@
     "check/enabled": "Decoraciones de cuadros",
     "check/enableSelectShowSwitch": "Desbloquear las opciones de Seleccionar & Mostrar",
     "check/removeLabelBox": "Eliminar cajas de etiquetas",
+    "check/labels/enabled": "Enabled",
     "check/zoomOnScrolling": "Zoom con la rueda del ratón",
     "check/flipSides": "Voltear caras",
     "check/rbh/enabled": "Enable Robinhood plugin",
