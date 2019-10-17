@@ -123,6 +123,7 @@
     "check/enabled": "ตกแต่งแผนภาพ",
     "check/enableSelectShowSwitch": "Unlock Select & Show options",
     "check/removeLabelBox": "เอากล่องที่มีชื่อออก",
+    "check/labels/enabled": "Enabled",
     "check/zoomOnScrolling": "ย่อขยายด้วยล้อเลื่อนของเมาส์",
     "check/flipSides": "พลิกข้าง",
     "check/rbh/enabled": "Enable Robinhood plugin",
