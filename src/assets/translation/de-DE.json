@@ -123,6 +123,7 @@
     "check/enabled": "Dekorationen",
     "check/enableSelectShowSwitch": "Optionen für Auswahl & Anzeigen entsperren",
     "check/removeLabelBox": "Beschriftungsboxen entfernen",
+    "check/labels/enabled": "Enabled",
     "check/zoomOnScrolling": "Zoome mit Mausrad",
     "check/flipSides": "Seiten spiegeln",
     "check/rbh/enabled": "Enable Robinhood plugin",
