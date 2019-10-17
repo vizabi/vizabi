@@ -40,9 +40,15 @@ const Label = Dialog.extend("label", {
       {
         component: simplecheckbox,
         placeholder: ".vzb-removelabelbox-switch",
-        model: ["ui.chart", "locale"],
-        checkbox: "removeLabelBox",
-        submodel: "labels"
+        model: ["ui.chart.labels", "locale"],
+        checkbox: "removeLabelBox"
+      },
+      {
+        component: simplecheckbox,
+        placeholder: ".vzb-labelsenabled-switch",
+        model: ["ui.chart.labels", "locale"],
+        prefix: "labels",
+        checkbox: "enabled"
       }
     ];
 

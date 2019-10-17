@@ -419,6 +419,13 @@ const Labels = Class.extend({
         _this.updateLabelsOnlyTextSize();
       });
 
+    if (this.model.ui.chart.labels.hasOwnProperty("enabled"))
+      this.model.on("change:ui.chart.labels.enabled", (evt, path) => {
+        if (!_this.context._readyOnce) return;
+        _this.selectDataPoints();
+      });
+
+
     this.KEYS = this.context.KEYS;
     this.KEY = this.context.KEY;
 
@@ -531,7 +538,8 @@ const Labels = Class.extend({
       .each(function(d, index) {
         _this.label.line(d3.select(this));
       })
-      .merge(this.entityLines);
+      .merge(this.entityLines)
+      .classed("vzb-hidden", utils.getProp(_this.model.ui, ["chart", "labels", "enabled"]) === false);
 
     this.entityLabels = this.entityLabels
       .enter().append("g")
@@ -540,7 +548,8 @@ const Labels = Class.extend({
         _this.cached[d[KEY]] = { _new: true };
         _this.label(d3.select(this));
       })
-      .merge(this.entityLabels);
+      .merge(this.entityLabels)
+      .classed("vzb-hidden", utils.getProp(_this.model.ui, ["chart", "labels", "enabled"]) === false);
   },
 
   showCloseCross(d, show) {
