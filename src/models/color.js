@@ -54,6 +54,9 @@ const ColorModel = Hook.extend({
       which: null,
       scaleType: null,
       palette: {},
+      domainMin: null,
+      domainMax: null,
+      clamp: null,
       paletteHiddenKeys: [],
       paletteLabels: null,
       allow: {
@@ -323,7 +326,10 @@ const ColorModel = Hook.extend({
 
       const limitsObj = this.getLimits(this.which);
       //default domain is based on limits
-      const limits = [limitsObj.min, limitsObj.max];
+      const limits = [
+        (this.domainMin || this.domainMin === 0) ? this.domainMin : limitsObj.min,
+        (this.domainMax || this.domainMax === 0) ? this.domainMax : limitsObj.max
+      ];
 
       const singlePoint = (limits[1] - limits[0] == 0);
 
@@ -348,6 +354,7 @@ const ColorModel = Hook.extend({
 
       scale.domain(domain)
         .range(range)
+        .clamp(!!this.clamp)
         .interpolate(d3.interpolateRgb.gamma(2.2));
 
     } else {
