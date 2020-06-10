@@ -8,11 +8,11 @@ import Hook from "models/hook";
 const defaultPalettes = {
   "_continuous": {
     "_default": "#ffb600",
-    "0": "#8c30e8", //"hsl(270, 80%, 55%)",
-    "25": "#30a3e8", //"hsl(202.5, 80%, 55%)",
-    "50": "#30e85e", //"hsl(135, 80%, 55%)",
-    "75": "#e2c75a", //"hsl(48, 70%, 62%)",
-    "100": "#e83030" //"hsl(0, 80%, 55%)"
+    "0%": "#8c30e8", //"hsl(270, 80%, 55%)",
+    "25%": "#30a3e8", //"hsl(202.5, 80%, 55%)",
+    "50%": "#30e85e", //"hsl(135, 80%, 55%)",
+    "75%": "#e2c75a", //"hsl(48, 70%, 62%)",
+    "100%": "#e83030" //"hsl(0, 80%, 55%)"
   },
   "_discrete": {
     "_default": "#ffb600",
@@ -56,7 +56,7 @@ const ColorModel = Hook.extend({
       palette: {},
       domainMin: null,
       domainMax: null,
-      clamp: null,
+      clamp: true,
       paletteHiddenKeys: [],
       paletteLabels: null,
       allow: {
@@ -315,7 +315,7 @@ const ColorModel = Hook.extend({
 
       domain = domain.sort((a, b) => a - b);
       range = domain.map(m => singlePoint ? paletteObject[domain[0]] : paletteObject[m]);
-      domain = domain.map(m => limits.min.valueOf() + m / 100 * (limits.max.valueOf() - limits.min.valueOf()));
+      domain = domain.map(m => !m.includes("%") ? timeMdl.parse(m) : (limits.min.valueOf() + parseInt(m) / 100 * (limits.max.valueOf() - limits.min.valueOf())));
 
       scale = d3.scaleUtc()
         .domain(domain)
@@ -335,7 +335,7 @@ const ColorModel = Hook.extend({
 
       domain = domain.sort((a, b) => a - b);
       range = domain.map(m => singlePoint ? paletteObject[domain[0]] : paletteObject[m]);
-      domain = domain.map(m => limits[0] + m / 100 * (limits[1] - limits[0]));
+      domain = domain.map(m => !m.includes("%") ? m : (limits[0] + parseInt(m) / 100 * (limits[1] - limits[0])));
 
       if (d3.min(domain) <= 0 && d3.max(domain) >= 0 && scaleType === "log") scaleType = "genericLog";
 
