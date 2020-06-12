@@ -424,7 +424,7 @@ const Hook = DataConnected.extend({
 
       // Format time values
       // Assumption: a hook has always time in its space
-      if (utils.isDate(x)) return _this._space.time.formatDate(x);
+      if (utils.isDate(x)) return _this._space.time.formatDate(x, "ui");
 
       // Dealing with values that are supposed to be time
       if (_this.scaleType === "time" && !utils.isDate(x)) {
