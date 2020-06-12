@@ -329,7 +329,7 @@ const TimeSlider = Component.extend({
     this.xScale.domain([minValue, maxValue]);
     //axis
     this.xAxis.tickValues([minValue, maxValue])
-      .tickFormat(this.model.time.getFormatter());
+      .tickFormat(this.model.time.getFormatter("ui"));
   },
 
   changeTime() {
