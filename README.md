@@ -23,7 +23,7 @@ The main features are:
 
 You can use Vizabi to create a new visualization based on your data or modify our set of visualization tools.
 
-See our example pages here: [Vizabi Examples](http://static.gapminderdev.org/preview/master/), and DOCS here: [Vizabi Docs](http://vizabi.org)
+See our example pages here: [Vizabi Examples](https://vizabi.org/examples/bubble-chart.html), and DOCS here: [Vizabi Docs](http://vizabi.org)
 
 ![Picture of charts](http://static.gapminder.org/vizabi/charts.png)
 
