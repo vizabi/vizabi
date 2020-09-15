@@ -1,8 +1,6 @@
 ![Gapminder Vizabi](http://static.gapminder.org/vizabi/vizabi.jpg)
 
 [![npm version](https://badge.fury.io/js/vizabi.svg)](http://badge.fury.io/js/vizabi)
-[![Build Status](https://secure.travis-ci.org/Gapminder/vizabi.png?branch=develop)](https://travis-ci.org/Gapminder/vizabi)
-[![Code Climate](https://codeclimate.com/github/Gapminder/vizabi/badges/gpa.svg)](https://codeclimate.com/github/Gapminder/vizabi)
 [![Dependency Status](https://david-dm.org/Gapminder/vizabi.svg)](https://david-dm.org/Gapminder/vizabi)
 [![devDependency Status](https://david-dm.org/Gapminder/vizabi/dev-status.svg)](https://david-dm.orgGapminder/vizabi#info=devDependencies)
 
@@ -20,7 +18,7 @@ The main features are:
 
 You can use Vizabi to create a new visualization based on your data or modify our set of visualization tools.
 
-See our example pages here: [Vizabi Examples](https://vizabi.org/examples/bubble-chart.html), and DOCS here: [Vizabi Docs](http://vizabi.org)
+See examples in action: [Vizabi Examples](https://www.gapminder.org/tools/), and DOCS here: [Vizabi Docs](http://vizabi.org)
 
 ![Picture of charts](http://static.gapminder.org/vizabi/charts.png)
 
