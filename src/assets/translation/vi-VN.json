@@ -123,6 +123,7 @@
     "check/enabled": "Trang trí biểu đồ",
     "check/enableSelectShowSwitch": "Unlock Select & Show options",
     "check/removeLabelBox": "Bỏ chọn hộp có nhãn",
+    "check/labels/enabled": "Enabled",
     "check/zoomOnScrolling": "Phóng to với con lăn chuột",
     "check/flipSides": "Lật mặt",
     "check/rbh/enabled": "Enable Robinhood plugin",
