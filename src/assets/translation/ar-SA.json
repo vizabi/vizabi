@@ -123,6 +123,7 @@
     "check/enabled": "زخارف الرسم البياني",
     "check/enableSelectShowSwitch": "فتح, تحديد وإظهار الخيارات",
     "check/removeLabelBox": "إزالة خانات التسمية",
+    "check/labels/enabled": "Enabled",
     "check/zoomOnScrolling": "التكبير والتصغير باستخدام عجلة الماوس",
     "check/flipSides": "قلب الجوانب",
     "check/rbh/enabled": "Enable Robinhood plugin",

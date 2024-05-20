@@ -123,6 +123,7 @@
     "check/enabled": "Chart decorations",
     "check/enableSelectShowSwitch": "Unlock Select & Show options",
     "check/removeLabelBox": "Remove label boxes",
+    "check/labels/enabled": "Enabled",
     "check/zoomOnScrolling": "Zoom with mouse wheel",
     "check/flipSides": "Flip sides",
     "check/rbh/enabled": "Enable Robinhood plugin",

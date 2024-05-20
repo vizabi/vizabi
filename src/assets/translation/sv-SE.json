@@ -123,6 +123,7 @@
     "check/enabled": "Chart decorations",
     "check/enableSelectShowSwitch": "Unlock Select & Show options",
     "check/removeLabelBox": "Inga rutor på etikett",
+    "check/labels/enabled": "Enabled",
     "check/zoomOnScrolling": "Zooma med hjulen",
     "check/flipSides": "Flip sides",
     "check/rbh/enabled": "Enable Robinhood plugin",

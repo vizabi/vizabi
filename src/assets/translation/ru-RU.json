@@ -123,6 +123,7 @@
     "check/enabled": "Декоративные элементы",
     "check/enableSelectShowSwitch": "Unlock Select & Show options",
     "check/removeLabelBox": "Убрать фон у надписей",
+    "check/labels/enabled": "Enabled",
     "check/zoomOnScrolling": "Масштабирование колёсиком",
     "check/flipSides": "Поменять стороны",
     "check/rbh/enabled": "Enable Robinhood plugin",
